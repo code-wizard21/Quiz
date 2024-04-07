@@ -1,0 +1,159 @@
+#root {
+  height: 100vh;
+}
+
+body {
+  margin: 0;
+}
+
+.app {
+  height: 100% !important;
+  background-color: #f3f4f6;
+}
+
+.bg-4E13AF {
+  background-color: #4E13AF !important;
+}
+
+@font-face {
+  font-family: 'Circular Std Bold';
+  src: url('./assets/fonts/static/circular-std-2.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Circular Std Regular';
+  src: url('./assets/fonts/static/circular-std-6.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+#view-que-video {
+  /* max-width: 430px; */
+  width: 100%;
+  margin: auto;
+  position: inherit;
+}
+
+.max-100-100 {
+  max-width: 100px !important;
+  max-height: 100px !important;
+}
+
+.h-700 {
+  height: 700px !important;
+}
+
+#view-que {
+  background-image: url("assets/question-back.svg");
+  background-repeat: no-repeat;
+  /* width: 430px; */
+  width: 100%;
+  max-width: 430px;
+  height: 700px;
+  margin: auto;
+}
+
+.option-btn {
+  color: #31302B;
+  background: #FFF;
+  font-weight: bold;
+  border-radius: 2px;
+  text-align: center;
+  cursor: pointer;
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  transition: background-position 1.3s;
+}
+
+.option-btn:hover {
+  background-position: 0 0;
+}
+
+.landing-page {
+  background-image: url("assets/landing2.svg");
+  background-repeat: no-repeat;
+  height: 100vh;
+  margin: auto;
+}
+
+.registration-page {
+  background-image: url("assets/bg_glows.svg");
+  background-repeat: no-repeat;
+  height: 100vh;
+  /* width: 432px; */
+  margin: auto;
+}
+
+#scrollableDiv::-webkit-scrollbar {
+  display: none;
+}
+
+button {
+  font-family: 'Circular Std Regular';
+}
+
+p {
+  font-family: 'Circular Std Regular';
+}
+
+div {
+  font-family: 'Circular Std Regular';
+}
+
+span {
+  font-family: 'Circular Std Regular';
+}
+
+.max-w-430 {
+  max-width: 430px !important;
+}
+
+.max-w-390 {
+  max-width: 390px !important;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+
+  select:focus,
+  textarea:focus,
+  input:focus {
+    font-size: 16px;
+    background: #eee;
+  }
+}
+
+.phone-input-container .country-list {
+  color: black !important;
+}
+
+.phone-input-container>Input {
+  background-color: #592EB0 !important;
+  color: white !important;
+  height: 48px !important;
+  width: 100% !important;
+  border: none !important;
+  border-radius: 10px !important;
+}
+
+.flag-dropdown {
+  background-color: #592EB0 !important;
+  border: none !important;
+  border-radius: 12px 0px 0px 12px !important;
+}
+
+.phone-input-container .selected-flag {
+  background-color: #592EB0 !important;
+  border: none !important;
+  border-radius: 12px !important;
+}
+
+.react-tel-input .flag-dropdown {
+  border: 0px !important;
+  border-right: 1px solid white !important;
+}
+
+#live-stream-header {
+  width: inherit !important;
+}

@@ -1,0 +1,17 @@
+{
+  "login": {
+    "title1": "Bienvenue sur Moxie",
+    "title2": "Accédez à un monde d'analyses de football avancées. Connectez-vous à SABR Sports et explorez Moxie. Commencez votre essai GRATUIT dès aujourd'hui !",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "error": {
+      "email_error": "Veuillez entrer votre adresse e-mail !",
+      "password_error": "Veuillez entrer votre mot de passe !",
+      "cred_error": "Hmm, cet e-mail ou ce mot de passe n'est pas correct"
+    },
+    "forgot_password": "Mot de passe oublié ? Nous sommes là pour vous aider",
+    "access_now": "Accéder maintenant",
+    "new_here": "Nouveau ici ?",
+    "start_your_free_trial": "Commencez votre essai GRATUIT"
+  }
+}

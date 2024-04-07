@@ -1,0 +1,105 @@
+import PropTypes from "prop-types";
+import { Autocomplete, TextField } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+
+const top100Films = [
+  { label: 'The Shawshank Redemption', year: 1994 },
+  { label: 'The Godfather', year: 1972 },
+  { label: 'The Godfather: Part II', year: 1974 },
+  { label: 'The Dark Knight', year: 2008 },
+  { label: '12 Angry Men', year: 1957 },
+  { label: "Schindler's List", year: 1993 },
+  { label: 'Pulp Fiction', year: 1994 },
+]
+
+export const AutocompleteField = (props) => {
+  const { error, helperText, label, options, placeholder, ...other } = props;
+
+  return (
+    <Autocomplete
+    options={top100Films}
+    sx={{
+      "& .MuiFilledInput-root .MuiFilledInput-input": {
+        px: 1.5,
+        py: 0.75,
+      },
+    }}
+    renderInput={(params) => {
+      const { InputProps, ...restProps } = params;
+      console.log('options',options, InputProps);
+      return (
+        <TextField
+          {...restProps}
+          error={error}
+          helperText={helperText}
+          label={label}
+          placeholder={placeholder}
+          sx={{
+            "& .MuiFilledInput-root": {
+              backgroundColor: "background.paper",
+              borderWidth: 1,
+              borderStyle: "solid",
+              borderColor: (theme) =>
+                theme.palette.mode === "light" ? "neutral.300" : "neutral.700",
+              borderRadius: 1,
+              boxShadow: "0px 1px 2px 0px rgba(9, 30, 66, 0.08)",
+              "&.MuiAutocomplete-inputRoot": {
+                p: 0,
+              },
+              transition: (theme) => theme.transitions.create(["border-color", "box-shadow"]),
+              "&:hover": {
+                backgroundColor: "background.paper",
+              },
+              "&.Mui-focused": {
+                backgroundColor: "background.paper",
+                boxShadow: (theme) => `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
+              },
+              "& .MuiFilledInput-input": {
+                fontSize: 14,
+                height: "unset",
+                lineHeight: 1.6,
+                px: 1.5,
+                py: 0.75,
+              },
+              "&.Mui-disabled": {
+                backgroundColor: "action.disabledBackground",
+                boxShadow: "none",
+                borderColor: alpha("#D6DBE1", 0.5),
+              },
+              ":not(.MuiInputBase-adornedStart)": {
+                p: 0,
+              },
+            },
+          }}
+          variant="filled"
+          InputProps={{
+            disableUnderline: true,
+            ...InputProps,
+          }}
+          InputLabelProps={{
+            shrink: true,
+            sx: {
+              color: "text.primary",
+              fontSize: 14,
+              fontWeight: 500,
+              mb: 0.5,
+              position: "relative",
+              transform: "none",
+            },
+          }}
+        />
+      );
+    }}
+    // ChipProps={{ variant: "outlined" }}
+    // {...other}
+  />
+  );
+};
+
+AutocompleteField.propTypes = {
+  error: PropTypes.bool,
+  helperText: PropTypes.string,
+  label: PropTypes.string,
+  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  placeholder: PropTypes.string,
+};

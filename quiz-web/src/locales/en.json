@@ -1,0 +1,17 @@
+{
+  "login": {
+    "title1": "Welcome Quiz Mobb",
+    "title2": "Login to your account",
+    "email": "Email",
+    "password": "Password",
+    "error": {
+      "email_error": "Please input your Email!",
+      "password_error": "Please input your Password!",
+      "cred_error": "Hmm, that email or password isn't right"
+    },
+    "forgot_password": "Forgot password? We've got you",
+    "access_now": "Access Now",
+    "new_here": "New here?",
+    "start_your_free_trial": "Start Your FREE Trial"
+  }
+}

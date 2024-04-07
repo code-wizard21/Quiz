@@ -1,0 +1,14 @@
+.ant-input-affix-wrapper, .ant-input, .ant-input:focus, .ant-input:hover, .ant-input-affix-wrapper:focus, .ant-input-affix-wrapper:hover {
+    /* border-color: #9B81CF !important; */
+    border: none !important;
+    background-color: #592EB0 !important;
+}
+
+.ant-input-password-icon {
+    color: #ffffff !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 0s 600000s, color 0s 600000s;
+}

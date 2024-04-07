@@ -1,0 +1,12 @@
+module.exports.Token = require('./token.model');
+module.exports.User = require('./user.model');
+module.exports.Quiz = require('./quiz.model');
+module.exports.Question = require('./question.model');
+module.exports.UserAnswer = require('./user-answer.model');
+module.exports.Participation = require('./participation.model');
+module.exports.QuizReminder = require('./quiz-reminder.model');
+module.exports.Category = require('./category.model');
+module.exports.QuizVote = require('./quiz-vote.model');
+module.exports.LiveStream = require('./live-stream.model');
+module.exports.Leaderboard = require('./leaderboard.model');
+module.exports.Payment = require('./payment.model');

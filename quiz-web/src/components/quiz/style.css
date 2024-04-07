@@ -1,0 +1,35 @@
+.ant-progress-bg, .ant-progress-success-bg {
+    height: 48px !important;
+}
+
+.option-pre-reveal-user-selection .ant-progress-outer .ant-progress-inner {
+    background-color: #F9DC30 !important;
+}
+
+.option-reveal-user-selection .ant-progress-outer .ant-progress-inner {
+    background-color: #FF2975 !important;
+}
+
+.GENERAL_OPTIONS_BG .ant-progress-outer .ant-progress-inner {
+    background-color: #FFFFFF !important;
+}
+
+.USER_SELECTION_BG .ant-progress-outer .ant-progress-inner {
+    background-color: #F9DC30 !important;
+}
+
+.USER_SELECTION_CORRECT_BG .ant-progress-outer .ant-progress-inner {
+    background-color: #66C956 !important;
+}
+
+.USER_SELECTION_WRONG_BG .ant-progress-outer .ant-progress-inner {
+    background-color: #FFFFFF !important;
+}
+
+.quiz-action-btn:hover {
+    color: black !important;
+}
+
+.top-25-percent {
+    top: 25% !important;
+}

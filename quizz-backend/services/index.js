@@ -1,0 +1,11 @@
+module.exports.authService = require('./auth.service');
+module.exports.emailService = require('./email.service');
+module.exports.tokenService = require('./token.service');
+module.exports.userService = require('./user.service');
+module.exports.quizService = require('./quiz.service');
+module.exports.optionService = require('./option.service');
+module.exports.quizCategoryService = require('./quiz-category.service');
+module.exports.userAnswerService = require('./user-answer.service');
+module.exports.questionService = require('./question.service');
+module.exports.participationService = require('./participation.service');
+module.exports.agoraService = require('./agora.service');

@@ -1,0 +1,15 @@
+#game-summary-container {
+    background-color: #2F0861;
+    width: 430px;
+    height: 700px;
+    margin: auto;
+}
+.text-sum-que {
+    background-color: #D1BCF2;
+}
+.text-sum-ans {
+    background-color: #7A58AF;
+}
+.game-summary-list {
+    height: 30rem;
+}
