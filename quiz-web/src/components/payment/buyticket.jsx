@@ -1,4 +1,3 @@
-
 import user1 from '../../assets/user/user2.svg';
 import background from '../../assets/figma/Graphic.svg';
 import vector from '../../assets/figma/Vector.svg';
@@ -42,7 +41,7 @@ const BuyTicket = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const mode = queryParams.get('mode');
- 
+
   const stripe = useStripe();
   const elements = useElements();
   const [value, setValue] = useState(1);
@@ -52,22 +51,21 @@ const BuyTicket = () => {
     getOperatingSystem();
   }, []);
 
-  useEffect(()=>{
-    if(amount===0)
-    {
+  useEffect(() => {
+    if (amount === 0) {
       console.log(amount);
       return;
     }
-  },[amount]);
+  }, [amount]);
   const getOperatingSystem = () => {
-    const  userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     // iOS detection from: http://stackoverflow.com/a/9039885/177710
     if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
       setMobile('iOS');
-      console.log('##########iOS')
+      console.log('##########iOS');
     }
     if (/android/i.test(userAgent)) {
-      console.log('##########Adroid')
+      console.log('##########Adroid');
       setMobile('Android');
     }
 
@@ -82,7 +80,7 @@ const BuyTicket = () => {
     if (!error && paymentMethod) {
       const { id } = paymentMethod;
       let amount,
-      ticket = 0;
+        ticket = 0;
       switch (mode) {
         case '1':
           amount = 300;
@@ -103,7 +101,7 @@ const BuyTicket = () => {
         default:
           amount = 0;
       }
-      
+
       const value = {
         payment_method_id: id,
         amount: amount,
@@ -151,7 +149,7 @@ const BuyTicket = () => {
             <div className="flex flex-row justify-center mt-6">
               <div className="ml-2 text-3xl font-bold text-center studregular">Select Payment </div>
             </div>
-            
+
             <div className="flex justify-center mt-6">
               <button
                 onClick={() => {
@@ -163,8 +161,72 @@ const BuyTicket = () => {
               >
                 <div className="mr-10 text-white  text-base">Credit Card</div>
               </button>
-{/*          
-                {mobile === 'Android' ? (
+
+              <GooglePayButton
+                environment="TEST"
+                paymentRequest={{
+                  apiVersion: 2,
+                  apiVersionMinor: 0,
+                  allowedPaymentMethods: [
+                    {
+                      type: 'CARD',
+                      parameters: {
+                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                        allowedCardNetworks: ['MASTERCARD', 'VISA'],
+                      },
+                      tokenizationSpecification: {
+                        type: 'PAYMENT_GATEWAY',
+                        parameters: {
+                          gateway: 'stripe',
+                          'stripe:version': '2018-10-31',
+                          'stripe:publishableKey':
+                            'sk_test_51DOfAJIFbzohYGemOLOrA6C52yD7aHdglSfl0kMB95gRJoxcDGSqpWHxa4sGtJDb5mzPX2azyvGDF3GekVRLirFu00NPR9PV6c',
+                        },
+                      },
+                    },
+                  ],
+                  merchantInfo: {
+                    merchantName: ' Quiz',
+                    merchantId: '5348369626',
+                  },
+                  transactionInfo: {
+                    totalPriceStatus: 'FINAL',
+                    totalPrice: 1000,
+                    currencyCode: 'SGD',
+                  },
+                }}
+                onLoadPaymentData={async (paymentData) => {
+                  console.log('Success', paymentData);
+                  // Parse and extract the necessary data from Payment Method
+                  const paymentMethod = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
+                  
+                  // You would have the necessary endpoint set up on your Express.js server side
+                  // to process the charge with the received payment method
+                  const response = await fetch('/payment/buyticketgoogle', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(paymentMethod), // Send PaymentMethod to the server
+                  });
+                
+                  const data = await response.json();
+                  
+                  // Handle response
+                  if(data.success){
+                    console.log("Payment successful");
+                  } else {
+                    console.log("Payment failed");
+                  }
+                }}
+                buttonRadius={40}
+                existingPaymentMethodRequired={true}
+                buttonColor="white"
+                buttonType="short"
+                buttonSizeMode="fill"
+                style={{ width: '100%', height: '57px', marginLeft: '10px' }}
+              />
+              {/* {mobile === 'Android' ? (
                   <GooglePayButton
                     environment="TEST"
                     paymentRequest={{
@@ -208,14 +270,12 @@ const BuyTicket = () => {
                     buttonSizeMode="fill"
                     style={{ width: '100%', height: '57px', marginLeft: '10px' }}
                   />
-                ) : (
+                ) : 
+                (
                   <ApplePayButton
                     data = {amount}
                   />
                 )} */}
-            <ApplePayButton
-                    data = {amount}
-                  />
             </div>
             <form className="mt-4 mb-8">
               <div className="m-4 pl-2 pt-4">

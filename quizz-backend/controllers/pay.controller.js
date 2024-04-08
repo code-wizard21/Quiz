@@ -49,6 +49,35 @@ const buyticket = catchAsync(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+
+const buyticketgoogle = catchAsync(async (req, res) => {
+  try {
+    const paymentData = req.body;
+    const paymentIntent = await stripe.paymentIntents.create({
+      // `amount` should be the required amount for the product or service, 
+      // remember this is in the smallest unit of the currency, cents for dollar
+      amount: 1000, // for example, this will be $10.00
+
+      // `currency` should be the currency in which the payment is supposed to be made
+      currency: 'usd',
+      
+      // `payment_method` will be the ID of the PaymentMethod received from the client-side
+      payment_method: paymentData.paymentMethodId,
+
+      // Setting `confirmation_method` to 'manual' here since we are confirming the paymentIntent manually
+      confirmation_method: 'manual',
+
+      // We are confirming the paymentIntent immediately
+      confirm: true,
+    });
+
+    res.send({ success: true });
+  } catch (error) {
+    console.error('Error confirming payment intent', error);
+    res.status(500).send({ success: false });
+  }
+});
 const buyticketapp = catchAsync(async (req, res) => {
   const token = req.body.token;
   const amount=req.body.amount;
@@ -116,6 +145,7 @@ const getID = (req, res) => {
 module.exports = {
   buyticket,
   buyticketapp,
+  buyticketgoogle,
   gethistory,
   getAll,
   getID,

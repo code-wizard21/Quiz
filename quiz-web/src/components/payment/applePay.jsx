@@ -19,8 +19,8 @@ const ApplePayButton = (prop) => {
         const handlePayment = async () => {
             if (!stripe) return;
             const paymentRequest = stripe.paymentRequest({
-                country: 'SGP',
-                currency: 'SGD',
+                country: 'SG',
+                currency: 'sgd',
                 total: {
                     label: 'Demo total',
                     amount: 100, // amount to be paid
