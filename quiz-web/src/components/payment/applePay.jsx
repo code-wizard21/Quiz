@@ -16,38 +16,38 @@ const ApplePayButton = (prop) => {
         fetchStripe();
     }, []);
 
-    const handlePayment = async () => {
-        if (!stripe) return;
-        const paymentRequest = stripe.paymentRequest({
-            country: 'SGP',
-            currency: 'SGD',
-            total: {
-                label: 'Demo total',
-                amount: data, // amount to be paid
-            },
-        });
+        const handlePayment = async () => {
+            if (!stripe) return;
+            const paymentRequest = stripe.paymentRequest({
+                country: 'SGP',
+                currency: 'SGD',
+                total: {
+                    label: 'Demo total',
+                    amount: 100, // amount to be paid
+                },
+            });
 
-        paymentRequest.canMakePayment().then(function(result) {
-            if (result) {
-                paymentRequest.show();
-            } else {
-                alert("Apple Pay is not available");
-            }
-        });
-
-        paymentRequest.on('token', function(ev) {
-            fetch('/payment/buyticket', {
-                method: 'POST',
-                body: JSON.stringify({ token: ev.token.id }),
-            }).then(function(res) {
-               if (res.ok) {
-                   ev.complete('success'); 
-               } else {
-                   ev.complete('fail');
+            paymentRequest.canMakePayment().then(function(result) {
+                if (result) {
+                    paymentRequest.show();
+                } else {
+                    alert("Apple Pay is not available");
                 }
             });
-        });
-    }
+
+            paymentRequest.on('token', function(ev) {
+                fetch('/payment/buyticketapp', {
+                    method: 'POST',
+                    body: JSON.stringify({ token: ev.token.id,amount:data }),
+                }).then(function(res) {
+                if (res.ok) {
+                    ev.complete('success'); 
+                } else {
+                    ev.complete('fail');
+                    }
+                });
+            });
+        }
 
     return (
   

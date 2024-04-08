@@ -167,7 +167,7 @@ export const CustomersTable = (props) => {
                     </NextLink>
                   </Box>
                 </TableCell>
-                <TableCell>{customer.mobileNumber}</TableCell>
+                <TableCell>{customer.mobile}</TableCell>
                 <TableCell>{customer.email}</TableCell>
                 <TableCell>{format(new Date(customer.createdAt), "dd/MM/yyyy HH:mm")}</TableCell>
                 <TableCell align="right">

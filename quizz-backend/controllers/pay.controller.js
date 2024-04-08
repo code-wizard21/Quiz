@@ -49,6 +49,30 @@ const buyticket = catchAsync(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+const buyticketapp = catchAsync(async (req, res) => {
+  const token = req.body.token;
+  const amount=req.body.amount;
+  console.log("token",token);
+  console.log("amount",amount);
+  // Use the token to create a charge
+  try {
+    const charge = await stripe.charges.create({
+      amount: 100, // amount in cents
+      currency: 'sgd',
+      description: 'Demo payment',
+      source: token,
+    });
+
+    // Respond with the status of the charge
+    if (charge.paid) {
+      res.json(charge);
+    } else {
+      res.json({ error: 'Payment failed' });
+    }
+  } catch (err) {
+    res.json({ error: err.message });
+  }
+});
 
 const gethistory = catchAsync(async (req, res) => {
   try {
@@ -91,6 +115,7 @@ const getID = (req, res) => {
 
 module.exports = {
   buyticket,
+  buyticketapp,
   gethistory,
   getAll,
   getID,

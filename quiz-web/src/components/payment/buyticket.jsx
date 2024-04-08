@@ -9,7 +9,6 @@ import { useStripe, useElements } from '@stripe/react-stripe-js';
 import { CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Check from './buy';
 import styled from 'styled-components';
 import GooglePayButton from '@google-pay/button-react';
 import ApplePayButton from './applePay';
@@ -48,10 +47,18 @@ const BuyTicket = () => {
   const elements = useElements();
   const [value, setValue] = useState(1);
   const [mobile, setMobile] = useState('');
-  const [amount, setAmount] = useState();
+  const [amount, setAmount] = useState(0);
   useEffect(() => {
     getOperatingSystem();
   }, []);
+
+  useEffect(()=>{
+    if(amount===0)
+    {
+      console.log(amount);
+      return;
+    }
+  },[amount]);
   const getOperatingSystem = () => {
     const  userAgent = navigator.userAgent || navigator.vendor || window.opera;
     // iOS detection from: http://stackoverflow.com/a/9039885/177710
@@ -75,27 +82,23 @@ const BuyTicket = () => {
     if (!error && paymentMethod) {
       const { id } = paymentMethod;
       let amount,
-        ticket = 0;
+      ticket = 0;
       switch (mode) {
         case '1':
           amount = 300;
           ticket = 1;
-          setAmount(amount);
           break;
         case '2':
           amount = 500;
           ticket = 2;
-          setAmount(amount);
           break;
         case '3':
           amount = 1000;
           ticket = 10;
-          setAmount(amount);
           break;
         case '4':
           amount = 2000;
           ticket = 20;
-          setAmount(amount);
           break;
         default:
           amount = 0;
@@ -108,6 +111,8 @@ const BuyTicket = () => {
         email: JSON.parse(localStorage.getItem('user')).user.email,
         item: ticket,
       };
+      console.log(amount);
+      setAmount(amount);
       buyticket(value)
         .then((res) => {
           if (res.status == 200) {
@@ -158,7 +163,7 @@ const BuyTicket = () => {
               >
                 <div className="mr-10 text-white  text-base">Credit Card</div>
               </button>
-         
+{/*          
                 {mobile === 'Android' ? (
                   <GooglePayButton
                     environment="TEST"
@@ -207,8 +212,10 @@ const BuyTicket = () => {
                   <ApplePayButton
                     data = {amount}
                   />
-                )}
-          
+                )} */}
+            <ApplePayButton
+                    data = {amount}
+                  />
             </div>
             <form className="mt-4 mb-8">
               <div className="m-4 pl-2 pt-4">
