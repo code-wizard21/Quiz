@@ -95,7 +95,7 @@ const Invoices = () => {
               }}
             >
               <Typography color="textPrimary" variant="h4">
-                User Parshoner({count})
+              Transactions({count})
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
               <NextLink href="/dashboard/invoices/create" passHref>

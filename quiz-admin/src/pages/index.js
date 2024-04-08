@@ -14,7 +14,7 @@ const Home = () => {
   return (
     <div>
       <Head>
-        <title>Moxie | Moxie App</title>
+        <title>QuizMobb | QuizMobb App</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <meta name="description" content="Join our community of Moxie Kings & Queens today and never be left in need of anything." />
         <meta name="keywords" content="Moxie App" />

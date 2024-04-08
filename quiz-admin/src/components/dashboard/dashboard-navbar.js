@@ -110,7 +110,7 @@ passHref>
           >
             <img src='/logo.png' style={{ height: 40, marginRight: 10 }} />
             <Typography
-              variant="h4" color={"#fff"}>Moxie</Typography>
+              variant="h4" color={"#fff"}>QuizMobb</Typography>
           </a>
           </Box>
         </NextLink>

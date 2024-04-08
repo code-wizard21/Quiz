@@ -185,7 +185,7 @@ const Invoices = () => {
               }}
             >
               <Typography color="textPrimary" variant="h4">
-                Invoices({count})
+              From Stripe({count})
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
          

@@ -140,6 +140,7 @@ const BuyTicket = () => {
             <div className="flex flex-row justify-center mt-6">
               <div className="ml-2 text-3xl font-bold text-center studregular">Select Payment </div>
             </div>
+            
             <div className="flex justify-center mt-6">
               <button
                 onClick={() => {
@@ -151,7 +152,7 @@ const BuyTicket = () => {
               >
                 <div className="mr-10 text-white  text-base">Credit Card</div>
               </button>
-              
+            
                 {mobile === 'Android' ? (
                   <GooglePayButton
                     environment="TEST"

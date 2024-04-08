@@ -22,7 +22,7 @@ export const MainNavbar = (props) => {
         }}
       >
         <NextLink href="/" passHref>
-          <a>Moxie</a>
+          <a>QuizMobb</a>
         </NextLink>
         <Box sx={{ flexGrow: 1 }} />
         <IconButton

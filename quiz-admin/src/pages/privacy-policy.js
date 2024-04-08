@@ -20,7 +20,7 @@ const PrivacyPolicy = () => {
   return (
     <>
       <Head>
-        <title>Privacy Policy | Moxie</title>
+        <title>Privacy Policy | QuizMobb</title>
       </Head>
       <AppBar elevation={0}
 sx={{ backgroundColor: "background.paper" }}>

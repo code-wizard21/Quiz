@@ -27,7 +27,7 @@ export const Footer = () => (
       }}
     >
       <Typography align="center" color="textSecondary" variant="caption">
-        ©2023 Moxie.com pte ltd. All rights reserved. <br />
+        ©2023 QuizMobb.com pte ltd. All rights reserved. <br />
         <NextLink href="/term-of-use" passHref>
           <a
             style={{

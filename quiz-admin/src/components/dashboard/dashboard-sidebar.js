@@ -32,17 +32,17 @@ const items = [
   },
   {
     icon: CubeIcon,
-    title: "Guest Shadow",
+    title: "Guest Users",
     href: "/dashboard/customers/shadow",
   },
   {
     icon: CubeIcon,
-    title: "Invoices",
+    title: "From Stripe",
     href: "/dashboard/invoices",
   },
   {
     icon: CubeIcon,
-    title: "User Parshoner",
+    title: "Transactions",
     href: "/dashboard/user_parshoner",
   },
   // {
