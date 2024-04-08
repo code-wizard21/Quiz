@@ -19,7 +19,6 @@ class InvoiceApi {
     const invoices = [];
 
     await res.data.data.forEach((element, idx) => {
-      console.log('element',element);
       invoices.push({
         id: idx + 1,
         amount: element.amount / 100,

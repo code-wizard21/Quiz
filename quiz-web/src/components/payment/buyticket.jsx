@@ -55,10 +55,13 @@ const BuyTicket = () => {
     // iOS detection from: http://stackoverflow.com/a/9039885/177710
     if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
       setMobile('iOS');
+      console.log('##########iOS')
     }
     if (/android/i.test(userAgent)) {
+      console.log('##########Adroid')
       setMobile('Android');
     }
+
     return 'unknown';
   };
   const handleSubmit = async () => {

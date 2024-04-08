@@ -24,6 +24,7 @@ const Invoices = () => {
     view: "all",
   });
   const [invoicesState, setInvoicesState] = useState({ isLoading: true });
+  const [count, setCount] = useState(0);
   const [selectedInvoices, handleSelect, handleSelectAll] = useSelection(
     invoicesState.data?.invoices
   );
@@ -31,7 +32,7 @@ const Invoices = () => {
 
   const getCustomers = useCallback(async () => {
     setInvoicesState(() => ({ isLoading: true }));
-    console.log("controller", controller);
+
     try {
       const result = await invoiceApi.getInvoices({
         filters: controller.filters,
@@ -41,15 +42,15 @@ const Invoices = () => {
         sort_by: controller.sort_by,
         view: controller.view,
       });
-
+      console.log('resutl',result.invoicesCount);
+      setCount(result.invoicesCount);
       const invoicesResult = {
         invoices: [],
       };
       const searchInput = search;
       let int = parseInt(searchInput);
-      console.log("router.query.search", int);
       if (!isNaN(int)) {
-        console.log("###########getCustomersgetCustomers");
+      
         await result.invoices.forEach((element, idx) => {
           if (element.amount == int) {
             invoicesResult.invoices.push({
@@ -62,7 +63,6 @@ const Invoices = () => {
             });
           }
         });
-        console.log("invoicesResult", invoicesResult);
         if (isMounted()) {
           setInvoicesState(() => ({
             isLoading: false,
@@ -70,8 +70,6 @@ const Invoices = () => {
           }));
         }
       } else {
-        console.log("result", result);
-        console.log("2222222222222222222222");
         setInvoicesState(() => ({
           isLoading: false,
           data: result,
@@ -187,7 +185,7 @@ const Invoices = () => {
               }}
             >
               <Typography color="textPrimary" variant="h4">
-                Invoices
+                Invoices({count})
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
          

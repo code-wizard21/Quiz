@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+  import { useEffect, useState } from "react";
 import Proptypes from "prop-types";
 import NextLink from "next/link";
 import { format } from "date-fns";
 import numeral from "numeral";
+import { DateTime } from 'luxon';
 import ErrorIcon from "@mui/icons-material/Error";
 import {
   Box,
@@ -189,7 +190,11 @@ export const InvoicesTable = (props) => {
                     {capitalizeFirstLetter(invoice.payment_method)}****{invoice.card_number}
                   </TableCell>
 
-                  <TableCell>{format(new Date(invoice.trx_date * 1000), "MMM dd, yyyy, hh:mm a")}</TableCell>
+                  <TableCell>
+                    {DateTime.fromMillis(invoice.trx_date * 1000, { zone: 'UTC' })
+                     .setZone('Asia/Singapore')
+                     .toFormat("MMM dd, yyyy, hh:mm a")}
+                  </TableCell>
                   {/* <TableCell>
                     {numeral(invoice.totalAmount).format(`${invoice.currencySymbol}0,0.00`)}
                   </TableCell> */}

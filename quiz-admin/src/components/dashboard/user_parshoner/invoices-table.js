@@ -16,6 +16,8 @@ import {
   TableRow,
   TableSortLabel,
 } from "@mui/material";
+import { DateTime } from 'luxon';
+import moment from 'moment-timezone';
 import { Pagination } from "../../pagination";
 import { ResourceError } from "../../resource-error";
 import { ResourceUnavailable } from "../../resource-unavailable";
@@ -24,7 +26,7 @@ import { Status } from "../../status";
 import { InvoiceMenu } from "../invoices/invoice-menu";
 import Chip from '@mui/material/Chip';
 import DoneIcon from '@mui/icons-material/Done';
-import moment from 'moment'
+
 
 const columns = [
   {
@@ -181,10 +183,8 @@ export const InvoicesTable = (props) => {
                   <TableCell>{invoice.email}</TableCell>
                   <TableCell>{invoice.user}</TableCell>
                   <TableCell>{invoice.item} Tickets</TableCell>
-                  <TableCell>{moment(invoice.trx_date).format("MMM dd, yyyy, hh:mm a")}</TableCell>
-                  {/* <TableCell>
-                    {numeral(invoice.totalAmount).format(`${invoice.currencySymbol}0,0.00`)}
-                  </TableCell> */}
+                  <TableCell>{DateTime.fromISO(invoice.trx_date,{ setZone: true }, { zone: 'utc' }).setZone('Asia/Singapore').toFormat('MMM dd, yyyy, hh:mm a')}</TableCell>
+
                   <TableCell>
                     <InvoiceMenu />
                   </TableCell>

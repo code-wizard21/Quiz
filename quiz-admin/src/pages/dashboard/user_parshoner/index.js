@@ -25,99 +25,30 @@ const Invoices = () => {
     view: "all",
   });
   const [data, setData] = useState([]);
+  const [count, setCount] = useState(0);
   const [invoicesState, setInvoicesState] = useState({ isLoading: true });
   const [selectedInvoices, handleSelect, handleSelectAll] = useSelection(
     invoicesState.data?.invoices
   );
 
-  const getCustomers = useCallback(async () => {
-    setInvoicesState(() => ({ isLoading: true }));
-
-    try {
-      const result = await invoiceApi.getInvoices({
-        filters: controller.filters,
-        page: controller.page,
-        query: controller.query,
-        sort: controller.sort,
-        sort_by: controller.sort_by,
-        view: controller.view,
-      });
-
-      if (isMounted()) {
-        setInvoicesState(() => ({
-          isLoading: false,
-          data: result,
-        }));
-      }
-      console.log(result);
-    } catch (err) {
-      console.error(err);
-
-      if (isMounted()) {
-        setInvoicesState(() => ({
-          isLoading: false,
-          error: err.message,
-        }));
-      }
-    }
-  }, [controller]);
 
   useEffect(() => {
     axiosClient.get('/payment/')
       .then((result) => {
         setData(result.data);
-        console.log(result.data);
+        setCount(result.data.length);
+     
       })
       .catch(err => {
         console.log(err);
       });
   }, []);
 
-  useEffect(() => {
-    getCustomers().catch(console.error);
-  }, [controller]);
-
+ 
   useEffect(() => {
     gtm.push({ event: "page_view" });
   }, []);
 
-  const handleViewChange = (newView) => {
-    setController({
-      ...controller,
-      page: 0,
-      view: newView,
-    });
-  };
-
-  const handleQueryChange = (newQuery) => {
-    setController({
-      ...controller,
-      page: 0,
-      query: newQuery,
-    });
-  };
-
-  const handleFiltersApply = (newFilters) => {
-    const parsedFilters = newFilters.map((filter) => ({
-      property: filter.property.name,
-      value: filter.value,
-      operator: filter.operator.value,
-    }));
-
-    setController({
-      ...controller,
-      page: 0,
-      filters: parsedFilters,
-    });
-  };
-
-  const handleFiltersClear = () => {
-    setController({
-      ...controller,
-      page: 0,
-      filters: [],
-    });
-  };
 
   const handlePageChange = (newPage) => {
     setController({
@@ -164,7 +95,7 @@ const Invoices = () => {
               }}
             >
               <Typography color="textPrimary" variant="h4">
-                Invoices
+                User Parshoner({count})
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
               <NextLink href="/dashboard/invoices/create" passHref>

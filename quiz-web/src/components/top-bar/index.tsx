@@ -52,11 +52,11 @@ const goPayment=()=>{
                 <div className="flex">
                   <a className="flex items-center bg-blue-600 px-3 rounded-full" onClick={goPayment}>
                     <img src={coinImg} alt="coin" />
-                    <div className="text-xl font-bold ml-2 text-white font-stud-regular">100</div>
+                    <div className="text-xl font-bold ml-2 text-white font-stud-regular">0</div>
                   </a>
                   <a className="flex items-center ml-5 bg-blue-600 px-3 rounded-full">
                     <img src={ticketImg} alt="ticket" />
-                    <div className="text-xl font-bold ml-2 text-white font-stud-regular">2</div>
+                    <div className="text-xl font-bold ml-2 text-white font-stud-regular">0</div>
                   </a>
                 </div>
               </div>

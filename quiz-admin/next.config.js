@@ -1,11 +1,6 @@
 // Remove this if you're not using Fullcalendar features
 const withTM = require('next-transpile-modules')([
-  // '@fullcalendar/common',
-  // '@fullcalendar/react',
-  // '@fullcalendar/daygrid',
-  // '@fullcalendar/list',
-  // '@fullcalendar/timegrid',
-  // '@fullcalendar/timeline'
+
 ]);
 
 module.exports = withTM({
@@ -20,6 +15,11 @@ module.exports = withTM({
   async redirects() {
     return [
       {
+        source: '/',
+        destination: '/authentication/login',
+        permanent: true
+      },
+      {
         source: '/dashboard',
         destination: '/dashboard/reports',
         permanent: true
@@ -29,11 +29,6 @@ module.exports = withTM({
         destination: '/dashboard/onboarding/vertical',
         permanent: true
       }
-      // {
-      //   source: '/docs',
-      //   destination: '/docs/welcome',
-      //   permanent: true
-      // }
     ];
   }
 });
