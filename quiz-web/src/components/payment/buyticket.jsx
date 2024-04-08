@@ -48,6 +48,7 @@ const BuyTicket = () => {
   const elements = useElements();
   const [value, setValue] = useState(1);
   const [mobile, setMobile] = useState('');
+  const [amount, setAmount] = useState();
   useEffect(() => {
     getOperatingSystem();
   }, []);
@@ -79,18 +80,22 @@ const BuyTicket = () => {
         case '1':
           amount = 300;
           ticket = 1;
+          setAmount(amount);
           break;
         case '2':
           amount = 500;
           ticket = 2;
+          setAmount(amount);
           break;
         case '3':
           amount = 1000;
           ticket = 10;
+          setAmount(amount);
           break;
         case '4':
           amount = 2000;
           ticket = 20;
+          setAmount(amount);
           break;
         default:
           amount = 0;
@@ -178,14 +183,14 @@ const BuyTicket = () => {
                           },
                         },
                       ],
-                      merchantInfo: {
-                        merchantName: 'Example Merchant',
-                        merchantId: '0123456789',
-                      },
+                      // merchantInfo: {
+                      //   merchantName: 'Example Merchant',
+                      //   merchantId: '0123456789',
+                      // },
                       transactionInfo: {
                         totalPriceStatus: 'FINAL',
-                        totalPrice: '12.34',
-                        currencyCode: 'USD',
+                        totalPrice: amount,
+                        currencyCode: 'SGD',
                       },
                     }}
                     onLoadPaymentData={(paymentRequest) => {
@@ -199,7 +204,9 @@ const BuyTicket = () => {
                     style={{ width: '100%', height: '57px', marginLeft: '10px' }}
                   />
                 ) : (
-                  <ApplePayButton />
+                  <ApplePayButton
+                    data = {amount}
+                  />
                 )}
           
             </div>

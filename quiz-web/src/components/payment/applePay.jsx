@@ -2,8 +2,9 @@ import  { useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 
 
-const ApplePayButton = () => {
-
+const ApplePayButton = (prop) => {
+    const {data} = prop;
+    console.log(data);
     const [stripe, setStripe] = useState(null);
 
     // Load Stripe
@@ -18,11 +19,11 @@ const ApplePayButton = () => {
     const handlePayment = async () => {
         if (!stripe) return;
         const paymentRequest = stripe.paymentRequest({
-            country: 'US',
-            currency: 'usd',
+            country: 'SGP',
+            currency: 'SGD',
             total: {
                 label: 'Demo total',
-                amount: 1000, // amount to be paid
+                amount: data, // amount to be paid
             },
         });
 
