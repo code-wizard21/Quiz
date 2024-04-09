@@ -4,7 +4,7 @@ import { loadStripe } from '@stripe/stripe-js';
 
 const ApplePayButton = (prop) => {
     const {data} = prop;
-    console.log(data);
+    console.log('data',data);
     const [stripe, setStripe] = useState(null);
 
     // Load Stripe

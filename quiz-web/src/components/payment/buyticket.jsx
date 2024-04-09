@@ -41,7 +41,7 @@ const BuyTicket = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const mode = queryParams.get('mode');
-
+  const [ticket, setTicket] = useState(0);
   const stripe = useStripe();
   const elements = useElements();
   const [value, setValue] = useState(1);
@@ -52,20 +52,77 @@ const BuyTicket = () => {
   }, []);
 
   useEffect(() => {
-    if (amount === 0) {
-      console.log(amount);
-      return;
+    let at,
+      tk = 0;
+    switch (mode) {
+      case '1':
+        at = 300;
+        tk = 1;
+        break;
+      case '2':
+        at = 500;
+        tk = 2;
+        break;
+      case '3':
+        at = 1000;
+        tk = 10;
+        break;
+      case '4':
+        at = 2000;
+        tk = 20;
+        break;
+      default:
+        at = 0;
     }
-  }, [amount]);
+    setAmount(at);
+    setTicket(tk);
+  }, []);
+  const paymentRequest = {
+    apiVersion: 2,
+    apiVersionMinor: 0,
+    allowedPaymentMethods: [
+      {
+        type: "CARD",
+        parameters: {
+          allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+          allowedCardNetworks: ["MASTERCARD", "VISA"]
+        },
+        tokenizationSpecification: {
+          type: "PAYMENT_GATEWAY",
+          parameters: {
+            gateway: "stripe",
+            "stripe:version": "2020-03-02",
+            "stripe:publishableKey": "pk_test_rGWIWC9peCMJJY0KXLhPScN3"
+          }
+        }
+      }
+    ],
+    merchantInfo: {
+      merchantId: "01234567890123456789 ",
+      merchantName: "Demo Merchant"
+    },
+    transactionInfo: {
+      totalPriceStatus: "FINAL",
+      totalPriceLabel: "Total",
+      totalPrice: "100.00",
+      currencyCode: "USD",
+      countryCode: "US"
+    },
+    callbackIntents: ["PAYMENT_AUTHORIZATION"]
+  };
+  
+  
+  const [buttonWidth] = useState(240);
+  const [buttonHeight] = useState(40);
+
+
   const getOperatingSystem = () => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     // iOS detection from: http://stackoverflow.com/a/9039885/177710
     if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
       setMobile('iOS');
-      console.log('##########iOS');
     }
     if (/android/i.test(userAgent)) {
-      console.log('##########Adroid');
       setMobile('Android');
     }
 
@@ -79,28 +136,6 @@ const BuyTicket = () => {
     });
     if (!error && paymentMethod) {
       const { id } = paymentMethod;
-      let amount,
-        ticket = 0;
-      switch (mode) {
-        case '1':
-          amount = 300;
-          ticket = 1;
-          break;
-        case '2':
-          amount = 500;
-          ticket = 2;
-          break;
-        case '3':
-          amount = 1000;
-          ticket = 10;
-          break;
-        case '4':
-          amount = 2000;
-          ticket = 20;
-          break;
-        default:
-          amount = 0;
-      }
 
       const value = {
         payment_method_id: id,
@@ -109,23 +144,21 @@ const BuyTicket = () => {
         email: JSON.parse(localStorage.getItem('user')).user.email,
         item: ticket,
       };
-      console.log(amount);
-      setAmount(amount);
-      buyticket(value)
-        .then((res) => {
-          if (res.status == 200) {
-            toast.success('successful', {
-              autoClose: false,
-            });
-            document.getElementById('my_modal_1').showModal();
-          } else {
-            document.getElementById('my_modal_2').showModal();
-          }
-        })
-        .catch((err) => {
-          // handle error
-          console.error(err.message);
-        });
+      console.log('amount', amount);
+      // buyticket(value)
+      //   .then((res) => {
+      //     if (res.status == 200) {
+      //       toast.success('successful', {
+      //         autoClose: false,
+      //       });
+      //       document.getElementById('my_modal_1').showModal();
+      //     } else {
+      //       document.getElementById('my_modal_2').showModal();
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     console.error(err.message);
+      //   });
     } else {
       console.log('error', error.message);
       toast.error(error.message, {
@@ -162,120 +195,19 @@ const BuyTicket = () => {
                 <div className="mr-10 text-white  text-base">Credit Card</div>
               </button>
 
-              <GooglePayButton
-                environment="TEST"
-                paymentRequest={{
-                  apiVersion: 2,
-                  apiVersionMinor: 0,
-                  allowedPaymentMethods: [
-                    {
-                      type: 'CARD',
-                      parameters: {
-                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                        allowedCardNetworks: ['MASTERCARD', 'VISA'],
-                      },
-                      tokenizationSpecification: {
-                        type: 'PAYMENT_GATEWAY',
-                        parameters: {
-                          gateway: 'stripe',
-                          'stripe:version': '2018-10-31',
-                          'stripe:publishableKey':
-                            'sk_test_51DOfAJIFbzohYGemOLOrA6C52yD7aHdglSfl0kMB95gRJoxcDGSqpWHxa4sGtJDb5mzPX2azyvGDF3GekVRLirFu00NPR9PV6c',
-                        },
-                      },
-                    },
-                  ],
-                  merchantInfo: {
-                    merchantName: ' Quiz',
-                    merchantId: '5348369626',
-                  },
-                  transactionInfo: {
-                    totalPriceStatus: 'FINAL',
-                    totalPrice: 1000,
-                    currencyCode: 'SGD',
-                  },
-                }}
-                onLoadPaymentData={async (paymentData) => {
-                  console.log('Success', paymentData);
-                  // Parse and extract the necessary data from Payment Method
-                  const paymentMethod = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
-                  
-                  // You would have the necessary endpoint set up on your Express.js server side
-                  // to process the charge with the received payment method
-                  const response = await fetch('/payment/buyticketgoogle', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(paymentMethod), // Send PaymentMethod to the server
-                  });
-                
-                  const data = await response.json();
-                  
-                  // Handle response
-                  if(data.success){
-                    console.log("Payment successful");
-                  } else {
-                    console.log("Payment failed");
-                  }
-                }}
-                buttonRadius={40}
-                existingPaymentMethodRequired={true}
-                buttonColor="white"
-                buttonType="short"
-                buttonSizeMode="fill"
-                style={{ width: '100%', height: '57px', marginLeft: '10px' }}
-              />
-              {/* {mobile === 'Android' ? (
-                  <GooglePayButton
-                    environment="TEST"
-                    paymentRequest={{
-                      apiVersion: 2,
-                      apiVersionMinor: 0,
-                      allowedPaymentMethods: [
-                        {
-                          type: 'CARD',
-                          parameters: {
-                            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                            allowedCardNetworks: ['MASTERCARD', 'VISA'],
-                          },
-                          tokenizationSpecification: {
-                            type: 'PAYMENT_GATEWAY',
-                            parameters: {
-                              gateway: 'stripe',
-                              'stripe:version': '2018-10-31',
-                              'stripe:publishableKey':
-                                'sk_test_51DOfAJIFbzohYGemOLOrA6C52yD7aHdglSfl0kMB95gRJoxcDGSqpWHxa4sGtJDb5mzPX2azyvGDF3GekVRLirFu00NPR9PV6c',
-                            },
-                          },
-                        },
-                      ],
-                      // merchantInfo: {
-                      //   merchantName: 'Example Merchant',
-                      //   merchantId: '0123456789',
-                      // },
-                      transactionInfo: {
-                        totalPriceStatus: 'FINAL',
-                        totalPrice: amount,
-                        currencyCode: 'SGD',
-                      },
-                    }}
-                    onLoadPaymentData={(paymentRequest) => {
-                      console.log('Success', paymentRequest);
-                    }}
-                    buttonRadius={40}
-                    existingPaymentMethodRequired={true}
-                    buttonColor="white"
-                    buttonType="short"
-                    buttonSizeMode="fill"
-                    style={{ width: '100%', height: '57px', marginLeft: '10px' }}
-                  />
-                ) : 
-                (
-                  <ApplePayButton
-                    data = {amount}
-                  />
-                )} */}
+              {mobile === 'Android' ? (
+                <GooglePayButton
+                  environment="TEST"     
+                  paymentRequest={paymentRequest}
+                  onLoadPaymentData={(paymentRequest) => {
+                    console.log('load payment data', paymentRequest);
+                  }}
+                  onPaymentAuthorized={() => ({ transactionState: 'SUCCESS' })}
+                  style={{ width: buttonWidth, height: buttonHeight }}
+                />
+              ) : (
+                <ApplePayButton data={amount} />
+              )}
             </div>
             <form className="mt-4 mb-8">
               <div className="m-4 pl-2 pt-4">
