@@ -389,6 +389,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }
 
     if (!user) {
+      console.log('###########');
       // create shadow user and join
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
       dispatch(setUserData(shadowUser.data.user));
@@ -402,33 +403,33 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }
 
     // emitted when user joins the live quiz
-    socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+  socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
 
     // generate random uid less than 1000
-    const randomUid = Math.floor(Math.random() * 1000);
+  //   const randomUid = Math.floor(Math.random() * 1000);
 
-    const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
+  //  const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
 
-    await client.join(appId, channelName, rtcToken.data.data, randomUid);
+  //   await client.join(appId, channelName, rtcToken.data.data, randomUid);
 
-    setIsJoined(true);
-    message.destroy();
-    videoRef.current.hidden = false;
-    videoRef.current?.style.setProperty('display', 'block');
-    toggleQuestion(false);
-    dispatch(setMiscellaneousData({ topBarVisibility: false }));
+  //   setIsJoined(true);
+  //   message.destroy();
+  //   videoRef.current.hidden = false;
+  //   videoRef.current?.style.setProperty('display', 'block');
+  //   toggleQuestion(false);
+  //   dispatch(setMiscellaneousData({ topBarVisibility: false }));
 
-    client.on('user-published', onUserPublish);
+  //   client.on('user-published', onUserPublish);
 
-    client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
-      if (mediaType === 'video') {
-        user.videoTrack?.stop();
-      }
-      if (mediaType === 'audio') {
-        user.audioTrack?.stop();
-      }
-      leaveChannel();
-    });
+  //   client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+  //     if (mediaType === 'video') {
+  //       user.videoTrack?.stop();
+  //     }
+  //     if (mediaType === 'audio') {
+  //       user.audioTrack?.stop();
+  //     }
+  //     leaveChannel();
+  //   });
   };
 
   const startTimer = useCallback((duration: number) => {

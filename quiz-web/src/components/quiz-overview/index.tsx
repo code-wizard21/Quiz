@@ -21,8 +21,7 @@ const QuizOverview: React.FC<{}> = (): React.ReactElement => {
   useEffect(() => {
     getQuizList()
       .then((res: AxiosResponse<IQuizesResponse>) => {
-        setQuizList(res.data.data.results);
-  
+        setQuizList(res.data.data.results); 
       })
       .catch((err) => {
         console.log(err);

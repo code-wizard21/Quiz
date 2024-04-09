@@ -237,14 +237,8 @@ const initaliseWebSocket = (server) => {
           return;
         }
 
-        // const alreadyExists = global.onlineUsers.get(data.user_id);
-        // if (alreadyExists) {
-        //     global.onlineUsers.delete(data.user_id);
-        // }
-        // global.onlineUsers.set(data.user_id, socket.id);
-
         const { quiz_id, user_id } = data;
-
+        console.log('quiz_id, user_id ',quiz_id, user_id );
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id) });
 
         if (!liveStream) {
@@ -254,13 +248,13 @@ const initaliseWebSocket = (server) => {
         const room = liveStream.room_id;
 
         // check if user participation already exsit
-        console.log('user_join_live_quiz :: checking user participation');
+
         console.log(`user_join_live_quiz :: quiz_id ${quiz_id} user_id ${user_id}`);
         const userParticipation = await UserParticipation.findOne({
           quiz: new ObjectId(quiz_id),
           user: new ObjectId(user_id),
         });
-        console.log('user_join_live_quiz :: userParticipation', userParticipation);
+
 
         if (userParticipation) {
           // update user participation status to ongoing

@@ -1,10 +1,10 @@
 const baseUrl: string = 'https://api.quizmobb.com';
-const localBaseUrl: string = 'http://localhost:4000';
+const localBaseUrl: string = 'http://localhost:3000';
 
-const v1localApiUrl: string = `${baseUrl}/v1`;
- const v1ApiUrl: string = `${localBaseUrl}/v1`;
+const v1localApiUrl: string = `${localBaseUrl}/v1`;
+const v1ApiUrl: string = `${baseUrl}/v1`;
 
 export const env: string = 'prod';
 
-export const apiBaseUrl: string = env === 'prod' ? v1localApiUrl : v1ApiUrl;
-export const serverUrl: string = env === 'prod' ? v1localApiUrl : v1ApiUrl;
+export const apiBaseUrl: string = env === 'prod' ? v1ApiUrl : v1localApiUrl;
+export const serverUrl: string = env === 'prod' ? baseUrl : localBaseUrl;
