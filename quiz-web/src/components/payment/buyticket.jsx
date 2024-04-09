@@ -82,39 +82,37 @@ const BuyTicket = () => {
     apiVersionMinor: 0,
     allowedPaymentMethods: [
       {
-        type: "CARD",
+        type: 'CARD',
         parameters: {
-          allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-          allowedCardNetworks: ["MASTERCARD", "VISA"]
+          allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+          allowedCardNetworks: ['MASTERCARD', 'VISA'],
         },
         tokenizationSpecification: {
-          type: "PAYMENT_GATEWAY",
+          type: 'PAYMENT_GATEWAY',
           parameters: {
-            gateway: "stripe",
-            "stripe:version": "2020-03-02",
-            "stripe:publishableKey": "pk_test_rGWIWC9peCMJJY0KXLhPScN3"
-          }
-        }
-      }
+            gateway: 'stripe',
+            'stripe:version': '2020-03-02',
+            'stripe:publishableKey': 'pk_test_rGWIWC9peCMJJY0KXLhPScN3',
+          },
+        },
+      },
     ],
     merchantInfo: {
-      merchantId: "01234567890123456789 ",
-      merchantName: "Demo Merchant"
+      merchantId: 'Test',
+      merchantName: 'Demo Merchant',
     },
     transactionInfo: {
-      totalPriceStatus: "FINAL",
-      totalPriceLabel: "Total",
-      totalPrice: "100.00",
-      currencyCode: "USD",
-      countryCode: "US"
+      totalPriceStatus: 'FINAL',
+      totalPriceLabel: 'Total',
+      totalPrice: '100',
+      currencyCode: 'USD',
+      countryCode: 'US',
     },
-    callbackIntents: ["PAYMENT_AUTHORIZATION"]
+    callbackIntents: ['PAYMENT_AUTHORIZATION'],
   };
-  
-  
+
   const [buttonWidth] = useState(240);
   const [buttonHeight] = useState(40);
-
 
   const getOperatingSystem = () => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -145,20 +143,20 @@ const BuyTicket = () => {
         item: ticket,
       };
       console.log('amount', amount);
-      // buyticket(value)
-      //   .then((res) => {
-      //     if (res.status == 200) {
-      //       toast.success('successful', {
-      //         autoClose: false,
-      //       });
-      //       document.getElementById('my_modal_1').showModal();
-      //     } else {
-      //       document.getElementById('my_modal_2').showModal();
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     console.error(err.message);
-      //   });
+      buyticket(value)
+        .then((res) => {
+          if (res.status == 200) {
+            toast.success('successful', {
+              autoClose: false,
+            });
+            document.getElementById('my_modal_1').showModal();
+          } else {
+            document.getElementById('my_modal_2').showModal();
+          }
+        })
+        .catch((err) => {
+          console.error(err.message);
+        });
     } else {
       console.log('error', error.message);
       toast.error(error.message, {
@@ -179,7 +177,7 @@ const BuyTicket = () => {
         </div>
         <div className="pt-2">
           <div className="flex  flex-col p-4 bg-gradient-to-bl bg-white m-6 rounded-2xl">
-            <div className="flex flex-row justify-center mt-6">
+            <div lclassName="flex flex-row justify-center mt-6">
               <div className="ml-2 text-3xl font-bold text-center studregular">Select Payment </div>
             </div>
 
@@ -197,7 +195,7 @@ const BuyTicket = () => {
 
               {mobile === 'Android' ? (
                 <GooglePayButton
-                  environment="TEST"     
+                  environment="TEST"
                   paymentRequest={paymentRequest}
                   onLoadPaymentData={(paymentRequest) => {
                     console.log('load payment data', paymentRequest);
@@ -206,7 +204,7 @@ const BuyTicket = () => {
                   style={{ width: buttonWidth, height: buttonHeight }}
                 />
               ) : (
-                <ApplePayButton data={amount} />
+                <ApplePayButton data={mode} />
               )}
             </div>
             <form className="mt-4 mb-8">

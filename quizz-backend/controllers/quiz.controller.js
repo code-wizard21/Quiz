@@ -10,10 +10,11 @@ const UserParticipation = require('../models/participation.model');
 
 const createQuiz = catchAsync(async (req, res) => {
   const mongooseSession = await mongoose.startSession();
+  console.log('req.body',req.body);
   mongooseSession.startTransaction();
   try {
     const quiz = await quizService.createQuiz(req.body, mongooseSession);
-    // create quiz live stream as scheduled
+    console.log('create Quiz quiz',quiz);
     await quizService.createQuizLiveStream(quiz._id, req.body.host, mongooseSession);
 
     await mongooseSession.commitTransaction();
@@ -29,8 +30,12 @@ const createQuiz = catchAsync(async (req, res) => {
 });
 
 const getQuiz = catchAsync(async (req, res) => {
+  console.log('req.body',req.body);
   const authUserId = req?.user?._id || null;
+  console.log('authUserId',authUserId);
+  
   const quiz = await quizService.getQuizById(req.params.quiz_id, authUserId);
+  console.log('quiz',quiz);
   if (!quiz) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Quiz not found');
   }

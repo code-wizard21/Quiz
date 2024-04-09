@@ -32,10 +32,10 @@ const SelectMode = () => {
             </div>
             <button
               onClick={() => {
-                setValue(1);
+                setValue(3);
               }}
               className={`mt-4 flex pt-8 pb-8  border-3 border-solid ${
-                value === 1 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                value === 3 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
               } rounded-3xl`}
             >
               <div className="flex">
@@ -45,9 +45,9 @@ const SelectMode = () => {
               </div>
             </button>
             <button
-              onClick={() => setValue(2)}
+              onClick={() => setValue(5)}
               className={`mt-4 flex pt-6 pb-6  border-2 ${
-                value === 2 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                value === 5 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
               } rounded-3xl`}
             >
               <div className="flex items-center">
@@ -62,9 +62,9 @@ const SelectMode = () => {
               </div>
             </button>
             <button
-              onClick={() => setValue(3)}
+              onClick={() => setValue(10)}
               className={`mt-4 flex pt-6 pb-6  border-2 ${
-                value === 3 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                value === 10 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
               } rounded-3xl`}
             >
               <div className="flex items-center">
@@ -77,9 +77,9 @@ const SelectMode = () => {
               </div>
             </button>
             <button
-              onClick={() => setValue(4)}
+              onClick={() => setValue(20)}
               className={`mt-4 flex pt-6 pb-6  border-2 ${
-                value === 4 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                value === 20 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
               } rounded-3xl`}
             >
               <div className="flex items-center">

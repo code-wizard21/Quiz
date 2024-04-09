@@ -39,7 +39,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const dispatch = useDispatch();
 
   const socket = useContext(SocketContext)?.socket;
-
+  console.log("socket",socket);
   const [quizData, setQuizData] = useState<IQuiz>();
   const [isVideoSubed, setIsVideoSubed] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
@@ -79,27 +79,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     role: 'audience',
   });
 
-  // client.on('user-left', (hostUser: IAgoraRTCRemoteUser) => {
-  //   console.log('user-left :: ', hostUser);
-  // });
-
-  // // check if host has stopped the stream
-  // client.on('user-published', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
-  //   console.log('user-published :: ', user, mediaType);
-  // });
-
-  // client.on('user-unpublished', (user: IAgoraRTCRemoteUser) => {
-  //   console.log('user-unpublished :: ', user);
-  // });
 
   useEffect(() => {
     // display to none for video element
     videoRef.current?.style.setProperty('display', 'none');
     timerRef.current?.style.setProperty('display', 'none');
 
-    // Function to log socket connection status
     const logConnectionStatus = () => {
-      // console.log('Socket connected:', socket?.connected);
       setIsSocketConnected(socket?.connected);
       showMessages('success', 'Socket connected: ' + socket?.connected);
     };
@@ -278,18 +264,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       leaveChannel();
     });
 
-    // const socketClient = io(serverUrl);
-
-    // socketClient.connect();
-
-    // if (!socket?.connected) {
-    //   // retry socket connection
-    //   socket?.connect();
-    // }
-
-    // Add a listener for connect event
-
-    // socket?.on('connect', () => {
     console.log(socket);
 
     if (!socket?.connected) {
@@ -421,12 +395,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       localStorage.setItem('user', JSON.stringify(shadowUser.data));
     }
 
-    // if (!quiz?.is_live) {
-    //   showMessages('error', 'Quiz is not live');
-    //   return;
-    // }
-
-    // only join if socket is connected
     if (!socket?.connected) {
       // retry socket connection
       socket?.connect();
