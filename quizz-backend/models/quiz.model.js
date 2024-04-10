@@ -92,6 +92,6 @@ quizSchema.plugin(paginate);
  * @property {Date} createdAt
  * @property {Date} updatedAt
  */
-const Quiz = mongoose.model('quizze', quizSchema);
+const Quiz = mongoose.model('Quiz', quizSchema);
 
 module.exports = Quiz;

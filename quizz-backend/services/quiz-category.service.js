@@ -14,10 +14,10 @@ const Category = require('../models/category.model');
  */
 
 const queryQuizCategory = async (filter, options) => {
-    const option = await Category.paginate(filter, options);
-    return option;
+  const option = await Category.paginate(filter, options);
+  return option;
 };
 
 module.exports = {
-    queryQuizCategory,
+  queryQuizCategory,
 };

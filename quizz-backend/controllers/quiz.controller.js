@@ -80,7 +80,7 @@ const getAllQuizesWithDetails = catchAsync(async (req, res) => {
   const options = pick(req.query, ['sort_by', 'limit', 'page']);
 
   const result = await quizService.queryQuizesWithDetails(filter, options);
-
+ 
   res.json(success(httpStatus.OK, 'successfully', result));
 });
 

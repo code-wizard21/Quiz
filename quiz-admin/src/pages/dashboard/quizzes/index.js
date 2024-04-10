@@ -49,7 +49,6 @@ const Products = () => {
           image: item.image,
         };
       });
-      console.log('data@@@@@@@@@',data);
 
       if (isMounted()) {
         setProductsState(() => ({

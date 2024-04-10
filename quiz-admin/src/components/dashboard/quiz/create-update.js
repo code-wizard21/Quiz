@@ -38,6 +38,7 @@ const availableStatus = [
 
 const QuizCreateUpdate = (props) => {
   const { quizId } = props;
+  console.log("quizID",quizId);
   const router = useRouter();
   const formik = useFormik({
     enableReinitialize: true,
@@ -112,17 +113,17 @@ const QuizCreateUpdate = (props) => {
   const getQuizById = useCallback(async () => {
 
     const result = await axiosClient.get("quizes/all?_id=" + quizId);
-
     const quiz = result?.data?.data?.results[0];
-    console.log('quiz',result);
     formik.setValues({
       ...formik.values,
-      id: quiz._id,
-      // host: {
-      //   // _id: quiz.host._id,
-      //   value: quiz.host._id,
-      //   label: quiz.host.name,
-      // },
+      // id: quiz._id,
+      host: {
+        // _id: quiz.host._id,
+        // value: quiz.host._id,
+        // label: quiz.host.name,
+        value: "Test",
+      label: "Test",
+      },
       category: {
         _id: quiz?.category?._id,
         value: quiz?.category?._id,
@@ -223,28 +224,7 @@ const QuizCreateUpdate = (props) => {
       });
   };
 
-  const getAllCategories = useCallback(async () => {
-    axiosClient
-      .get("/categories")
-      .then((response) => {
-       
-        if (response?.data?.data?.results) {
-          const data = response?.data?.data?.results?.map((item) => {
-            return {
-              value: item.id,
-              label: item.name,
-            };
-          });
-          console.log('responseresponse',data);
-          setCategoryList(data);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error("Something went wrong");
-      });
-  }, []);
-
+ 
   const checkAndUpdateRadioButton = (event, index, optionIndex) => {
     formik.setFieldValue(
       `questions[${index}].options`,
@@ -265,12 +245,10 @@ const QuizCreateUpdate = (props) => {
   };
 
   const getAllHost = async () => {
-    console.log('getAllHost');
     axiosClient
       .get("/users?role=host")
       .then((response) => {
         if (response?.data?.data?.results) {
-          console.log('response',response);
           const data = response?.data?.data?.results?.map((item) => {
             return {
               value: item.id,
@@ -278,7 +256,7 @@ const QuizCreateUpdate = (props) => {
             };
            
           });
-          console.log('Host'.data);
+          console.log('response Host data',data);
           setHostList(data);
         }
       })
@@ -286,7 +264,27 @@ const QuizCreateUpdate = (props) => {
         toast.error("Something went wrong");
       });
   };
-
+  const getAllCategories = useCallback(async () => {
+    axiosClient
+      .get("/categories")
+      .then((response) => {
+       
+        if (response?.data?.data?.results) {
+          const data = response?.data?.data?.results?.map((item) => {
+            return {
+              value: item.id,
+              label: item.name,
+            };
+          });
+          console.log('response category data',data);
+          setCategoryList(data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Something went wrong");
+      });
+  }, []);
   useEffect(async () => {
     try {
       getAllCategories();

@@ -2,34 +2,21 @@ import PropTypes from "prop-types";
 import { Autocomplete, TextField } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 
-const top100Films = [
-  { label: 'The Shawshank Redemption', year: 1994 },
-  { label: 'The Godfather', year: 1972 },
-  { label: 'The Godfather: Part II', year: 1974 },
-  { label: 'The Dark Knight', year: 2008 },
-  { label: '12 Angry Men', year: 1957 },
-  { label: "Schindler's List", year: 1993 },
-  { label: 'Pulp Fiction', year: 1994 },
-]
-
 export const AutocompleteField = (props) => {
   const { error, helperText, label, options, placeholder, ...other } = props;
 
   return (
     <Autocomplete
-    options={top100Films}
-    sx={{
-      "& .MuiFilledInput-root .MuiFilledInput-input": {
-        px: 1.5,
-        py: 0.75,
-      },
-    }}
-    renderInput={(params) => {
-      const { InputProps, ...restProps } = params;
-      console.log('options',options, InputProps);
-      return (
+      options={options}
+      sx={{
+        "& .MuiFilledInput-root .MuiFilledInput-input": {
+          px: 1.5,
+          py: 0.75,
+        },
+      }}
+      renderInput={({ InputProps, ...rest }) => (
         <TextField
-          {...restProps}
+          {...rest}
           error={error}
           helperText={helperText}
           label={label}
@@ -40,7 +27,7 @@ export const AutocompleteField = (props) => {
               borderWidth: 1,
               borderStyle: "solid",
               borderColor: (theme) =>
-                theme.palette.mode === "light" ? "neutral.300" : "neutral.700",
+                theme.palette.mode == "light" ? "neutral.300" : "neutral.700",
               borderRadius: 1,
               boxShadow: "0px 1px 2px 0px rgba(9, 30, 66, 0.08)",
               "&.MuiAutocomplete-inputRoot": {
@@ -72,6 +59,7 @@ export const AutocompleteField = (props) => {
             },
           }}
           variant="filled"
+          // eslint-disable-next-line react/jsx-no-duplicate-props
           InputProps={{
             disableUnderline: true,
             ...InputProps,
@@ -88,11 +76,10 @@ export const AutocompleteField = (props) => {
             },
           }}
         />
-      );
-    }}
-    // ChipProps={{ variant: "outlined" }}
-    // {...other}
-  />
+      )}
+      ChipProps={{ variant: "outlined" }}
+      {...other}
+    />
   );
 };
 

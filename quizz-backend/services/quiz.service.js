@@ -1116,21 +1116,21 @@ const queryQuizesWithDetails = async (filter, options) => {
       },
     },
     // populate host name & id
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'host',
-        foreignField: '_id',
-        as: 'host',
-      },
-    },
-    // unwind host array
-    {
-      $unwind: {
-        path: '$host',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
+    // {
+    //   $lookup: {
+    //     from: 'users',
+    //     localField: 'host',
+    //     foreignField: '_id',
+    //     as: 'host',
+    //   },
+    // },
+    // // unwind host array
+    // {
+    //   $unwind: {
+    //     path: '$host',
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
     {
       $lookup: {
         from: 'categories',

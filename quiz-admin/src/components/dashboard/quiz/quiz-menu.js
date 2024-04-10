@@ -10,7 +10,6 @@ export const ProductMenu = (props) => {
   const [anchorRef, open, handleOpen, handleClose] = usePopover();
   const { product, updateList } = props;
 
-
   const handleDelete = async () => {
     await axiosInstance.delete(`ask/${product.id}`);
     toast.success("Product deleted");
@@ -19,9 +18,7 @@ export const ProductMenu = (props) => {
 
   return (
     <>
-      <IconButton onClick={handleOpen}
-ref={anchorRef}
-{...props}>
+      <IconButton onClick={handleOpen} ref={anchorRef} {...props}>
         <DotsVerticalIcon fontSize="small" />
       </IconButton>
       <Menu

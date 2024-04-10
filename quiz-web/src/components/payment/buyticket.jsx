@@ -200,6 +200,9 @@ const BuyTicket = () => {
                   onLoadPaymentData={(paymentRequest) => {
                     console.log('load payment data', paymentRequest);
                   }}
+                  onPaymentAuthorized={(paymentData) => {
+                    console.log('User has authorized payment', paymentData);
+                  }}
                   onPaymentAuthorized={() => ({ transactionState: 'SUCCESS' })}
                   style={{ width: buttonWidth, height: buttonHeight }}
                 />
