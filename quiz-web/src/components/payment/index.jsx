@@ -21,15 +21,15 @@ const Payment=()=>{
         className="rounded-2xl bg-cover bg-center bg-no-repeat h-screen"
       >
         <div className="flex flex-col">
-          <div className="mt-24 flex justify-center z-20">
-            <img src={user1} alt="user2" className=" border-4  rounded-full" width={109} height={109} />
+          <div className="mt-6 flex justify-center z-20">
+            <img src={user1} alt="user2" className=" border-4  rounded-full" width={90} height={90} />
           </div>
         </div>
 
-        <div className="flex flex-col mt-8">
+        <div className="flex flex-col mt-2">
           <div className="mt-4 flex flex-row justify-center p-4">
             <img src={frame} alt="frame" />
-            <div className="text-customYellowBorder ml-2 text-6xl font-bold text-center studregular">$8402</div>
+            <div className="text-customYellowBorder ml-2 text-5xl font-bold text-center studregular">$8402</div>
           </div>
 
           <div className="studregular text-center text-sm text-2xl font-bold  text-white">
@@ -37,18 +37,18 @@ const Payment=()=>{
           </div>
         </div>
 
-        <div className="pr-14 pl-14 mt-4">
+        <div className="pr-8 pl-8 mt-2">
           <div className="studregular text-center text-2xl font-bold  text-white p-1">
             Join the Quiz and compete to be the winner by entering with a Ticket
           </div>
         </div>
 
-        <div className="mt-4 p-10 ">
+        <div className="mt-2 p-4">
           <div className="flex justify-center">
             {user && (
               <>
                 <div className="studregular font-bold text-2xl text-white">Your account:</div>
-                <div className="flex ml-8">
+                <div className="flex ml-2">
                   <div className="flex justify-center items-center relative">
                     <img src={group_yel} alt="user2" className="border-4 rounded-full" />
                     <img
@@ -70,20 +70,20 @@ const Payment=()=>{
         </div>
 
         <div className="flex justify-center mt-6">
-          <button className="bg-customBlue w-[315px] h-[52px] top-[320px] rounded-[30px] space-x-[6px]">
+          <button className="bg-customBlue w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]">
             <div className="flex items-center justify-center">
               <div className="studregular text-center text-xl font-bold text-white mr-2 ">Use 1 Ticket</div>
               <img src={group_red} alt="user2" />
             </div>
           </button>
         </div>
-        <div className="flex justify-center mt-14 mb-14">
+        <div className="flex justify-center mt-8 mb-4">
           <button
             onClick={handleChange}
-            className="bg-customYellowBorder w-[315px] h-[52px] top-[320px] rounded-[30px] space-x-[6px]"
+            className="bg-customYellowBorder w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
           >
             <div className="flex items-center justify-center">
-              <div className="studregular text-black text-center text-xl font-bold  mr-2 ">Buy Tickets</div>
+              <div className="studregular text-black text-center text-xl font-bold  mr-2">Buy Tickets</div>
               <img src={group_red} alt="user2" />
             </div>
           </button>

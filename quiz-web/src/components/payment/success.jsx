@@ -1,3 +1,4 @@
+
 import user1 from '../../assets/user/user2.svg';
 import background from '../../assets/figma/Graphic.svg';
 import vector from '../../assets/figma/Vector.svg';
@@ -50,7 +51,6 @@ const BuyTicket = () => {
   useEffect(() => {
     getOperatingSystem();
   }, []);
-
   useEffect(() => {
     let at,
       tk = 0;
@@ -110,10 +110,8 @@ const BuyTicket = () => {
     },
     callbackIntents: ['PAYMENT_AUTHORIZATION'],
   };
-
   const [buttonWidth] = useState(240);
   const [buttonHeight] = useState(40);
-
   const getOperatingSystem = () => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     // iOS detection from: http://stackoverflow.com/a/9039885/177710
@@ -123,7 +121,6 @@ const BuyTicket = () => {
     if (/android/i.test(userAgent)) {
       setMobile('Android');
     }
-
     return 'unknown';
   };
   const handleSubmit = async () => {
@@ -134,7 +131,6 @@ const BuyTicket = () => {
     });
     if (!error && paymentMethod) {
       const { id } = paymentMethod;
-
       const value = {
         payment_method_id: id,
         amount: amount,
@@ -171,97 +167,15 @@ const BuyTicket = () => {
         className="rounded-2xl bg-cover bg-center bg-no-repeat h-screen"
       >
         <div className="flex flex-col mb-4">
-          <div className="mt-14 flex justify-center z-20">
-            <img src={user1} alt="user2" className=" border-4  rounded-full" width={109} height={109} />
+          <div className="mt-8 flex justify-center z-20">
+            <img src={user1} alt="user2" className=" border-4  rounded-full" width={90} height={90} />
           </div>
         </div>
-        <div className="pt-2">
-          <div className="flex  flex-col p-4 bg-gradient-to-bl bg-white m-6 rounded-2xl">
-            <div lclassName="flex flex-row justify-center mt-6">
-              <div className="ml-2 text-3xl font-bold text-center studregular">Select Payment </div>
-            </div>
-
-            <div className="flex justify-center mt-6">
-              <button
-                onClick={() => {
-                  setValue(1);
-                }}
-                className={`bg-customBlue w-[265px] h-[62px] top-[320px] rounded-[30px] space-x-[6px]   ${
-                  value === 1 ? 'z-10' : 'z-1'
-                }`}
-              >
-                <div className="mr-10 text-white  text-base">Credit Card</div>
-              </button>
-
-              {mobile === 'Android' ? (
-                <GooglePayButton
-                  environment="TEST"
-                  paymentRequest={paymentRequest}
-                  onLoadPaymentData={(paymentRequest) => {
-                    console.log('load payment data', paymentRequest);
-                  }}
-                  onPaymentAuthorized={(paymentData) => {
-                    console.log('User has authorized payment', paymentData);
-                  }}
-                  onPaymentAuthorized={() => ({ transactionState: 'SUCCESS' })}
-                  style={{ width: buttonWidth, height: buttonHeight }}
-                />
-              ) : (
-                <ApplePayButton data={mode} />
-              )}
-            </div>
-            <form className="mt-4 mb-8">
-              <div className="m-4 pl-2 pt-4">
-                <label>Card Number</label>
-                <CardInputWrapper>
-                  <CardNumberElement options={CARD_ELEMENT_OPTIONS} />
-                </CardInputWrapper>
-              </div>
-              <div className="flex flex-column">
-                <div className="m-4 pl-2 pt-4">
-                  <label>Expiry Date</label>
-                  <CardInputWrapper>
-                    <CardExpiryElement options={CARD_ELEMENT_OPTIONS} />
-                  </CardInputWrapper>
-                </div>
-                <div className="m-4 pl-2 pt-4">
-                  <label className="">CVV</label>
-                  <CardInputWrapper>
-                    <CardCvcElement options={CARD_ELEMENT_OPTIONS} />
-                  </CardInputWrapper>
-                </div>
-              </div>
-            </form>
-            <div className="mt-4 ml-2 text-base font-bold text-center studregular">
-              We will send you an order detail to your email after the successful payment.
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-center mt-14 mb-14">
-          <button
-            onClick={async (e) => {
-              e.preventDefault();
-              await handleSubmit(e);
-            }}
-            className="bg-customYellowBorder w-[315px] h-[52px] top-[320px] rounded-[30px] space-x-[6px]"
-            // onLoad={loading}
-          >
-            <div className="flex items-center justify-center">
-              <img src={vector} alt="user2" />
-              <div className="ml-2 studregular text-center text-xl font-bold text-black mr-2 ">Continue to Payment</div>
-            </div>
-          </button>
-        </div>
-        <a href="/selectmode" className="flex items-center justify-center">
-          <div className="studregular text-center text-xl font-bold text-white mr-2 underline">Cancel</div>
-        </a>
-      </div>
-      <dialog id="my_modal_1" className="modal rounded-xl  border-white">
-        <div className="modal-box">
-          <div className="flex justify-center text-2xl font-bold text-center studregular">Transaction Success!!</div>
+        <div className="modal-box bg-white mt-12 ml-4 mr-4 border-4 rounded-lg pt-4">
+          <div className="flex justify-center mt-8 text-2xl font-bold text-center ">Transaction Success!!</div>
           <div className="py-4 flex justify-center">Welcome Contestant! Get to the top</div>
           <div className="py-1 flex justify-center"> positions to access the prize pool!</div>
-          <div className="modal-action">
+          <div className="modal-action pb-12">
             <form method="dialog " className="justify-center flex">
               <button
                 className="bg-customYellowBorder mt-8 w-[285px] h-[52px] top-[320px] rounded-[30px] space-x-[6px] border-white"
@@ -275,8 +189,12 @@ const BuyTicket = () => {
             </form>
           </div>
         </div>
-      </dialog>
-      <dialog id="my_modal_2" className="modal rounded-xl  border-white">
+     
+      </div>
+     
+       
+
+      {/* <dialog id="my_modal_2" className="modal rounded-xl  border-white">
         <div className="modal-box">
           <div className="flex justify-center text-2xl font-bold text-center studregular">Transaction Decline</div>
           <div className="py-4 flex justify-center text-center">Oh Snap! The credit card </div>
@@ -289,7 +207,7 @@ const BuyTicket = () => {
             </form>
           </div>
         </div>
-      </dialog>
+      </dialog> */}
     </>
   );
 };

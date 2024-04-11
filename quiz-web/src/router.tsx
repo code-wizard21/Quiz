@@ -27,7 +27,7 @@ const load = (Component: any) => (props: any) =>
 const QuizOverview = load(lazy(() => import('./components/quiz-overview')));
 const QuizPayment = load(lazy(() => import('./components/payment')));
 const SelectPayment = load(lazy(() => import('./components/payment/selectmode')));
-const BuyTicket = load(lazy(() => import('./components/payment/buyticket')));
+const Success = load(lazy(() => import('./components/payment/success')));
 
 const Router: React.FC<{}> = (): React.ReactElement => {
   const { language }: TGeneralSettings = useSelector((state: RootState) => state.settings.generalSettings);
@@ -62,7 +62,7 @@ const Router: React.FC<{}> = (): React.ReactElement => {
         <Route element={<PaymentLayout />}>
           <Route path="/payment" element={<QuizPayment />} />
           <Route path="/selectmode" element={<SelectPayment />} />
-          <Route path="/buyticket" element={<BuyTicket />} />
+          <Route path="/success" element={<Success />} />
         </Route>
 
         <Route path="*" element={<PageNotFound />} />

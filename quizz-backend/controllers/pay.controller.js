@@ -8,6 +8,7 @@ const stripe = require('stripe')(
   'sk_test_51DOfAJIFbzohYGemOLOrA6C52yD7aHdglSfl0kMB95gRJoxcDGSqpWHxa4sGtJDb5mzPX2azyvGDF3GekVRLirFu00NPR9PV6c'
 );
 const YOUR_DOMAIN = 'https://quizmobb.com';
+//const YOUR_DOMAIN = 'http://localhost:4002';
 const buyticket = catchAsync(async (req, res) => {
   const { amount, payment_method_id, user, email, item } = req.body;
   console.log(req.body);
@@ -67,16 +68,17 @@ const checkoutsession = catchAsync(async (req, res) => {
             },
             unit_amount: amount,
           },
-          quantity: ticket,
+          quantity: 1,
         },
       ],
       mode: 'payment',
-      success_url: `${YOUR_DOMAIN}?success=true`,
-      cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+      success_url: `${YOUR_DOMAIN}/success`,
+      cancel_url: `${YOUR_DOMAIN}/selectmode`,
     });
   
       console.log("session",session.url);
-    res.redirect(303, session.url);
+    // res.redirect(303, session.url);
+    res.status(200).send(session.url);
   } catch (error) {
     console.error('Error confirming payment intent', error);
     res.status(500).send({ success: false });
