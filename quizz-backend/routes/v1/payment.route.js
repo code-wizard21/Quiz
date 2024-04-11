@@ -9,8 +9,9 @@ const router = express.Router();
 router.post('/buyticket', payController.buyticket);
  router.post('/buyticketapp', payController.buyticketapp);
  router.post('/buyticketgoogle', payController.buyticketgoogle);
+ router.post('/create-checkout-session', payController.checkoutsession);
 
- 
+
  router.get('/history', payController.gethistory);
 router.get('/', payController.getAll);
 router.get('/:_id', payController.getID);

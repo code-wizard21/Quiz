@@ -4,16 +4,49 @@ import background from '../../assets/figma/Graphic.svg';
 import vector from '../../assets/figma/Vector.svg';
 import { useNavigate } from 'react-router-dom';
 import  { useState } from 'react';
+import { checkOutSession } from '../../service/payment/payment.service';
 
 const SelectMode = () => {
   const navigate = useNavigate();
   
-  const [value, setValue] = useState(1);
+  const [value, setValue] = useState(3);
 
   const handleChange = () => {
     navigate(`/buyticket?mode=${value}`);
   };
-  
+  const handleClick = () =>{
+    let amount,ticket;
+    switch (value) {
+      case 1:
+        amount = 300;
+        ticket = 1;
+        break;
+      case 2:
+        amount = 500;
+        ticket = 2;
+        break;
+      case 3:
+        amount = 2200;
+        ticket = 10;
+        break;
+      case 4:
+        amount = 3600;
+        ticket = 20;
+        break;
+        default:
+          amount = 0;
+        ticket = 0;
+    }
+    const data={amount:amount,ticket:ticket};
+    console.log("data",data);
+    checkOutSession(data)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.error(err.message);
+    });
+  }
   return (
     <>
       <div
@@ -32,10 +65,10 @@ const SelectMode = () => {
             </div>
             <button
               onClick={() => {
-                setValue(3);
+                setValue(1);
               }}
               className={`mt-4 flex pt-8 pb-8  border-3 border-solid ${
-                value === 3 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                value === 1 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
               } rounded-3xl`}
             >
               <div className="flex">
@@ -45,9 +78,9 @@ const SelectMode = () => {
               </div>
             </button>
             <button
-              onClick={() => setValue(5)}
+              onClick={() => setValue(2)}
               className={`mt-4 flex pt-6 pb-6  border-2 ${
-                value === 5 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                value === 2 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
               } rounded-3xl`}
             >
               <div className="flex items-center">
@@ -62,9 +95,9 @@ const SelectMode = () => {
               </div>
             </button>
             <button
-              onClick={() => setValue(10)}
+              onClick={() => setValue(3)}
               className={`mt-4 flex pt-6 pb-6  border-2 ${
-                value === 10 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                value === 3 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
               } rounded-3xl`}
             >
               <div className="flex items-center">
@@ -77,9 +110,9 @@ const SelectMode = () => {
               </div>
             </button>
             <button
-              onClick={() => setValue(20)}
+              onClick={() => setValue(4)}
               className={`mt-4 flex pt-6 pb-6  border-2 ${
-                value === 20 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                value === 4 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
               } rounded-3xl`}
             >
               <div className="flex items-center">
@@ -98,7 +131,7 @@ const SelectMode = () => {
         </div>
         <div className="flex justify-center mt-14 mb-14">
           <button
-            onClick={handleChange}
+            onClick={handleClick}
             className="bg-customYellowBorder w-[315px] h-[52px] top-[320px] rounded-[30px] space-x-[6px]"
           >
             <div className="flex items-center justify-center">
@@ -107,6 +140,7 @@ const SelectMode = () => {
             </div>
           </button>
         </div>
+
         <a href="/payment" className="flex items-center justify-center">
           <div className="studregular text-center text-xl font-bold text-white mr-2 underline">Cancel</div>
         </a>

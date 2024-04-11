@@ -7,6 +7,9 @@ import { post } from '../../wrappers/request';
  * @param {TCreateUser} userData
  * @returns {Promise<AxiosResponse>}
  */
+export const checkOutSession = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
+  return post('payment/create-checkout-session', userData);
+};
 export const buyticket = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('payment/buyticket', userData);
 };

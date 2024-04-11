@@ -7,7 +7,7 @@ const { tokenTypes } = require('../config/tokens');
 const stripe = require('stripe')(
   'sk_test_51DOfAJIFbzohYGemOLOrA6C52yD7aHdglSfl0kMB95gRJoxcDGSqpWHxa4sGtJDb5mzPX2azyvGDF3GekVRLirFu00NPR9PV6c'
 );
-
+const YOUR_DOMAIN = 'https://quizmobb.com';
 const buyticket = catchAsync(async (req, res) => {
   const { amount, payment_method_id, user, email, item } = req.body;
   console.log(req.body);
@@ -50,6 +50,38 @@ const buyticket = catchAsync(async (req, res) => {
   }
 });
 
+
+
+const checkoutsession = catchAsync(async (req, res) => {
+  try {
+    console.log("req.body",req.body);
+    const {amount,ticket}=req.body;
+    console.log('amount',amount);
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price_data: {
+            currency: 'sgd',
+            product_data: {
+              name: 'ticket',
+            },
+            unit_amount: amount,
+          },
+          quantity: ticket,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${YOUR_DOMAIN}?success=true`,
+      cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+    });
+  
+      console.log("session",session.url);
+    res.redirect(303, session.url);
+  } catch (error) {
+    console.error('Error confirming payment intent', error);
+    res.status(500).send({ success: false });
+  }
+});
 
 const buyticketgoogle = catchAsync(async (req, res) => {
   try {
@@ -149,4 +181,5 @@ module.exports = {
   gethistory,
   getAll,
   getID,
+  checkoutsession
 };
