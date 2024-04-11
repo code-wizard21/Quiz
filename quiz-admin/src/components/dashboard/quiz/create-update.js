@@ -116,13 +116,13 @@ const QuizCreateUpdate = (props) => {
     const quiz = result?.data?.data?.results[0];
     formik.setValues({
       ...formik.values,
-      // id: quiz._id,
+      id: quiz._id,
       host: {
-        // _id: quiz.host._id,
-        // value: quiz.host._id,
-        // label: quiz.host.name,
-        value: "Test",
-      label: "Test",
+        _id: quiz.host._id,
+        value: quiz.host._id,
+        label: quiz.host.name,
+      //   value: "Test",
+      // label: "Test",
       },
       category: {
         _id: quiz?.category?._id,
@@ -643,6 +643,14 @@ const QuizCreateUpdate = (props) => {
                 disabled={isProcessing}
               >
                 {{ quizId } ? "Update" : "Create"}
+              </Button>
+              <Button
+                color="secondary"
+                variant="contained"
+                onClick={() => router.push('/dashboard/quizzes/')}
+               
+              >
+                Cancel
               </Button>
             </CardActions>
           </Card>

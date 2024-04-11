@@ -503,11 +503,11 @@ const updateQuizById = async (quizId, updateBody) => {
     }
 
     // check if their is any user participation for this quiz and if yes then throw error
-    const userParticipation = await UserParticipation.countDocuments({ quiz: quizId }).session(session);
+    // const userParticipation = await UserParticipation.countDocuments({ quiz: quizId }).session(session);
 
-    if (userParticipation) {
-      throw new ApiError(httpStatus.BAD_REQUEST, `can't update quiz as user has already participated in this quiz`);
-    }
+    // if (userParticipation) {
+    //   throw new ApiError(httpStatus.BAD_REQUEST, `can't update quiz as user has already participated in this quiz`);
+    // }
 
     if (updateBody?.removed_questions?.length) {
       for (const questionId of updateBody.removed_questions) {
@@ -1116,21 +1116,21 @@ const queryQuizesWithDetails = async (filter, options) => {
       },
     },
     // populate host name & id
-    // {
-    //   $lookup: {
-    //     from: 'users',
-    //     localField: 'host',
-    //     foreignField: '_id',
-    //     as: 'host',
-    //   },
-    // },
-    // // unwind host array
-    // {
-    //   $unwind: {
-    //     path: '$host',
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'host',
+        foreignField: '_id',
+        as: 'host',
+      },
+    },
+    // unwind host array
+    {
+      $unwind: {
+        path: '$host',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $lookup: {
         from: 'categories',

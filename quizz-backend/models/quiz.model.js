@@ -39,11 +39,11 @@ const quizSchema = mongoose.Schema(
         start_date: {
             type: Date,
             required: true,
-            validate(value) {
-                if (value < Date.now()) {
-                    throw new Error('Start date must be greater than current date');
-                }
-            },
+            // validate(value) {
+            //     if (value < Date.now()) {
+            //         throw new Error('Start date must be greater than current date');
+            //     }
+            // },
         },
         is_paid: {
             type: Boolean,
