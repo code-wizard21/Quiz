@@ -88,11 +88,12 @@ app.use((req, res, next) => {
 
 // convert error to ApiError, if needed
 app.use(errorConverter);
+const endpointSecret = "whsec_aba064cbea4753ca3c34581db682faad683d7968e74de1841b78585489cff970";
 
 
 app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
   const sig = request.headers['stripe-signature'];
-  console.log("web hook occur");
+  console.log("web hook occur",request.body);
   let event;
 
   try {
@@ -104,10 +105,6 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
 
   // Handle the event
   switch (event.type) {
-    case 'checkout.session.async_payment_failed':
-      const checkoutSessionAsyncPaymentFailed = event.data.object;
-      // Then define and call a function to handle the event checkout.session.async_payment_failed
-      break;
     case 'checkout.session.async_payment_succeeded':
       const checkoutSessionAsyncPaymentSucceeded = event.data.object;
       // Then define and call a function to handle the event checkout.session.async_payment_succeeded
@@ -116,10 +113,6 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
       const checkoutSessionCompleted = event.data.object;
       console.log('checkoutSessionCompleted',checkoutSessionCompleted);
       // Then define and call a function to handle the event checkout.session.completed
-      break;
-    case 'checkout.session.expired':
-      const checkoutSessionExpired = event.data.object;
-      // Then define and call a function to handle the event checkout.session.expired
       break;
     // ... handle other event types
     default:
