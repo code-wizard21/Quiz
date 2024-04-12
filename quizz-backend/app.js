@@ -92,7 +92,7 @@ app.use(errorConverter);
 
 app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
   const sig = request.headers['stripe-signature'];
-
+  console.log("web hook occur");
   let event;
 
   try {
