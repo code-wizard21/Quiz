@@ -7,6 +7,7 @@ const cors = require('cors');
 const stripe = require('stripe')(
   'sk_test_51DOfAJIFbzohYGemOLOrA6C52yD7aHdglSfl0kMB95gRJoxcDGSqpWHxa4sGtJDb5mzPX2azyvGDF3GekVRLirFu00NPR9PV6c'
 );
+const { Payment } = require('./models');
 const passport = require('passport');
 const httpStatus = require('http-status');
 const config = require('./config/config');
@@ -23,33 +24,52 @@ const whitelist =
     ? ['http://localhost:3001', 'https://quiz-web-five.vercel.app', 'https://www.quizmobb.com']
     : ['https://quiz-web-five.vercel.app', 'https://www.quizmobb.com'];
 
-    const endpointSecret = "whsec_hm0gPh68j8RunfG1DEbrF2RzSKqDo0Dm";
-
+const endpointSecret = 'whsec_hm0gPh68j8RunfG1DEbrF2RzSKqDo0Dm';
 
 const app = express();
 const bodyParser = require('body-parser');
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (request, response) => {
   const sig = request.headers['stripe-signature'];
-  console.log('Web hook',sig);
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
-    console.log('web hook occur', request.body);
   } catch (err) {
     console.log('err', err);
     response.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
-
-  // Handle the event
-  switch (event.type) {
-    case 'checkout.session.async_payment_succeeded':
-      const checkoutSessionAsyncPaymentSucceeded = event.data.object;
-    case 'checkout.session.completed':
-      const checkoutSessionCompleted = event.data.object;
-      console.log('checkoutSessionCompleted', checkoutSessionCompleted);
-      break;
+  const info = event.data.object;
+  let ticketCount = 0;
+  
+  const ticketMapping = {
+    300: 1,
+    500: 2,
+    2200: 10,
+    3600: 20,
+  };
+  
+  ticketCount = ticketMapping[info.amount_total] || 0;
+  if (event.type == 'checkout.session.completed') {
+    
+    const newData = new Payment({
+      amount: info.amount_total,
+      status: info.payment_status,
+      item: ticketCount,
+      user: info.customer_details.name,
+      email: info.customer_details.email,
+      trx_date: info.created,
+    });
+    console.log('newData',newData);
+    newData
+      .save()
+      .then(() => {
+        res.status(200).send(paymentIntent);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log('checkoutSessionCompleted', checkoutSessionCompleted);
   }
 
   // Return a 200 response to acknowledge receipt of the event

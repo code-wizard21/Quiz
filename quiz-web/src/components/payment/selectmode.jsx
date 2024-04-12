@@ -107,7 +107,7 @@ const SelectMode = () => {
                   </div>
                 </div>
 
-                <div className="ml-28 text-xl font-bold mr-2 text-center studregular">10</div>
+                <div className="ml-28 text-xl font-bold mr-2 text-center studregular">2</div>
                 <img src={group_red} alt="user2" className="border-4  rounded-full" />
               </div>
             </button>
