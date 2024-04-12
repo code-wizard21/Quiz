@@ -3,19 +3,19 @@ import group_red from '../../assets/figma/Group_red.svg';
 import background from '../../assets/figma/Graphic.svg';
 import vector from '../../assets/figma/Vector.svg';
 import { useNavigate } from 'react-router-dom';
-import  { useState } from 'react';
+import { useState } from 'react';
 import { checkOutSession } from '../../service/payment/payment.service';
 
 const SelectMode = () => {
   const navigate = useNavigate();
-  
+
   const [value, setValue] = useState(1);
 
   const handleChange = () => {
     navigate(`/buyticket?mode=${value}`);
   };
-  const handleClick = () =>{
-    let amount,ticket;
+  const handleClick = () => {
+    let amount, ticket;
     switch (value) {
       case 1:
         amount = 300;
@@ -33,29 +33,27 @@ const SelectMode = () => {
         amount = 3600;
         ticket = 20;
         break;
-        default:
-          amount = 0;
+      default:
+        amount = 0;
         ticket = 0;
     }
-    const data={amount:amount,ticket:ticket};
-    console.log("data",data);
+    const data = { amount: amount, ticket: ticket };
+    console.log('data', data);
     checkOutSession(data)
-    .then((res) => {
-      console.log(res);
-      if(res.status==200){
-        window.location.href=res.data;
-      }
-    })
-    .catch((err) => {
-      console.error(err.message);
-    });
-  }
+      .then((res) => {
+        console.log(res);
+        if (res.status == 200) {
+          navigate(res.data);
+          window.location.href = res.data;
+        }
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  };
   return (
     <>
-      <div
-        style={{ backgroundImage: `url(${background})` }}
-        className="rounded-2xl bg-cover bg-center bg-no-repeat h-screen"
-      >
+      <div style={{ backgroundImage: `url(${background})` }} className="bg-cover bg-center bg-no-repeat">
         <div className="flex flex-col mb-1">
           <div className="mt-4 flex justify-center z-20">
             <img src={user1} alt="user2" className="border-4  rounded-full" width={90} height={90} />
@@ -70,16 +68,31 @@ const SelectMode = () => {
               onClick={() => {
                 setValue(1);
               }}
-              className={`mt-4 flex pt-4 pb-4  border-3 border-solid ${
+              className={`mt-4 flex p-4 border-3 border-solid items-center ${
                 value === 1 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
               } rounded-3xl`}
             >
-              <div className="flex">
-                <div className="ml-4 text-xl font-bold text-center studregular">S$3.00</div>
-                <div className="ml-28 text-xl font-bold mr-3 text-center studregular">1</div>
-                <img src={group_red} alt="user2" className="border-4  rounded-full" />
-              </div>
+              <div className="text-xl font-bold text-center studregular">S$3.00</div>
+              <div className="ml-auto text-xl font-bold mr-3 text-center studregular">1</div>
+              <img src={group_red} alt="user2" className="border-4  rounded-full" />
             </button>
+            {/* <button
+              onClick={() => setValue(3)}
+              className={`mt-4 flex p-4 border-2 items-center${
+                value === 2 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+              } rounded-3xl`}
+            >           
+                <div className="flex flex-col justify-center">
+                  <div className="text-xl font-bold text-center studregular">S$5.00</div>
+                  <div className="bg-customBuleBg pr-1 pl-1 text-white text-sm font-bold text-center studregular">Save 16%</div>
+                </div>
+         
+                <div className="ml-auto text-xl font-bold mr-2 text-center studregular">10</div>
+                <img src={group_red} alt="user2" className="border-4  rounded-full" />
+
+            
+            </button> */}
+         
             <button
               onClick={() => setValue(2)}
               className={`mt-4 flex pt-2 pb-2  border-2 ${
@@ -89,12 +102,13 @@ const SelectMode = () => {
               <div className="flex items-center">
                 <div className="flex flex-col justify-center">
                   <div className="ml-4 text-xl font-bold text-center studregular">S$5.00</div>
-                  <div className="ml-4 bg-customBuleBg pr-1 pl-1 text-white text-sm font-bold text-center studregular">Save 16%</div>
+                  <div className="ml-4 bg-customBuleBg pr-1 pl-1 text-white text-sm font-bold text-center studregular">
+                    Save 16%
+                  </div>
                 </div>
-         
-                <div className="ml-28 text-xl font-bold mr-2 text-center studregular">2</div>
-                <img src={group_red} alt="user2" className="border-4  rounded-full" />
 
+                <div className="ml-28 text-xl font-bold mr-2 text-center studregular">10</div>
+                <img src={group_red} alt="user2" className="border-4  rounded-full" />
               </div>
             </button>
             <button
@@ -106,12 +120,13 @@ const SelectMode = () => {
               <div className="flex items-center">
                 <div className="flex flex-col justify-center">
                   <div className="ml-4 text-xl font-bold text-center studregular">S$22.00</div>
-                  <div className="ml-4 bg-customBuleBg pr-1 pl-1 text-white text-sm font-bold text-center studregular">Save 16%</div>
+                  <div className="ml-4 bg-customBuleBg pr-1 pl-1 text-white text-sm font-bold text-center studregular">
+                    Save 24%
+                  </div>
                 </div>
-         
+
                 <div className="ml-28 text-xl font-bold mr-2 text-center studregular">10</div>
                 <img src={group_red} alt="user2" className="border-4  rounded-full" />
-
               </div>
             </button>
             <button
@@ -123,12 +138,13 @@ const SelectMode = () => {
               <div className="flex items-center">
                 <div className="flex flex-col justify-center">
                   <div className="ml-4 text-xl font-bold text-center studregular">S$36.00</div>
-                  <div className="ml-4 bg-customBuleBg pr-1 pl-1 text-white text-sm font-bold text-center studregular">Save 16%</div>
+                  <div className="ml-4 bg-customBuleBg pr-1 pl-1 text-white text-sm font-bold text-center studregular">
+                    Save 42%
+                  </div>
                 </div>
-         
+
                 <div className="ml-28 text-xl font-bold mr-2 text-center studregular">20</div>
                 <img src={group_red} alt="user2" className="border-4  rounded-full" />
-
               </div>
             </button>
             <div className="mt-4 ml-2 text-base font-bold text-center studregular">
