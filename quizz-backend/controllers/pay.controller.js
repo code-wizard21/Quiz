@@ -112,9 +112,12 @@ const getAll = (req, res) => {
 
 const getID = (req, res) => {
   const { params } = req;
+  console.log('praams', params);
   User.findOne(params)
+    
     .then((result) => {
       Payment.find({ email: result.email })
+      .sort({ trx_date: -1 })
         .then((result) => {
           res.status(200).json(result);
         })

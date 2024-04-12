@@ -19,6 +19,7 @@ import {
 import ErrorIcon from "@mui/icons-material/Error";  
 import Chip from "@mui/material/Chip";
 import { Divider, Grid } from "@mui/material";
+import { DateTime } from 'luxon';
 import { customerApi } from "../../../../api/customer";
 import { useRouter } from "next/router";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
@@ -175,7 +176,7 @@ const CustomerOrders = () => {
   return (
     <>
       <Head>
-        <title>Customer: Orders | Lobang Dashboard</title>
+        <title>Users: Orders | Lobang Dashboard</title>
       </Head>
       <Typography color="textPrimary" variant="h4">
         {user}
@@ -253,7 +254,11 @@ const CustomerOrders = () => {
                     <TableRow key={order._id}>
                       <TableCell>${parseInt(order.amount) / 100} SGD</TableCell>
                       <TableCell>
-                        {moment(order.trx_date).format("MMM DD, yyyy, hh:mm a")}
+                      {/* {moment(order.trx_date).tz("Asia/Singapore").format("MMM DD, yyyy, hh:mm a")}
+                      */}
+                      {DateTime.fromMillis(Math.floor(new Date(order.trx_date).getTime()), { zone: 'UTC' })
+                     .setZone('Asia/Singapore')
+                     .toFormat("MMM dd, yyyy, hh:mm a")}
                       </TableCell>
                       <TableCell>
                       {order.status == "paid"||order.status == "succeeded" ? (

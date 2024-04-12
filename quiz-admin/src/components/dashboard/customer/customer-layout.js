@@ -152,7 +152,7 @@ export const CustomerLayout = (props) => {
         <Box sx={{ mb: 2, my:2, display:'flex', justifyContent: 'space-between' }}>
             <NextLink href="/dashboard/customers" passHref>
               <Button color="primary" component="a" startIcon={<ArrowLeftIcon />} variant="text">
-                Customers
+                Users
               </Button>
             </NextLink>
 
