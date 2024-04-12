@@ -23,13 +23,14 @@ const whitelist =
     ? ['http://localhost:3001', 'https://quiz-web-five.vercel.app', 'https://www.quizmobb.com']
     : ['https://quiz-web-five.vercel.app', 'https://www.quizmobb.com'];
 
-const endpointSecret = 'whsec_2i5UWISNpsLGklLVZGVsc2wVsTrHbAB7';
+    const endpointSecret = "whsec_aba064cbea4753ca3c34581db682faad683d7968e74de1841b78585489cff970";
+
 
 const app = express();
 
 app.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
   const sig = request.headers['stripe-signature'];
-  console.log('Web hook');
+  console.log('Web hook',sig);
   let event;
 
   try {
