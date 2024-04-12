@@ -254,7 +254,7 @@ const CustomerOrders = () => {
                         {moment(order.trx_date).format("MMM dd, yyyy, hh:mm a")}
                       </TableCell>
                       <TableCell>
-                        <Status color={statusVariant.color} label={statusVariant.label} />
+                        {/* <Status  label={statusVariant.label} /> */}
                         {/* ijijijij */}
                       </TableCell>
                       <TableCell>
