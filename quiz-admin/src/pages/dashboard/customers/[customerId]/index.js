@@ -144,7 +144,6 @@ const CustomerOrders = () => {
           console.log('result.data',result.data);
            setUser(result.data[0].user);
           result.data.forEach((item) => {
-            console.log(item);
             total += parseInt(item.amount);
             ticket += parseInt(item.item);
           });
@@ -254,7 +253,7 @@ const CustomerOrders = () => {
                     <TableRow key={order._id}>
                       <TableCell>${parseInt(order.amount) / 100} SGD</TableCell>
                       <TableCell>
-                        {moment(order.trx_date).format("MMM dd, yyyy, hh:mm a")}
+                        {moment(order.trx_date).format("MMM DD, yyyy, hh:mm a")}
                       </TableCell>
                       <TableCell>
                       {order.status == "paid"||order.status == "succeeded" ? (

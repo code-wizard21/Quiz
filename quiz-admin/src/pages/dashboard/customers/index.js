@@ -132,7 +132,7 @@ const Customers = () => {
   return (
     <>
       <Head>
-        <title>Customer: List | Quiz Dashboard</title>
+        <title>Customers: List | Quiz Dashboard</title>
       </Head>
       <Box sx={{ flexGrow: 1 }}>
         <Container
