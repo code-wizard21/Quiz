@@ -21,25 +21,10 @@ const whitelist =
     ? ['http://localhost:3001', 'https://quiz-web-five.vercel.app', 'https://www.quizmobb.com']
     : ['https://quiz-web-five.vercel.app', 'https://www.quizmobb.com'];
 
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (whitelist.indexOf(origin) !== -1 || !origin) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-// };
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    callback(null, true); // Allow all origins
-  },
-  credentials: true,
-};
 
 const app = express();
+
+
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -67,7 +52,6 @@ app.use(cors());
 app.options('*', cors());
 const endpointSecret = "whsec_aba064cbea4753ca3c34581db682faad683d7968e74de1841b78585489cff970";
 
-
 app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
   const sig = request.headers['stripe-signature'];
  console.log('Web hook');
@@ -77,6 +61,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
     event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
     console.log("web hook occur",request.body);
   } catch (err) {
+    console.log('err',err);
     response.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
@@ -85,21 +70,16 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
   switch (event.type) {
     case 'checkout.session.async_payment_succeeded':
       const checkoutSessionAsyncPaymentSucceeded = event.data.object;
-      // Then define and call a function to handle the event checkout.session.async_payment_succeeded
-      break;
     case 'checkout.session.completed':
       const checkoutSessionCompleted = event.data.object;
       console.log('checkoutSessionCompleted',checkoutSessionCompleted);
-      // Then define and call a function to handle the event checkout.session.completed
       break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
   }
 
   // Return a 200 response to acknowledge receipt of the event
   response.send();
 });
+
 // jwt authentication
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
