@@ -63,8 +63,8 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (request, res
     console.log('newData',newData);
     newData
       .save()
-      .then(() => {
-        response.status(200).send(newData);
+      .then((res) => {
+        console.log('res',res);
       })
       .catch((err) => {
         console.log(err);
