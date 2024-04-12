@@ -92,8 +92,7 @@ export const DashboardNavbar = () => {
           py: 1,
         }}
       >
-        <NextLink href="/"
-passHref>
+        <NextLink href="/" passHref>
           <Box
             component="a"
             sx={{
@@ -102,16 +101,17 @@ passHref>
               justifyContent: "center",
             }}
           >
-           <a
-            style={{
-              color: "#000",
-              display: 'contents'
-            }}
-          >
-            <img src='/logo.png' style={{ height: 40, marginRight: 10 }} />
-            <Typography
-              variant="h4" color={"#fff"}>QuizMobb</Typography>
-          </a>
+            <a
+              style={{
+                color: "#000",
+                display: "contents",
+              }}
+            >
+              <img src="/logo.png" style={{ height: 40, marginRight: 10 }} />
+              <Typography variant="h4" color={"#fff"}>
+                QuizMobb
+              </Typography>
+            </a>
           </Box>
         </NextLink>
         <Divider
@@ -122,8 +122,7 @@ passHref>
             mx: 3,
           }}
         />
-        <DashboardNavbarMenu onClose={() => setOpenMenu(false)}
-open={mdDown && openMenu} />
+        <DashboardNavbarMenu onClose={() => setOpenMenu(false)} open={mdDown && openMenu} />
         <Button
           endIcon={
             <ChevronDownIcon

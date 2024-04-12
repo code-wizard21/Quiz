@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { Box, Divider, Drawer, IconButton, List } from "@mui/material";
+import { Box, Divider, Drawer, Button,IconButton, List, Typography } from "@mui/material";
 import { DashboardSidebarItem } from "./dashboard-sidebar-item";
 import { Scrollbar } from "../scrollbar";
+import { ExternalLink as ExternalLinkIcon } from "../../icons/external-link";
+
 import { ChevronLeft as ChevronLeftIcon } from "../../icons/chevron-left";
 import { ChevronRight as ChevronRightIcon } from "../../icons/chevron-right";
 import { Cog as CogIcon } from "../../icons/cog";
@@ -13,7 +15,7 @@ import { CustomCube as CubeIcon } from "../../icons/custom-cube";
 import { CustomUsers as UsersIcon } from "../../icons/custom-users";
 import { DocumentText as DocumentTextIcon } from "../../icons/document-text";
 import { Cube } from "../../icons/cube";
-
+import NextLink from "next/link";
 const items = [
   {
     icon: ChartPieIcon,
@@ -60,6 +62,7 @@ export const DashboardSidebar = (props) => {
   const [activeHref, setActiveHref] = useState("");
   const [hovered, setHovered] = useState(false);
 
+ const [value, setValue] = useState(0);
   const handleOpenItem = (item) => {
     if (openedItem === item) {
       setOpenedItem(null);
@@ -145,27 +148,254 @@ export const DashboardSidebar = (props) => {
             p: 2,
           }}
         >
+       
           <List disablePadding>
-            {activeItem &&
-              items.map((item) => (
-                <DashboardSidebarItem
-                  active={activeItem?.title === item.title}
-                  activeHref={activeHref}
-                  key={item.title}
-                  onOpen={() => handleOpenItem(item)}
-                  open={openedItem?.title === item.title && (hovered || pinned)}
-                  pinned={pinned}
-                  {...item}
-                />
-              ))}
+            <li>
+              <NextLink href='/dashboard/reports' passHref>
+                <Button
+                  component="a"
+                  endIcon={<ExternalLinkIcon color="action" />}
+                  fullWidth
+                  onClick={() => setValue(1)}
+                  startIcon={<ChartPieIcon />}
+                  // target={external ? "_target" : "_self"}
+                  sx={{
+                    fontWeight: 500,
+                    justifyContent: "flex-start",
+                    lineHeight: 0,
+                    minWidth: "fit-content",
+                    px: 1.25,
+                    py: 1.25,
+                    "& .MuiButton-startIcon": {
+                      color: value==1 ? "primary" : "text.secondary",
+                      margin: 0,
+                    },
+                    "& .MuiButton-endIcon": {
+                      color: "action.disabled",
+                      display: pinned ? "flex" : "none",
+                      marginLeft: "auto",
+                    },
+                  }}
+                  variant="text"
+                >
+                  <Typography
+                    color="textPrimary"
+                    sx={{
+                      color: value==1 ? "primary" : "text.secondary",
+                      display: pinned ? "flex" : "none",
+                      ml: 1.25,
+                    }}
+                    variant="inherit"
+                  >
+                  Report
+                  </Typography>
+                </Button>
+              </NextLink>
+              <NextLink href='/dashboard/users' passHref>
+                <Button
+                  component="a"
+                  endIcon={<ExternalLinkIcon color="action" />}
+                  fullWidth
+                  onClick={() => setValue(2)}
+                  startIcon={<UsersIcon />}
+                  // target={external ? "_target" : "_self"}
+                  sx={{
+                    fontWeight: 500,
+                    justifyContent: "flex-start",
+                    lineHeight: 0,
+                    minWidth: "fit-content",
+                    px: 1.25,
+                    py: 1.25,
+                    "& .MuiButton-startIcon": {
+                      color: value==2 ? "primary" : "text.secondary",
+                      margin: 0,
+                    },
+                    "& .MuiButton-endIcon": {
+                      color: "action.disabled",
+                      display: pinned ? "flex" : "none",
+                      marginLeft: "auto",
+                    },
+                  }}
+                  variant="text"
+                >
+                  <Typography
+                    color="textPrimary"
+                    sx={{
+                      color: value==2 ? "primary" : "text.secondary",
+                      display: pinned ? "flex" : "none",
+                      ml: 1.25,
+                    }}
+                    variant="inherit"
+                  >
+                  Users
+                  </Typography>
+                </Button>
+              </NextLink>
+              <NextLink href='/dashboard/quizzes' passHref>
+                <Button
+                  component="a"
+                  onClick={() => setValue(3)}
+                  endIcon={<ExternalLinkIcon color="action" />}
+                  fullWidth
+                  startIcon={<CubeIcon />}
+                  // target={external ? "_target" : "_self"}
+                  sx={{
+                    fontWeight: 500,
+                    justifyContent: "flex-start",
+                    lineHeight: 0,
+                    minWidth: "fit-content",
+                    px: 1.25,
+                    py: 1.25,
+                    "& .MuiButton-startIcon": {
+                      color: value==3 ? "primary" : "text.secondary",
+                      margin: 0,
+                    },
+                    "& .MuiButton-endIcon": {
+                      color: "action.disabled",
+                      display: pinned ? "flex" : "none",
+                      marginLeft: "auto",
+                    },
+                  }}
+                  variant="text"
+                >
+                  <Typography
+                    color="textPrimary"
+                    sx={{
+                      color: value==3 ? "primary" : "text.secondary",
+                      display: pinned ? "flex" : "none",
+                      ml: 1.25,
+                    }}
+                    variant="inherit"
+                  >
+                  Quiz
+                  </Typography>
+                </Button>
+              </NextLink>
+              <NextLink href='/dashboard/users/shadow' passHref>
+                <Button
+                  component="a"
+                  endIcon={<ExternalLinkIcon color="action" />}
+                  fullWidth
+                  onClick={() => setValue(4)}
+                  startIcon={<CubeIcon />}
+                  // target={external ? "_target" : "_self"}
+                  sx={{
+                    fontWeight: 500,
+                    justifyContent: "flex-start",
+                    lineHeight: 0,
+                    minWidth: "fit-content",
+                    px: 1.25,
+                    py: 1.25,
+                    "& .MuiButton-startIcon": {
+                      color: value==4 ? "primary" : "text.secondary",
+                      margin: 0,
+                    },
+                    "& .MuiButton-endIcon": {
+                      color: "action.disabled",
+                      display: pinned ? "flex" : "none",
+                      marginLeft: "auto",
+                    },
+                  }}
+                  variant="text"
+                >
+                  <Typography
+                    color="textPrimary"
+                    sx={{
+                      color: value==4 ? "primary" : "text.secondary",
+                      display: pinned ? "flex" : "none",
+                      ml: 1.25,
+                    }}
+                    variant="inherit"
+                  >
+                  Guest Users
+                  </Typography>
+                </Button>
+              </NextLink>
+              <NextLink href='/dashboard/stripe_payment' passHref>
+                <Button
+                  component="a"
+                  endIcon={<ExternalLinkIcon color="action" />}
+                  fullWidth
+                  onClick={() => setValue(5)}
+                  startIcon={<CubeIcon />}
+                  // target={external ? "_target" : "_self"}
+                  sx={{
+                    fontWeight: 500,
+                    justifyContent: "flex-start",
+                    lineHeight: 0,
+                    minWidth: "fit-content",
+                    px: 1.25,
+                    py: 1.25,
+                    "& .MuiButton-startIcon": {
+                      color: value==5 ? "primary" : "text.secondary",
+                      margin: 0,
+                    },
+                    "& .MuiButton-endIcon": {
+                      color: "action.disabled",
+                      display: pinned ? "flex" : "none",
+                      marginLeft: "auto",
+                    },
+                  }}
+                  variant="text"
+                >
+                  <Typography
+                    color="textPrimary"
+                    sx={{
+                      color: value==5  ? "primary" : "text.secondary",
+                      display: pinned  ? "flex" : "none",
+                      ml: 1.25,
+                    }}
+                    variant="inherit"
+                  >
+                 From Stripe
+                  </Typography>
+                </Button>
+              </NextLink>
+              <NextLink href='/dashboard/transactions' passHref>
+                <Button
+                  component="a"
+                  onClick={() => setValue(6)}
+                  endIcon={<ExternalLinkIcon color="action" />}
+                  fullWidth
+                  startIcon={<CubeIcon />}
+                  // target={external ? "_target" : "_self"}
+                  sx={{
+                    fontWeight: 500,
+                    justifyContent: "flex-start",
+                    lineHeight: 0,
+                    minWidth: "fit-content",
+                    px: 1.25,
+                    py: 1.25,
+                    "& .MuiButton-startIcon": {
+                      color: value==6  ? "primary" : "text.secondary",
+                      margin: 0,
+                    },
+                    "& .MuiButton-endIcon": {
+                      color: "action.disabled",
+                      display: pinned ? "flex" : "none",
+                      marginLeft: "auto",
+                    },
+                  }}
+                  variant="text"
+                >
+                  <Typography
+                    color="textPrimary"
+                    sx={{
+                      color: value==6 ? "primary" : "text.secondary",
+                      display: pinned ? "flex" : "none",
+                      ml: 1.25,
+                    }}
+                    variant="inherit"
+                  >
+                 Transactions
+                  </Typography>
+                </Button>
+              </NextLink>
+            </li>
           </List>
           <Box sx={{ flexGrow: 1 }} />
+
           <Divider />
-          <Box sx={{ pt: 1 }}>
-            <IconButton onClick={onPin}>
-              {pinned ? <ChevronLeftIcon color="action" /> : <ChevronRightIcon color="action" />}
-            </IconButton>
-          </Box>
         </Box>
       </Scrollbar>
     </Drawer>
