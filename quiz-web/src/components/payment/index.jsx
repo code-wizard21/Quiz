@@ -13,7 +13,6 @@ const Payment=()=>{
     navigate('/selectmode');
   };
   const { user } = useSelector((state) => state.auth);
-  console.log('user',user)
   return (
     <>
       <div

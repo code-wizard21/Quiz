@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { Box, Button, Card, Container, Divider, Typography } from "@mui/material";
-import { customerApi } from "../../../api/customer";
 import { AuthGuard } from "../../../components/authentication/auth-guard";
 import { CustomerDialog } from "../../../components/dashboard/customer/customer-dialog";
 import { CustomersFilter } from "../../../components/dashboard/customer/customers-filter";
@@ -34,7 +33,6 @@ const Customers = () => {
 
     try {
       const result = await getUsers(controller.page + 1, 10, "desc", "createdAt:desc");
-      console.log('getUsers',result);
       if (isMounted()) {
         setCustomersState(() => ({
           isLoading: false,
@@ -51,12 +49,11 @@ const Customers = () => {
         }));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [controller, customersState]);
 
   useEffect(() => {
     getCustomers().catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [controller]);
 
   useEffect(() => {

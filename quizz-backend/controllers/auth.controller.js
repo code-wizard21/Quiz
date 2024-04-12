@@ -8,9 +8,7 @@ const register = catchAsync(async (req, res) => {
   let updatedUser;
 
   if (req.body.shadow_user_id) {
-    console.log('req.body.shadow_user_id');
     const shadowUser = await userService.getUserById(req.body.shadow_user_id);
-    console.log('shadowUser', shadowUser);
     if (shadowUser) {
       delete req.body.shadow_user_id;
       const userUpdateBody = { ...req.body, role: 'user' };
@@ -27,7 +25,6 @@ const register = catchAsync(async (req, res) => {
     }
   } else {
     const user = await userService.createUser(req.body);
-    console.log('user', user);
     let agoraUserData;
     try {
       agoraUserData = await agoraService.generateChatUserinAgora(user, req.body.password);
@@ -37,14 +34,13 @@ const register = catchAsync(async (req, res) => {
       // res.status(500).send({ error: 'Error while generating Agora user' });
       return;
     }
-    console.log('agoraUserData', agoraUserData);
+
     const userUpdateID = {
       agora: {
         uuid: agoraUserData.uuid,
         username: agoraUserData.username,
       },
     };
-    console.log('userUpdateID', userUpdateID);
     updatedUser = await userService.updateUserById(user.id, userUpdateID);
   }
 
@@ -96,7 +92,7 @@ const getShadowUser = catchAsync(async (req, res, next) => {
 
 const userLogin = catchAsync(async (req, res) => {
   const { email, password } = req.body;
-  console.log('user login', email);
+
   const user = await authService.loginUserWithEmailAndPassword(email, password, 'user');
   const tokens = await tokenService.generateAuthTokens(user);
   // TODO: Implement coin service
@@ -117,7 +113,7 @@ const hostLogin = catchAsync(async (req, res) => {
 
 const adminLogin = catchAsync(async (req, res) => {
   const { email, password } = req.body;
-  console.log('email', email);
+
   const user = await authService.loginUserWithEmailAndPassword(email, password, 'admin');
   const tokens = await tokenService.generateAuthTokens(user);
 
@@ -126,16 +122,11 @@ const adminLogin = catchAsync(async (req, res) => {
 
 const adminRegister = async (req, res) => {
   try {
-    console.log('email', req.body);
     req.body.role = 'admin';
-    console.log(req.body);
 
-    const user = await userService.createUser(req.body);
-    console.log(user);
+  const user = await userService.createUser(req.body);
 
-    // Assuming that the `createUser` method will return the created user.
-    // Use `user` object to structure your response.
-    // For example, we can return the user's ID and role:
+
     return res.status(200).send({
       id: user._id,
       role: user.role,
@@ -184,7 +175,6 @@ const verifyEmail = catchAsync(async (req, res) => {
 
 const authenticatedUser = catchAsync(async (req, res) => {
   const user = await userService.getUserById(req.user.id);
-  console.log(req.body);
   // await userService.updateUserById(user.id, { lastLogin: Date.now() });
   return res.send(user);
 });

@@ -1,9 +1,8 @@
-import { generateResourceId } from "../utils/generate-resource-id";
-import { decode, JWT_EXPIRES_IN, JWT_SECRET, sign } from "../utils/jwt";
+
 import { wait } from "../utils/wait";
 import axiosClient from "./axiosinstance";
 
-const users = [];
+
 
 class AuthApi {
   async login({ email, password }) {

@@ -1,21 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
-import NextLink from "next/link";
+import {  useEffect, useState } from "react";
 import Head from "next/head";
-
 import { Box, Button, Container, Divider, Typography, Card } from "@mui/material";
-import { invoiceApi } from "../../../api/invoice";
 import axiosClient from "../../../api/axiosinstance";
 import { AuthGuard } from "../../../components/authentication/auth-guard";
 import { DashboardLayout } from "../../../components/dashboard/dashboard-layout";
-
-import { InvoicesTable } from "../../../components/dashboard/user_parshoner/invoices-table";
-import { useMounted } from "../../../hooks/use-mounted";
+import { TransactionsTable } from "../../../components/dashboard/transactions/invoices-table";
 import { useSelection } from "../../../hooks/use-selection";
 import { Plus as PlusIcon } from "../../../icons/plus";
 import { gtm } from "../../../lib/gtm";
 
-const Invoices = () => {
-  const isMounted = useMounted();
+const Transactions = () => {
+
   const [controller, setController] = useState({
     filters: [],
     page: 0,
@@ -37,7 +32,6 @@ const Invoices = () => {
       .then((result) => {
         setData(result.data);
         setCount(result.data.length);
-        console.log('result data',result.data);
       })
       .catch(err => {
         console.log(err);
@@ -98,7 +92,7 @@ const Invoices = () => {
               Transactions({count})
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
-              <NextLink href="/dashboard/invoices/create" passHref>
+             
                 <Button
                   color="primary"
                   component="a"
@@ -108,7 +102,7 @@ const Invoices = () => {
                 >
                   Add
                 </Button>
-              </NextLink>
+            
             </Box>
           </Box>
           <Card
@@ -120,7 +114,7 @@ const Invoices = () => {
           >
         
             <Divider />
-            <InvoicesTable
+            <TransactionsTable
               error={data.error}
               invoices={data}
               invoicesCount={data.length}
@@ -141,10 +135,10 @@ const Invoices = () => {
   );
 };
 
-Invoices.getLayout = (page) => (
+Transactions.getLayout = (page) => (
   <AuthGuard>
     <DashboardLayout>{page}</DashboardLayout>
   </AuthGuard>
 );
 
-export default Invoices;
+export default Transactions;

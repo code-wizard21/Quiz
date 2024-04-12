@@ -12,6 +12,7 @@ const agoraRoute = require('./agora.route');
 const paymentRoute = require('./payment.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
+const transactionRoute = require('./transaction.route');
 
 const router = express.Router();
 
@@ -24,6 +25,10 @@ const defaultRoutes = [
     path: '/users',
     route: userRoute,
   },
+  // {
+  //   path: '/transaction',
+  //   route: transactionRoute,
+  // },
   {
     path: '/quizes',
     route: quizRoute,

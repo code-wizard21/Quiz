@@ -38,7 +38,6 @@ const availableStatus = [
 
 const QuizCreateUpdate = (props) => {
   const { quizId } = props;
-  console.log("quizID",quizId);
   const router = useRouter();
   const formik = useFormik({
     enableReinitialize: true,
@@ -256,7 +255,7 @@ const QuizCreateUpdate = (props) => {
             };
            
           });
-          console.log('response Host data',data);
+
           setHostList(data);
         }
       })
@@ -276,7 +275,7 @@ const QuizCreateUpdate = (props) => {
               label: item.name,
             };
           });
-          console.log('response category data',data);
+
           setCategoryList(data);
         }
       })

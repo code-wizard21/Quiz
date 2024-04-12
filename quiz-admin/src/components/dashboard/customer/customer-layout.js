@@ -49,7 +49,6 @@ export const CustomerLayout = (props) => {
   const isMounted = useMounted();
   const router = useRouter();
   const { customerId } = router.query;
-  // console.log(router.query)
   const [banDialogOpen, handleOpenBanDialog, handleCloseBanDialog] = useDialog();
   const [customerState, setCustomerState] = useState({ isLoading: true });
 

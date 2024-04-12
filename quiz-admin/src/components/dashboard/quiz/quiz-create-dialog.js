@@ -27,7 +27,7 @@ export const ProductCreateDialog = (props) => {
   const [hostList, setHostList] = useState([]);
 
   const getAllCategories = useCallback(async () => {
-    console.log('data#@@@@@@@@%%%%%%%'  );
+
       axiosClient      
       .get("/categories")
       .then((response) => {
@@ -38,7 +38,6 @@ export const ProductCreateDialog = (props) => {
               label: item.name,
             };
           });
-          console.log('data#@@@@@@@@%%%%%%%',data);
           setCategoryList(data);
         }
       })

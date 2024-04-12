@@ -23,7 +23,6 @@ const getShadowUsers = (async (req, res) => {
    console.log('#########getShadowUsersgetShadowUsers');
     try {
         const result = await userService.queryShadowUsers(filter, options);
-        console.log('result',result)
         res.json(success(httpStatus.OK, 'Shadow users retrieved successfully', result));
         // Handle result here, such as send response or further processing
       } catch (error) {

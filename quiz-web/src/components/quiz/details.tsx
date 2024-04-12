@@ -29,8 +29,10 @@ import BackTab from '../back-tab';
 import Leaderboard from '../leaderboard';
 import './style.css';
 
-const channelName = 'test';
-const appId = '00925574b4244e60bcd740e7b68f2996';
+
+const channelName = 'Quiz';
+const appId = 'b75cc48b972d4ccc92edb71a1c75fb23';
+
 // now connect to socket server
 
 const QuizDetail: React.FC = (): React.ReactElement => {
@@ -39,7 +41,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const dispatch = useDispatch();
 
   const socket = useContext(SocketContext)?.socket;
-  console.log("socket",socket);
+
   const [quizData, setQuizData] = useState<IQuiz>();
   const [isVideoSubed, setIsVideoSubed] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
@@ -79,13 +81,27 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     role: 'audience',
   });
 
+  // client.on('user-left', (hostUser: IAgoraRTCRemoteUser) => {
+  //   console.log('user-left :: ', hostUser);
+  // });
+
+  // // check if host has stopped the stream
+  // client.on('user-published', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+  //   console.log('user-published :: ', user, mediaType);
+  // });
+
+  // client.on('user-unpublished', (user: IAgoraRTCRemoteUser) => {
+  //   console.log('user-unpublished :: ', user);
+  // });
 
   useEffect(() => {
     // display to none for video element
     videoRef.current?.style.setProperty('display', 'none');
     timerRef.current?.style.setProperty('display', 'none');
 
+    // Function to log socket connection status
     const logConnectionStatus = () => {
+      // console.log('Socket connected:', socket?.connected);
       setIsSocketConnected(socket?.connected);
       showMessages('success', 'Socket connected: ' + socket?.connected);
     };
@@ -264,6 +280,18 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       leaveChannel();
     });
 
+    // const socketClient = io(serverUrl);
+
+    // socketClient.connect();
+
+    // if (!socket?.connected) {
+    //   // retry socket connection
+    //   socket?.connect();
+    // }
+
+    // Add a listener for connect event
+
+    // socket?.on('connect', () => {
     console.log(socket);
 
     if (!socket?.connected) {
@@ -389,13 +417,18 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }
 
     if (!user) {
-      console.log('###########');
       // create shadow user and join
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
       dispatch(setUserData(shadowUser.data.user));
       localStorage.setItem('user', JSON.stringify(shadowUser.data));
     }
 
+    // if (!quiz?.is_live) {
+    //   showMessages('error', 'Quiz is not live');
+    //   return;
+    // }
+
+    // only join if socket is connected
     if (!socket?.connected) {
       // retry socket connection
       socket?.connect();
@@ -403,33 +436,33 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }
 
     // emitted when user joins the live quiz
-  socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+    socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
 
     // generate random uid less than 1000
-  //   const randomUid = Math.floor(Math.random() * 1000);
+    const randomUid = Math.floor(Math.random() * 1000);
 
-  //  const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
+    const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
 
-  //   await client.join(appId, channelName, rtcToken.data.data, randomUid);
+    await client.join(appId, channelName, rtcToken.data.data, randomUid);
 
-  //   setIsJoined(true);
-  //   message.destroy();
-  //   videoRef.current.hidden = false;
-  //   videoRef.current?.style.setProperty('display', 'block');
-  //   toggleQuestion(false);
-  //   dispatch(setMiscellaneousData({ topBarVisibility: false }));
+    setIsJoined(true);
+    message.destroy();
+    videoRef.current.hidden = false;
+    videoRef.current?.style.setProperty('display', 'block');
+    toggleQuestion(false);
+    dispatch(setMiscellaneousData({ topBarVisibility: false }));
 
-  //   client.on('user-published', onUserPublish);
+    client.on('user-published', onUserPublish);
 
-  //   client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
-  //     if (mediaType === 'video') {
-  //       user.videoTrack?.stop();
-  //     }
-  //     if (mediaType === 'audio') {
-  //       user.audioTrack?.stop();
-  //     }
-  //     leaveChannel();
-  //   });
+    client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+      if (mediaType === 'video') {
+        user.videoTrack?.stop();
+      }
+      if (mediaType === 'audio') {
+        user.audioTrack?.stop();
+      }
+      leaveChannel();
+    });
   };
 
   const startTimer = useCallback((duration: number) => {

@@ -61,7 +61,6 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (request, res
       email: info.metadata.email,
       trx_date:new Date(),
     });
-    console.log('newData',newData);
     newData
       .save()
       .then((res) => {

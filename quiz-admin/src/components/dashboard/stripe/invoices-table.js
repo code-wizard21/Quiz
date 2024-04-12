@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Proptypes from "prop-types";
-import NextLink from "next/link";
-import { format } from "date-fns";
-import numeral from "numeral";
+
+import { DateTime } from "luxon";
+import ErrorIcon from "@mui/icons-material/Error";
 import {
   Box,
   Checkbox,
@@ -16,17 +16,17 @@ import {
   TableRow,
   TableSortLabel,
 } from "@mui/material";
-import { DateTime } from 'luxon';
-import moment from 'moment-timezone';
 import { Pagination } from "../../pagination";
 import { ResourceError } from "../../resource-error";
 import { ResourceUnavailable } from "../../resource-unavailable";
 import { Scrollbar } from "../../scrollbar";
-import { Status } from "../../status";
-import { InvoiceMenu } from "../invoices/invoice-menu";
-import Chip from '@mui/material/Chip';
-import DoneIcon from '@mui/icons-material/Done';
+import { InvoiceMenu } from "./invoice-menu";
+import Chip from "@mui/material/Chip";
+import DoneIcon from "@mui/icons-material/Done";
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 const columns = [
   {
@@ -34,24 +34,15 @@ const columns = [
     disablePadding: true,
     label: "Amount",
   },
- 
   {
     id: "status",
     label: "Status",
   },
   {
-    id: "email",
-    label: "Email",
+    id: "payment_method",
+    label: "Payment Method",
   },
 
-  {
-    id: "user",
-    label: "User",
-  },
-  {
-    id: "item",
-    label: "Item",
-  },
   {
     id: "trx_date",
     label: "Trx Date",
@@ -81,7 +72,7 @@ const statusVariants = [
   },
 ];
 
-export const InvoicesTable = (props) => {
+export const StripeTable = (props) => {
   const {
     error,
     invoices: invoicesProp,
@@ -145,10 +136,8 @@ export const InvoicesTable = (props) => {
           </TableHead>
           <TableBody>
             {invoices.map((invoice) => {
-
               const statusVariant = statusVariants.find(
-                (variant) => variant.value === invoice.status,
-
+                (variant) => variant.value === invoice.status
               );
 
               return (
@@ -170,7 +159,7 @@ export const InvoicesTable = (props) => {
                     />
                   </TableCell>
                   <TableCell>
-                    ${invoice.amount/100} SGD
+                    ${invoice.amount} SGD
                     {/* <NextLink href="/dashboard/invoices/1" passHref>
                       <Link color="inherit" component="a" underline="none" variant="subtitle2">
                         #{invoice.id}
@@ -178,13 +167,31 @@ export const InvoicesTable = (props) => {
                     </NextLink> */}
                   </TableCell>
                   <TableCell>
-                    <Chip label={invoice.status} color='success' icon={<DoneIcon />} variant="outlined" />
+                    {invoice.status == "succeeded" ? (
+                      <Chip
+                        label={invoice.status}
+                        color="success"
+                        icon={<DoneIcon />}
+                        variant="outlined"
+                      />
+                    ) : (
+                      <Chip
+                        label={invoice.status}
+                        color="error"
+                        icon={<ErrorIcon />}
+                        variant="outlined"
+                      />
+                    )}
                   </TableCell>
-                  <TableCell>{invoice.email}</TableCell>
-                  <TableCell>{invoice.user}</TableCell>
-                  <TableCell>{invoice.item} Tickets</TableCell>
-                  <TableCell>{DateTime.fromISO(invoice.trx_date,{ setZone: true }, { zone: 'utc' }).setZone('Asia/Singapore').toFormat('MMM dd, yyyy, hh:mm a')}</TableCell>
+                  <TableCell>
+                    {capitalizeFirstLetter(invoice.payment_method)}****{invoice.card_number}
+                  </TableCell>
 
+                  <TableCell>
+                    {DateTime.fromMillis(invoice.trx_date * 1000, { zone: "UTC" })
+                      .setZone("Asia/Singapore")
+                      .toFormat("MMM dd, yyyy, hh:mm a")}
+                  </TableCell>
                   <TableCell>
                     <InvoiceMenu />
                   </TableCell>
@@ -229,7 +236,7 @@ export const InvoicesTable = (props) => {
   );
 };
 
-InvoicesTable.defaultProps = {
+StripeTable.defaultProps = {
   invoices: [],
   invoicesCount: 0,
   page: 1,
@@ -238,7 +245,7 @@ InvoicesTable.defaultProps = {
   sort_by: "issueDate",
 };
 
-InvoicesTable.propTypes = {
+StripeTable.propTypes = {
   invoices: Proptypes.array,
   invoicesCount: Proptypes.number,
   error: Proptypes.string,

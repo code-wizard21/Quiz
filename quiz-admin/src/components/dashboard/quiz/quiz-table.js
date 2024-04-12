@@ -110,7 +110,6 @@ export const ProductsTable = (props) => {
           </TableHead>
           <TableBody>
             {products.map((product) => {
-              console.log('products',product);
               return (
                 <NextLink href={"quizzes/" + product.id} key={product.id}>
                   <TableRow

@@ -50,7 +50,7 @@ export const CustomersTable = (props) => {
     isLoading,
     onPageChange,
     onSelect,
-    onSelectAll,
+
     onSortChange,
     page,
     selectedCustomers,
@@ -64,12 +64,7 @@ export const CustomersTable = (props) => {
     setCustomers(customersProp);
   }, [customersProp]);
 
-  const handleIsFavoriteChange = (customerId, value) => {
-    const temp = [...customers];
-    const customerIndex = temp.findIndex((customer) => customer.id === customerId);
-    temp[customerIndex].isFavorite = value;
-    setCustomers(temp);
-  };
+
 
   const displayLoading = isLoading;
   const displayError = Boolean(!isLoading && error);
@@ -130,16 +125,7 @@ export const CustomersTable = (props) => {
                       justifyContent: "center",
                     }}
                   >
-                    {/* <IconButton
-                      onClick={() => handleIsFavoriteChange(customer.id, !customer.isFavorite)}
-                      size="small"
-                    >
-                      <StarIcon
-                        sx={{
-                          color: customer.isFavorite ? "rgb(255, 180, 0)" : "action.disabled",
-                        }}
-                      />
-                    </IconButton> */}
+            
                   </Box>
                 </TableCell>
                 <TableCell padding="none">

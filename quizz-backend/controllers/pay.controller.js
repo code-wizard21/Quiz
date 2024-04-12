@@ -11,7 +11,7 @@ const YOUR_DOMAIN = 'https://quizmobb.com';
 //const YOUR_DOMAIN = 'http://localhost:4002';
 const buyticket = catchAsync(async (req, res) => {
   const { amount, payment_method_id, user, email, item } = req.body;
-  console.log(req.body);
+
 
   try {
     const paymentIntent = await stripe.paymentIntents
@@ -55,9 +55,7 @@ const buyticket = catchAsync(async (req, res) => {
 
 const checkoutsession = catchAsync(async (req, res) => {
   try {
-    console.log('req.body', req.body);
     const { amount, ticket, user, email } = req.body;
-    console.log('req.body', req.body);
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -83,7 +81,7 @@ const checkoutsession = catchAsync(async (req, res) => {
 
     //   console.log("session",session.url);
     // // res.redirect(303, session.url);
-    // res.status(200).send(session.url);
+    res.status(200).send(session.url);
   } catch (error) {
     console.error('Error confirming payment intent', error);
     res.status(500).send({ success: false });
@@ -93,7 +91,7 @@ const checkoutsession = catchAsync(async (req, res) => {
 const gethistory = catchAsync(async (req, res) => {
   try {
     const paymentHistory = await stripe.charges.list({ limit: 100 });
-    console.log('payment');
+
     res.json(paymentHistory);
   } catch (error) {
     console.error(`Error: ${error}`);
@@ -110,11 +108,28 @@ const getAll = (req, res) => {
     .catch(() => {});
 };
 
+const getTransactionID = (req, res) => {
+  const { params } = req;
+  Payment.findOne(params)
+    .then((result) => {
+
+      Payment.find({ email: result.email })
+      .sort({ trx_date: -1 })
+        .then((result) => {
+  
+          res.status(200).json(result);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 const getID = (req, res) => {
   const { params } = req;
-  console.log('praams', params);
   User.findOne(params)
-    
     .then((result) => {
       Payment.find({ email: result.email })
       .sort({ trx_date: -1 })
@@ -131,6 +146,7 @@ const getID = (req, res) => {
 };
 
 module.exports = {
+  getTransactionID,
   buyticket,
   gethistory,
   getAll,

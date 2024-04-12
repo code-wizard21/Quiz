@@ -11,9 +11,7 @@ const SelectMode = () => {
 
   const [value, setValue] = useState(1);
 
-  const handleChange = () => {
-    navigate(`/buyticket?mode=${value}`);
-  };
+  
   const handleClick = () => {
     let amount, ticket;
     switch (value) {
@@ -44,7 +42,6 @@ const SelectMode = () => {
       amount: amount,
       ticket: ticket,
     };
-    console.log('data', data);
     checkOutSession(data)
       .then((res) => {
         console.log(res);

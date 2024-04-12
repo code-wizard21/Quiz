@@ -1,18 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
-
 import { Box, Container, Divider, Typography, Card } from "@mui/material";
 import { invoiceApi } from "../../../api/invoice";
 import { AuthGuard } from "../../../components/authentication/auth-guard";
 import { DashboardLayout } from "../../../components/dashboard/dashboard-layout";
-import { InvoicesFilter } from "../../../components/dashboard/invoices/invoices-filter";
-import { InvoicesTable } from "../../../components/dashboard/invoices/invoices-table";
+import { InvoicesFilter } from "../../../components/dashboard/stripe/invoices-filter";
+import { StripeTable } from "../../../components/dashboard/stripe/invoices-table";
 import { useMounted } from "../../../hooks/use-mounted";
 import { useSelection } from "../../../hooks/use-selection";
 import { gtm } from "../../../lib/gtm";
 import { useRouter } from "next/router";
 
-const Invoices = () => {
+const Stripe = () => {
   const router = useRouter();
   const isMounted = useMounted();
   const [controller, setController] = useState({
@@ -42,7 +41,6 @@ const Invoices = () => {
         sort_by: controller.sort_by,
         view: controller.view,
       });
-      console.log('resutl',result.invoicesCount);
       setCount(result.invoicesCount);
       const invoicesResult = {
         invoices: [],
@@ -110,7 +108,6 @@ const Invoices = () => {
   };
 
   const handleQueryChange = (newQuery) => {
-    console.log("newqueay", newQuery);
     setController({
       ...controller,
       page: 0,
@@ -210,7 +207,7 @@ const Invoices = () => {
               view={controller.view}
             />
             <Divider />
-            <InvoicesTable
+            <StripeTable
               error={invoicesState.error}
               invoices={invoicesState.data?.invoices}
               invoicesCount={invoicesState.data?.invoicesCount}
@@ -231,10 +228,10 @@ const Invoices = () => {
   );
 };
 
-Invoices.getLayout = (page) => (
+Stripe.getLayout = (page) => (
   <AuthGuard>
     <DashboardLayout>{page}</DashboardLayout>
   </AuthGuard>
 );
 
-export default Invoices;
+export default Stripe;

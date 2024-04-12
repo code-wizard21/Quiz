@@ -10,11 +10,11 @@ const UserParticipation = require('../models/participation.model');
 
 const createQuiz = catchAsync(async (req, res) => {
   const mongooseSession = await mongoose.startSession();
-  console.log('req.body',req.body);
+
   mongooseSession.startTransaction();
   try {
     const quiz = await quizService.createQuiz(req.body, mongooseSession);
-    console.log('create Quiz quiz',quiz);
+
     await quizService.createQuizLiveStream(quiz._id, req.body.host, mongooseSession);
 
     await mongooseSession.commitTransaction();

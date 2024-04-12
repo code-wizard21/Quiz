@@ -35,7 +35,6 @@ class InvoiceApi {
      NOTE: Query, filter, sort and pagination are operation meant to be executed on the server.
      Since this does not connect to a real backend, we simulate these operations.
      */
-    console.log("query", query);
     const queriedInvoices = invoices.filter((_invoice) => {
       // If query exists, it looks only in customer id field
       if (!!query && !_invoice.payment_method?.toLowerCase().includes(query.toLowerCase())) {
@@ -50,13 +49,13 @@ class InvoiceApi {
       // In this case, the view represents the resource status
       return _invoice.status === view;
     });
-    console.log("queriedInvoices", queriedInvoices);
+
     const filteredInvoices = applyFilters(queriedInvoices, filters);
-    console.log("filteredInvoices", filteredInvoices);
+
     const sortedInvoices = applySort(filteredInvoices, sort, sort_by);
-    console.log("sortedInvoices", sortedInvoices);
+
     const paginatedInvoices = applyPagination(sortedInvoices, page);
-    console.log("paginatedInvoices", paginatedInvoices);
+
     return Promise.resolve({
       invoices: paginatedInvoices,
       invoicesCount: filteredInvoices.length,
@@ -80,12 +79,12 @@ class InvoiceApi {
         trx_date: element.created,
       });
     });
-    // console.log('invoesesese',invoices,searchInput);
+
     const invoicesResult = [];
    
     let int = parseInt(e.searchInput);
     await invoices.forEach((element,idx) => {
-      console.log('element',element);
+
       if(element.amount==int){
         invoicesResult.push({
           id: idx + 1,
@@ -96,9 +95,9 @@ class InvoiceApi {
           trx_date: element.created,
         })
       }
-      console.log(element.amount);
+
     });
-    console.log('invoicesResult',invoicesResult);
+
     
     return Promise.resolve({
       invoices: invoicesResult,

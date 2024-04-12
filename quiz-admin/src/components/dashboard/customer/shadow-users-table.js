@@ -160,7 +160,7 @@ export const ShadowUsersTable = (props) => {
                     >
                       {customer.name?.charAt(0) || "S"}
                     </Avatar>
-                    <NextLink href="/dashboard/customers/1" passHref>
+                    <NextLink href="/dashboard/users/1" passHref>
                       <Link color="inherit" component="a" underline="none" variant="subtitle2">
                         {customer?.name || `Guest-${customer.username}`}
                       </Link>

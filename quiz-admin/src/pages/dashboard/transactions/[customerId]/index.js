@@ -31,7 +31,6 @@ import { gtm } from "../../../../lib/gtm";
 import axiosClient from "../../../../api/axiosinstance";
 import DoneIcon from "@mui/icons-material/Done";  
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-
 const columns = [
   {
     id: "amount",
@@ -129,13 +128,11 @@ const CustomerOrders = () => {
   useEffect(() => {
     const total = 0;
     const ticket = 0;
-
     if (router.isReady) {
       axiosClient
-        .get(`/payment/${customerId}`)
+        .get(`/payment/transactions/${customerId}`)
         .then((result) => {
           setData(result.data);
-
            setUser(result.data[0].user);
           result.data.forEach((item) => {
             total += parseInt(item.amount);
@@ -277,6 +274,7 @@ const CustomerOrders = () => {
                       </TableCell>
                       <TableCell>
                         {order.email}
+                        {/* {numeral(order.totalAmount).format(`${order.currencySymbol}0,0.00`)} */}
                       </TableCell>
                       <TableCell align="right">
                         <CustomerOrderMenu />
