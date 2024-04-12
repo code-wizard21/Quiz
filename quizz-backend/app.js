@@ -58,7 +58,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (request, res
       item: ticketCount,
       user: info.customer_details.name,
       email: info.customer_details.email,
-      trx_date: info.created,
+      trx_date:new Date(),
     });
     console.log('newData',newData);
     newData

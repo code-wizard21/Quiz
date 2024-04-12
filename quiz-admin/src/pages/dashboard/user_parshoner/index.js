@@ -37,7 +37,7 @@ const Invoices = () => {
       .then((result) => {
         setData(result.data);
         setCount(result.data.length);
-     
+        console.log('result data',result.data);
       })
       .catch(err => {
         console.log(err);
