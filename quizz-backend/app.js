@@ -4,7 +4,9 @@ const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
 const cors = require('cors');
-const stripe = require('stripe')('sk_test_51DOfAJIFbzohYGemOLOrA6C52yD7aHdglSfl0kMB95gRJoxcDGSqpWHxa4sGtJDb5mzPX2azyvGDF3GekVRLirFu00NPR9PV6c');
+const stripe = require('stripe')(
+  'sk_test_51DOfAJIFbzohYGemOLOrA6C52yD7aHdglSfl0kMB95gRJoxcDGSqpWHxa4sGtJDb5mzPX2azyvGDF3GekVRLirFu00NPR9PV6c'
+);
 const passport = require('passport');
 const httpStatus = require('http-status');
 const config = require('./config/config');
@@ -21,19 +23,20 @@ const whitelist =
     ? ['http://localhost:3001', 'https://quiz-web-five.vercel.app', 'https://www.quizmobb.com']
     : ['https://quiz-web-five.vercel.app', 'https://www.quizmobb.com'];
 
+const endpointSecret = 'whsec_2i5UWISNpsLGklLVZGVsc2wVsTrHbAB7';
 
 const app = express();
 
-app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
+app.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
   const sig = request.headers['stripe-signature'];
- console.log('Web hook');
+  console.log('Web hook');
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
-    console.log("web hook occur",request.body);
+    console.log('web hook occur', request.body);
   } catch (err) {
-    console.log('err',err);
+    console.log('err', err);
     response.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
@@ -44,7 +47,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
       const checkoutSessionAsyncPaymentSucceeded = event.data.object;
     case 'checkout.session.completed':
       const checkoutSessionCompleted = event.data.object;
-      console.log('checkoutSessionCompleted',checkoutSessionCompleted);
+      console.log('checkoutSessionCompleted', checkoutSessionCompleted);
       break;
   }
 
@@ -76,9 +79,6 @@ app.use(compression());
 // enable cors
 app.use(cors());
 app.options('*', cors());
-const endpointSecret = "whsec_2i5UWISNpsLGklLVZGVsc2wVsTrHbAB7";
-
-
 
 // jwt authentication
 app.use(passport.initialize());
@@ -103,7 +103,6 @@ app.use((req, res, next) => {
 
 // convert error to ApiError, if needed
 app.use(errorConverter);
-
 
 // handle error
 app.use(errorHandler);
