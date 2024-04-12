@@ -32,8 +32,8 @@ export const DashboardLayout = (props) => {
   return (
     <>
       <DashboardNavbar />
-      {!mdDown && <DashboardSidebar onPin={handlePinSidebar}
-        pinned={settings.pinSidebar} />}
+      <DashboardSidebar onPin={handlePinSidebar}
+        pinned={settings.pinSidebar} />
       <DashboardLayoutRoot
         sx={{
           pl: {

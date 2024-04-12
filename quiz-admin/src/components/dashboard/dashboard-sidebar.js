@@ -23,7 +23,7 @@ const items = [
   {
     icon: UsersIcon,
     title: "Users",
-    href: "/dashboard/customers",
+    href: "/dashboard/users",
   },
   {
     icon: CubeIcon,
@@ -33,7 +33,7 @@ const items = [
   {
     icon: CubeIcon,
     title: "Guest Users",
-    href: "/dashboard/customers/shadow",
+    href: "/dashboard/users/shadow",
   },
   {
     icon: CubeIcon,

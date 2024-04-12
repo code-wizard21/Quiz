@@ -160,7 +160,7 @@ export const CustomersTable = (props) => {
                     >
                       {customer.name?.charAt(0) || "S"}
                     </Avatar>
-                    <NextLink href={`/dashboard/customers/${customer?.id}`} passHref>
+                    <NextLink href={`/dashboard/users/${customer?.id}`} passHref>
                       <Link color="inherit" component="a" underline="none" variant="subtitle2">
                         {customer?.name || "Shadow"}
                       </Link>

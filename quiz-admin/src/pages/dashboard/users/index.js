@@ -1,16 +1,17 @@
-import { Box, Button, Card, Container, Divider, Typography } from "@mui/material";
-import Head from "next/head";
 import { useCallback, useEffect, useState } from "react";
-import { getShadowUsers } from "../../../../api/user.service";
-import { AuthGuard } from "../../../../components/authentication/auth-guard";
-import { CustomerDialog } from "../../../../components/dashboard/customer/customer-dialog"
-import { CustomersFilter } from "../../../../components/dashboard/customer/customers-filter";
-import { ShadowUsersTable } from "../../../../components/dashboard/customer/shadow-users-table";
-import { DashboardLayout } from "../../../../components/dashboard/dashboard-layout";
-import { useMounted } from "../../../../hooks/use-mounted";
-import { useSelection } from "../../../../hooks/use-selection";
-import { Plus as PlusIcon } from "../../../../icons/plus";
-import { gtm } from "../../../../lib/gtm";
+import Head from "next/head";
+import { Box, Button, Card, Container, Divider, Typography } from "@mui/material";
+import { customerApi } from "../../../api/customer";
+import { AuthGuard } from "../../../components/authentication/auth-guard";
+import { CustomerDialog } from "../../../components/dashboard/customer/customer-dialog";
+import { CustomersFilter } from "../../../components/dashboard/customer/customers-filter";
+import { CustomersTable } from "../../../components/dashboard/customer/customers-table";
+import { DashboardLayout } from "../../../components/dashboard/dashboard-layout";
+import { useMounted } from "../../../hooks/use-mounted";
+import { useSelection } from "../../../hooks/use-selection";
+import { Plus as PlusIcon } from "../../../icons/plus";
+import { gtm } from "../../../lib/gtm";
+import { getUsers } from "../../../api/user.service";
 
 const Customers = () => {
   const isMounted = useMounted();
@@ -32,7 +33,8 @@ const Customers = () => {
     setCustomersState(() => ({ isLoading: true }));
 
     try {
-      const result = await getShadowUsers(controller.page + 1, 10, "desc", "createdAt:desc");
+      const result = await getUsers(controller.page + 1, 10, "desc", "createdAt:desc");
+      console.log('getUsers',result);
       if (isMounted()) {
         setCustomersState(() => ({
           isLoading: false,
@@ -118,21 +120,19 @@ const Customers = () => {
   };
 
   const updateList = (id) => {
-    const newCustomers = customersState.data.customers.filter((customer) => customer.id !== id);
+    const newCustomers = customersState.data.customers.filter(
+      (customer) => customer.id !== id
+    );
     setCustomersState({
       ...customersState,
-      data: {
-        ...customersState.data,
-        customers: newCustomers,
-        customersCount: customersState.data.customersCount - 1,
-      },
+      data: { ...customersState.data, customers: newCustomers, customersCount: customersState.data.customersCount - 1 },
     });
   };
 
   return (
     <>
       <Head>
-        <title>Customers: List | Quiz Dashboard</title>
+        <title>Users: List | Quiz Dashboard</title>
       </Head>
       <Box sx={{ flexGrow: 1 }}>
         <Container
@@ -150,9 +150,9 @@ const Customers = () => {
                 display: "flex",
               }}
             >
-              <Typography color="textPrimary" variant="h4">
-                Users{" "}
-                {customersState.data?.customersCount && `(${customersState.data?.customersCount})`}
+              <Typography color="textPrimary"
+                variant="h4">
+                Users {customersState.data?.customersCount && `(${customersState.data?.customersCount})`}
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
               <Button
@@ -185,7 +185,7 @@ const Customers = () => {
               view={controller.view}
             />
             <Divider />
-            <ShadowUsersTable
+            <CustomersTable
               customers={customersState.data?.customers}
               customersCount={customersState.data?.customersCount}
               error={customersState.error}
@@ -203,7 +203,8 @@ const Customers = () => {
           </Card>
         </Container>
       </Box>
-      <CustomerDialog onClose={() => setOpenCreateDialog(false)} open={openCreateDialog} />
+      <CustomerDialog onClose={() => setOpenCreateDialog(false)}
+        open={openCreateDialog} />
     </>
   );
 };

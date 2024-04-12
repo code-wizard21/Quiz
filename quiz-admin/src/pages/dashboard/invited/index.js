@@ -133,7 +133,7 @@ const Customers = () => {
   return (
     <>
       <Head>
-        <title>Customers: List | Lobang Dashboard</title>
+        <title>Users: List | Lobang Dashboard</title>
       </Head>
       <Box sx={{ flexGrow: 1 }}>
         <Container

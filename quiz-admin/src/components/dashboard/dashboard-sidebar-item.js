@@ -24,17 +24,14 @@ export const DashboardSidebarItem = (props) => {
   // Branch
   if (items) {
     return (
-      <List disablePadding
-sx={{ width: "100%" }}>
+      <List disablePadding sx={{ width: "100%" }}>
         <li>
           <Button
             endIcon={
               open ? (
-                <ChevronDownIcon color="action"
-fontSize="small" />
+                <ChevronDownIcon color="action" fontSize="small" />
               ) : (
-                <ChevronRightIcon color="action"
-fontSize="small" />
+                <ChevronRightIcon color="action" fontSize="small" />
               )
             }
             fullWidth
@@ -71,17 +68,14 @@ fontSize="small" />
             </Typography>
           </Button>
         </li>
-        <Collapse in={open}
-unmountOnExit>
-          <List disablePadding
-sx={{ width: "100%" }}>
+        <Collapse in={open} unmountOnExit>
+          <List disablePadding sx={{ width: "100%" }}>
             {items.map((item) => {
               const isActive = activeHref === item.href;
 
               return (
                 <li key={item.href}>
-                  <NextLink href={item.href}
-passHref>
+                  <NextLink href={item.href} passHref>
                     <Button
                       component="a"
                       fullWidth
@@ -109,8 +103,7 @@ passHref>
   // Leaf
   return (
     <li>
-      <NextLink href={href}
-passHref>
+      <NextLink href={href} passHref>
         <Button
           component="a"
           endIcon={external && <ExternalLinkIcon color="action" />}
