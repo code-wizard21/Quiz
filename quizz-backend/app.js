@@ -4,6 +4,7 @@ const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
 const cors = require('cors');
+const stripe = require('stripe')('sk_test_51DOfAJIFbzohYGemOLOrA6C52yD7aHdglSfl0kMB95gRJoxcDGSqpWHxa4sGtJDb5mzPX2azyvGDF3GekVRLirFu00NPR9PV6c');
 const passport = require('passport');
 const httpStatus = require('http-status');
 const config = require('./config/config');
@@ -64,40 +65,17 @@ app.use(compression());
 // enable cors
 app.use(cors());
 app.options('*', cors());
-
-// jwt authentication
-app.use(passport.initialize());
-passport.use('jwt', jwtStrategy);
-
-// limit repeated failed requests to auth endpoints
-if (config.env === 'production') {
-  app.use('/v1/auth', authLimiter);
-}
-
-app.get('/status', (req, res) => {
-  res.status(200).send();
-});
-
-// v1 api routes
-app.use('/v1', routes);
-
-// send back a 404 error for any unknown api request
-app.use((req, res, next) => {
-  next(new ApiError(httpStatus.NOT_FOUND, 'Not found', true, {}));
-});
-
-// convert error to ApiError, if needed
-app.use(errorConverter);
 const endpointSecret = "whsec_aba064cbea4753ca3c34581db682faad683d7968e74de1841b78585489cff970";
 
 
 app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
   const sig = request.headers['stripe-signature'];
-  console.log("web hook occur",request.body);
+ console.log('Web hook');
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    console.log("web hook occur",request.body);
   } catch (err) {
     response.status(400).send(`Webhook Error: ${err.message}`);
     return;
@@ -122,6 +100,30 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
   // Return a 200 response to acknowledge receipt of the event
   response.send();
 });
+// jwt authentication
+app.use(passport.initialize());
+passport.use('jwt', jwtStrategy);
+
+// limit repeated failed requests to auth endpoints
+if (config.env === 'production') {
+  app.use('/v1/auth', authLimiter);
+}
+
+app.get('/status', (req, res) => {
+  res.status(200).send();
+});
+
+// v1 api routes
+app.use('/v1', routes);
+
+// send back a 404 error for any unknown api request
+app.use((req, res, next) => {
+  next(new ApiError(httpStatus.NOT_FOUND, 'Not found', true, {}));
+});
+
+// convert error to ApiError, if needed
+app.use(errorConverter);
+
 
 // handle error
 app.use(errorHandler);
