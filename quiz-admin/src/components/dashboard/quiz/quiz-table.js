@@ -1,6 +1,7 @@
 import Proptypes from "prop-types";
 import NextLink from "next/link";
 import { format } from "date-fns";
+import moment from 'moment-timezone';
 import {
   Avatar,
   Box,
@@ -153,7 +154,7 @@ export const ProductsTable = (props) => {
                       {product.start_date && (
                         <div>
                           <Typography color="inherit" variant="body2">
-                            {product.start_date}
+                            { moment(product.start_date).format('MMM DD, YYYY, hh:mm a')}
                           </Typography>
                         </div>
                       )}

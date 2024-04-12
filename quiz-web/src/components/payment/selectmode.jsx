@@ -37,7 +37,13 @@ const SelectMode = () => {
         amount = 0;
         ticket = 0;
     }
-    const data = { amount: amount, ticket: ticket };
+
+    const data = {
+      user: JSON.parse(localStorage.getItem('user')).user.name,
+      email: JSON.parse(localStorage.getItem('user')).user.email,
+      amount: amount,
+      ticket: ticket,
+    };
     console.log('data', data);
     checkOutSession(data)
       .then((res) => {
@@ -92,7 +98,7 @@ const SelectMode = () => {
 
             
             </button> */}
-         
+
             <button
               onClick={() => setValue(2)}
               className={`mt-4 flex pt-2 pb-2  border-2 ${

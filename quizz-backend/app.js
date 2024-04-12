@@ -28,6 +28,7 @@ const endpointSecret = 'whsec_hm0gPh68j8RunfG1DEbrF2RzSKqDo0Dm';
 
 const app = express();
 const bodyParser = require('body-parser');
+
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (request, response) => {
   const sig = request.headers['stripe-signature'];
   let event;
@@ -51,13 +52,13 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (request, res
   
   ticketCount = ticketMapping[info.amount_total] || 0;
   if (event.type == 'checkout.session.completed') {
-    
+
     const newData = new Payment({
       amount: info.amount_total,
       status: info.payment_status,
-      item: ticketCount,
-      user: info.customer_details.name,
-      email: info.customer_details.email,
+      item: info.metadata.ticket,
+      user: info.metadata.user,
+      email: info.metadata.email,
       trx_date:new Date(),
     });
     console.log('newData',newData);

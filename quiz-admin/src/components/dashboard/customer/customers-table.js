@@ -169,7 +169,7 @@ export const CustomersTable = (props) => {
                 </TableCell>
                 <TableCell>{customer.mobile}</TableCell>
                 <TableCell>{customer.email}</TableCell>
-                <TableCell>{format(new Date(customer.createdAt), "dd/MM/yyyy HH:mm")}</TableCell>
+                <TableCell>{format(new Date(customer.createdAt), "MMM dd, yyyy, hh:mm a")}</TableCell>
                 <TableCell align="right">
                   <CustomerMenu updateList={updateList} customer={customer} />
                 </TableCell>

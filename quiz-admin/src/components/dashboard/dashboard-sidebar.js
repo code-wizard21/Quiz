@@ -38,12 +38,12 @@ const items = [
   {
     icon: CubeIcon,
     title: "From Stripe",
-    href: "/dashboard/invoices",
+    href: "/dashboard/stripe_payment",
   },
   {
     icon: CubeIcon,
     title: "Transactions",
-    href: "/dashboard/user_parshoner",
+    href: "/dashboard/transactions",
   },
   // {
   //   icon: CubeIcon,
