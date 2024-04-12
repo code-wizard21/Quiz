@@ -23,7 +23,7 @@ const whitelist =
     ? ['http://localhost:3001', 'https://quiz-web-five.vercel.app', 'https://www.quizmobb.com']
     : ['https://quiz-web-five.vercel.app', 'https://www.quizmobb.com'];
 
-    const endpointSecret = "whsec_QwYWLsO0fCSqQK1OgyI6BpkeLPgNi0qP";
+    const endpointSecret = "whsec_hm0gPh68j8RunfG1DEbrF2RzSKqDo0Dm";
 
 
 const app = express();
