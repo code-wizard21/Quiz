@@ -29,24 +29,20 @@ import { ShoppingCart as ShoppingCartIcon } from "../../../icons/shopping-cart";
 const stats = [
   {
     content: "Since: Apr 2021",
-    icon: <CalendarIcon fontSize="small"
-      sx={{ color: "text.secondary" }} />,
+    icon: <CalendarIcon fontSize="small" sx={{ color: "text.secondary" }} />,
   },
   {
     content: "Orders: 17",
-    icon: <ShoppingCartIcon fontSize="small"
-      sx={{ color: "text.secondary" }} />,
+    icon: <ShoppingCartIcon fontSize="small" sx={{ color: "text.secondary" }} />,
   },
   {
     content: "Spent: $ 69.00",
-    icon: <CashIcon fontSize="small"
-      sx={{ color: "text.secondary" }} />,
+    icon: <CashIcon fontSize="small" sx={{ color: "text.secondary" }} />,
   },
 ];
 
 // NOTE: This should be generated based on user data because "/1" represents "/:id" from routing
 //  strategy where ":id" is dynamic depending on current customer id
-
 
 export const CustomerLayout = (props) => {
   const { children } = props;
@@ -56,20 +52,6 @@ export const CustomerLayout = (props) => {
   // console.log(router.query)
   const [banDialogOpen, handleOpenBanDialog, handleCloseBanDialog] = useDialog();
   const [customerState, setCustomerState] = useState({ isLoading: true });
-  // const tabs = [
-  //   {
-  //     href: "/dashboard/customers/1",
-  //     label: "Summary",
-  //   },
-  //   {
-  //     href: `/dashboard/customers/${customerId}/orders`,
-  //     label: "Orders",
-  //   },
-  //   {
-  //     href: "/dashboard/customers/1/activity",
-  //     label: "Activity",
-  //   },
-  // ];
 
   const getCustomer = useCallback(async () => {
     setCustomerState(() => ({ isLoading: true }));
@@ -156,9 +138,7 @@ export const CustomerLayout = (props) => {
             }}
           >
             <ExclamationOutlinedIcon />
-            <Typography color="textSecondary"
-              sx={{ mt: 2 }}
-              variant="body2">
+            <Typography color="textSecondary" sx={{ mt: 2 }} variant="body2">
               {customerState.error}
             </Typography>
           </Box>
@@ -169,42 +149,16 @@ export const CustomerLayout = (props) => {
     return (
       <>
         <Box sx={{ py: 4 }}>
-          <Box sx={{ mb: 2 }}>
-            <NextLink href="/dashboard/customers"
-              passHref>
-              <Button color="primary"
-                component="a"
-                startIcon={<ArrowLeftIcon />}
-                variant="text">
+        <Box sx={{ mb: 2, my:2, display:'flex', justifyContent: 'space-between' }}>
+            <NextLink href="/dashboard/customers" passHref>
+              <Button color="primary" component="a" startIcon={<ArrowLeftIcon />} variant="text">
                 Customers
               </Button>
             </NextLink>
+
+            <ActionsMenu  actions={actions} />
           </Box>
-          <Box
-            sx={{
-              alignItems: "center",
-              display: "flex",
-            }}
-          >
-      
-            <Box sx={{ flexGrow: 1 }} />
-            <ActionsMenu actions={actions} />
-          </Box>
-       
-          {/* <Tabs
-            allowScrollButtonsMobile
-            sx={{ mt: 4 }}
-            value={router.isReady ? tabs.findIndex((tab) => tab.href === router.asPath) : false}
-            variant="scrollable"
-            onChange={handleTabsChange}
-            textColor="primary"
-          >
-            {tabs.map((option, index) => (
-              <Tab key={option.href}
-                label={option.label}
-                value={index} />
-            ))}
-          </Tabs> */}
+
           <Divider />
         </Box>
         {children}

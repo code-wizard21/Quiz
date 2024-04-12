@@ -71,7 +71,7 @@ const Invoices = () => {
   return (
     <>
       <Head>
-        <title>Invoice: List | Lobang Dashboard</title>
+        <title>Transactions: List | Lobang Dashboard</title>
       </Head>
       <Box
         sx={{

@@ -16,6 +16,8 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
+import ErrorIcon from "@mui/icons-material/Error";  
+import Chip from "@mui/material/Chip";
 import { Divider, Grid } from "@mui/material";
 import { customerApi } from "../../../../api/customer";
 import { useRouter } from "next/router";
@@ -32,6 +34,7 @@ import { useMounted } from "../../../../hooks/use-mounted";
 import { gtm } from "../../../../lib/gtm";
 import axiosClient from "../../../../api/axiosinstance";
 import moment from "moment";
+import DoneIcon from "@mui/icons-material/Done";  
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 const columns = [
   {
@@ -254,8 +257,21 @@ const CustomerOrders = () => {
                         {moment(order.trx_date).format("MMM dd, yyyy, hh:mm a")}
                       </TableCell>
                       <TableCell>
-                        {/* <Status  label={statusVariant.label} /> */}
-                        {/* ijijijij */}
+                      {order.status == "paid"||order.status == "succeeded" ? (
+                      <Chip
+                        label={order.status}
+                        color="success"
+                        icon={<DoneIcon />}
+                        variant="outlined"
+                      />
+                    ) : (
+                      <Chip
+                        label={order.status}
+                        color="error"
+                        icon={<ErrorIcon />}
+                        variant="outlined"
+                      />
+                    )}
                       </TableCell>
                       <TableCell>
                         <Typography color="inherit" variant="inherit">
