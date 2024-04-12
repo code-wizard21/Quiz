@@ -24,34 +24,6 @@ const whitelist =
 
 const app = express();
 
-
-
-if (config.env !== 'test') {
-  app.use(morgan.successHandler);
-  app.use(morgan.errorHandler);
-}
-
-// set security HTTP headers
-app.use(helmet());
-
-// parse json request body
-app.use(express.json());
-
-// parse urlencoded request body
-app.use(express.urlencoded({ extended: true }));
-
-// sanitize request data
-app.use(xss());
-app.use(mongoSanitize());
-
-// gzip compression
-app.use(compression());
-
-// enable cors
-app.use(cors());
-app.options('*', cors());
-const endpointSecret = "whsec_2i5UWISNpsLGklLVZGVsc2wVsTrHbAB7";
-
 app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
   const sig = request.headers['stripe-signature'];
  console.log('Web hook');
@@ -79,6 +51,34 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
   // Return a 200 response to acknowledge receipt of the event
   response.send();
 });
+
+if (config.env !== 'test') {
+  app.use(morgan.successHandler);
+  app.use(morgan.errorHandler);
+}
+
+// set security HTTP headers
+app.use(helmet());
+
+// parse json request body
+app.use(express.json());
+
+// parse urlencoded request body
+app.use(express.urlencoded({ extended: true }));
+
+// sanitize request data
+app.use(xss());
+app.use(mongoSanitize());
+
+// gzip compression
+app.use(compression());
+
+// enable cors
+app.use(cors());
+app.options('*', cors());
+const endpointSecret = "whsec_2i5UWISNpsLGklLVZGVsc2wVsTrHbAB7";
+
+
 
 // jwt authentication
 app.use(passport.initialize());
