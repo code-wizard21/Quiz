@@ -24,7 +24,7 @@ import { CustomerOrderMenu } from "../../../../components/dashboard/customer/cus
 import { ResourceError } from "../../../../components/resource-error";
 import { ResourceUnavailable } from "../../../../components/resource-unavailable";
 import { Scrollbar } from "../../../../components/scrollbar";
-import { CustomerLayout } from "../../../../components/dashboard/customer/customer-layout";
+import { CustomerLayout } from "../../../../components/dashboard/transactions/index";
 import { DashboardLayout } from "../../../../components/dashboard/dashboard-layout";
 import { useMounted } from "../../../../hooks/use-mounted";
 import { gtm } from "../../../../lib/gtm";
