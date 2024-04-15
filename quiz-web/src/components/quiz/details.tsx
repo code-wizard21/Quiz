@@ -30,7 +30,7 @@ import Leaderboard from '../leaderboard';
 import './style.css';
 
 
-const channelName = 'Quiz';
+const channelName = 'test';
 const appId = 'b75cc48b972d4ccc92edb71a1c75fb23';
 
 // now connect to socket server
@@ -436,7 +436,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }
 
     // emitted when user joins the live quiz
-    socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+    socket?.emit(SOCKET_EMITTERS .USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
 
     // generate random uid less than 1000
     const randomUid = Math.floor(Math.random() * 1000);
