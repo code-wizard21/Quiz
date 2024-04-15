@@ -8,6 +8,20 @@ const nanoidAlpha = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQR
 
 const nanoidAlphaNumeric = () => nanoidAlpha() + nanoidNumeric();
 
+function makeRandomUsername() {
+  var result           = '';
+  var length           = 6;
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( let i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+// Use the function
+
+
 /**
  * Create a user
  * @param {Object} userBody
@@ -18,13 +32,19 @@ const createUser = async (userBody) => {
   const newUserBody = { ...userBody };
 
   // check if username is taken
+  if (!newUserBody.username) {
+    newUserBody.name = await makeRandomUsername();
+    console.log(" newUserBody.username", newUserBody.name);
+  }
 
+  
   // check if email is taken
   if (await User.isEmailTaken(newUserBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
   newUserBody.username = newUserBody.name;
   // create the user
+  console.log("username#########",newUserBody);
   return User.create(newUserBody);
 };
 

@@ -53,20 +53,20 @@ const shadowRegister = catchAsync(async (req, res) => {
   req.body.role = 'shadow';
   // default password for shadow user is 'quizApp@123'
   req.body.password = 'quizApp@123';
-
+  console.log('user############');
   const user = await userService.createUser(req.body);
-
+  console.log('user',user);
   const agoraUserData = await agoraService.generateChatUserinAgora(user, req.body.password);
-
+  console.log("agoraUserData",agoraUserData);
   const userUpdateID = {
     agora: {
       uuid: agoraUserData.uuid,
       username: agoraUserData.username,
     },
   };
-
+  console.log("userUpdateID",userUpdateID);
   const updatedUser = await userService.updateUserById(user.id, userUpdateID);
-
+  console.log("updatedUser",updatedUser);
   const tokens = await tokenService.generateAuthTokens(updatedUser);
 
   res.status(httpStatus.CREATED).send({ user: updatedUser, tokens });
@@ -104,6 +104,7 @@ const userLogin = catchAsync(async (req, res) => {
 });
 
 const hostLogin = catchAsync(async (req, res) => {
+  console.log('req.body',req.body);
   const { email, password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(email, password, 'host');
   const tokens = await tokenService.generateAuthTokens(user);
