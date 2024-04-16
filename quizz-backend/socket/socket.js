@@ -22,10 +22,12 @@ const initaliseWebSocket = (server) => {
     io.on('connection', (socket) => {
       // create listener when host starts live stream on a quiz and creates a room and emits room code
       socket.on('host_live_start', async (data) => {
+        console.log('data',data);
         // get room_id from livestreams collection via quiz_id and host_id
         const { quiz_id, host_id } = data;
+        console.log('quiz_id',quiz_id, 'host_id',host_id);
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
-
+        console.log('liveStrean',liveStream);
         if (!liveStream) {
           console.log('live stream not found');
           return;

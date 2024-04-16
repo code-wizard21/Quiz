@@ -436,6 +436,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }
 
     // emitted when user joins the live quiz
+    console.log('user_id:',user?.id,' quiz_id', id);
     socket?.emit(SOCKET_EMITTERS .USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
 
     // generate random uid less than 1000
