@@ -28,7 +28,8 @@ import { ILoginResponse } from '../../types/user.type';
 import BackTab from '../back-tab';
 import Leaderboard from '../leaderboard';
 import './style.css';
-
+import { getTicket } from '../../service/user/user.service';
+import { reduceTicket } from '../../service/user/user.service';
 
 const channelName = 'test';
 const appId = 'b75cc48b972d4ccc92edb71a1c75fb23';
@@ -61,6 +62,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [remoteVideoTracks, setRemoteVideoTracks] = useState<any>(null);
   const [remoteAudioTracks, setRemoteAudioTracks] = useState<any>(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [ticket, setTicket] = useState(0);
+  const [credit, setCredit] = useState(0);
 
   // temp
   // const [socket, setSocket] = useState<Socket>(io(serverUrl, { autoConnect: true }).connect());
@@ -81,18 +84,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     role: 'audience',
   });
 
-  // client.on('user-left', (hostUser: IAgoraRTCRemoteUser) => {
-  //   console.log('user-left :: ', hostUser);
-  // });
 
-  // // check if host has stopped the stream
-  // client.on('user-published', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
-  //   console.log('user-published :: ', user, mediaType);
-  // });
-
-  // client.on('user-unpublished', (user: IAgoraRTCRemoteUser) => {
-  //   console.log('user-unpublished :: ', user);
-  // });
 
   useEffect(() => {
     // display to none for video element
@@ -280,18 +272,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       leaveChannel();
     });
 
-    // const socketClient = io(serverUrl);
 
-    // socketClient.connect();
-
-    // if (!socket?.connected) {
-    //   // retry socket connection
-    //   socket?.connect();
-    // }
-
-    // Add a listener for connect event
-
-    // socket?.on('connect', () => {
     console.log(socket);
 
     if (!socket?.connected) {
@@ -338,6 +319,25 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       // Disconnect from the socket
       socket?.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    if(user!=null){
+      if (user.role == 'user') {
+        const data = { id: user.id };
+  
+        getTicket(data)
+          .then((res) => {
+            setTicket(res.data.data.ticket); // Set tickets
+            setCredit(res.data.data.credit); // Set credits
+            console.log('findById', res); // Log Response
+          })
+          .catch((e) => console.log(e)); // Log any error occurred
+  
+        console.log('###############'); // Logging ###############
+      }
+    }
+   console.log('user',user);
   }, []);
 
   const toggleLeaderboardHandler = useCallback((status: boolean) => {
@@ -410,36 +410,38 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const joinChannel = async () => {
     // message.loading("Joining Quiz");
     showMessages('loading', 'Joining Quiz');
-
+    
     if (isJoined) {
       showMessages('error', 'You are already in the quiz');
       await leaveChannel();
     }
-
     if (!user) {
       // create shadow user and join
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
       dispatch(setUserData(shadowUser.data.user));
       localStorage.setItem('user', JSON.stringify(shadowUser.data));
+    } else{
+      if(user.role=='user'){
+          if(ticket<1){
+            showMessages('error', 'Please buy the ticket');
+            return;
+          }
+          else{
+            console.log("ticket######",ticket);
+            const data = { id: user.id };
+            reduceTicket(data);
+          }
+      }
     }
+    console.log('ticket',ticket);
+   
 
-    // if (!quiz?.is_live) {
-    //   showMessages('error', 'Quiz is not live');
-    //   return;
-    // }
-
-    // only join if socket is connected
     if (!socket?.connected) {
-      // retry socket connection
       socket?.connect();
       showMessages('error', 'Please wait while we connect you to the quiz');
     }
-
-    // emitted when user joins the live quiz
-    console.log('user_id:',user?.id,' quiz_id', id);
     socket?.emit(SOCKET_EMITTERS .USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
 
-    // generate random uid less than 1000
     const randomUid = Math.floor(Math.random() * 1000);
 
     const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
@@ -483,11 +485,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const toggleQuestion = (toDisplay: boolean = false) => {
     setViewQuestions(toDisplay);
-    // setLiveVideoHeight(!toDisplay ? 700 : 100);
-    // setLiveVideoWidth(!toDisplay ? 430 : 100);
+
     videoRef.current?.style.setProperty('display', 'block');
 
-    // set video style to left = 37%
     if (toDisplay) {
       videoRef.current?.style.setProperty('left', '39%');
       timerRef.current?.style.setProperty('left', '36.6%');
@@ -498,7 +498,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       timerRef.current?.style.setProperty('border-radius', '50px');
       videoRef.current?.style.setProperty('position', 'absolute');
     } else {
-      // remove left property
       videoRef.current?.style.setProperty('border-radius', '0px');
       videoRef.current?.style.removeProperty('left');
       videoRef.current?.style.removeProperty('top');

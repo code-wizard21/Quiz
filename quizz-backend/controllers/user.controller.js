@@ -4,6 +4,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { userService } = require('../services');
 const { success } = require('../utils/ApiResponse');
+const { User } = require('../models');
 
 const createUser = catchAsync(async (req, res) => {
     const user = await userService.createUser(req.body);
@@ -16,6 +17,37 @@ const getUsers = catchAsync(async (req, res) => {
     const result = await userService.queryUsers(filter, options);
     res.json(success(httpStatus.OK, 'Users retrieved successfully', result));
 });
+
+const getTicket = (async (req, res) => {
+    console.log('req.body',req.body);
+    try {
+        const result = await User.findById(req.body.id);
+        res.json(success(httpStatus.OK, 'Shadow users retrieved successfully', result));
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while querying shadow users.' });
+      }
+    
+  });
+  const reduceTicket = async (req, res) => {
+    console.log('req.body',req.body);
+    try {
+        let user = await User.findOne({ _id: req.body.id }); // First find the user to get the current ticket count
+        let updatedDoc = await User.updateOne(
+            { _id: req.body.id}, 
+            { 
+              $set: { 
+                ticket: user.ticket - 1, // Reduce the ticket count by 1
+              }
+            }
+         );
+        res.json(success(httpStatus.OK, 'Ticket reduced successfully', updatedDoc));
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while updating the ticket count.' });
+      }
+};
+  
 
 const getShadowUsers = (async (req, res) => {
     const filter = pick(req.query, []);
@@ -55,8 +87,10 @@ const deleteUser = catchAsync(async (req, res) => {
 
 module.exports = {
     createUser,
+    getTicket,
     getShadowUsers,
     getUsers,
+    reduceTicket,
     getUser,
     updateUser,
     deleteUser,

@@ -10,11 +10,32 @@ import { logout } from '../../service/auth/auth.service';
 import { ILoginResponse } from '../../types/user.type';
 import { TMiscellaneousSettings } from '../../types/miscellaneous.type';
 import { USER_ROLE } from '../../constants/enum';
+import { getTicket } from '../../service/user/user.service';
 
 const TopBar: React.FC = () => {
   const navigate = useNavigate();
+  const [ticket, setTicket] = useState(0);
+  const [credit, setCredit] = useState(0);
 
   const { user } = useSelector((state: RootState) => state.auth);
+  useEffect(() => {
+    if(user!=null){
+      if (user.role == 'user') {
+        const data = { id: user.id };
+  
+        getTicket(data)
+          .then((res) => {
+            setTicket(res.data.data.ticket); // Set tickets
+            setCredit(res.data.data.credit); // Set credits
+            console.log('findById', res); // Log Response
+          })
+          .catch((e) => console.log(e)); // Log any error occurred
+  
+        console.log('###############'); // Logging ###############
+      }
+    }
+   console.log('user',user);
+  }, []);
 
   const logoutUser = useCallback(async () => {
     const localUser = localStorage.getItem('user');
@@ -24,9 +45,9 @@ const TopBar: React.FC = () => {
     localStorage.clear();
     navigate('/');
   }, []);
-const goPayment=()=>{
-  navigate('/payment');
-}
+  const goPayment = () => {
+    navigate('/payment');
+  };
   const { topBarVisibility }: TMiscellaneousSettings = useSelector((state: RootState) => state.miscellaneous);
 
   const [isTopBarVisible, setIsTopBarVisible] = useState<boolean>(topBarVisibility);
@@ -36,7 +57,7 @@ const goPayment=()=>{
   }, [topBarVisibility]);
 
   const GuestTitle: React.ReactNode = (
-      <Row className='w-full m-auto justify-center text-2xl font-stud-regular mt-4'>Guest Mode</Row>
+    <Row className="w-full m-auto justify-center text-2xl font-stud-regular mt-4">Guest Mode</Row>
   );
 
   return (
@@ -52,11 +73,11 @@ const goPayment=()=>{
                 <div className="flex">
                   <a className="flex items-center bg-blue-600 px-3 rounded-full" onClick={goPayment}>
                     <img src={coinImg} alt="coin" />
-                    <div className="text-xl font-bold ml-2 text-white font-stud-regular">0</div>
+                    <div className="text-xl font-bold ml-2 text-white font-stud-regular">{credit}</div>
                   </a>
                   <a className="flex items-center ml-5 bg-blue-600 px-3 rounded-full">
                     <img src={ticketImg} alt="ticket" />
-                    <div className="text-xl font-bold ml-2 text-white font-stud-regular">0</div>
+                    <div className="text-xl font-bold ml-2 text-white font-stud-regular">{ticket}</div>
                   </a>
                 </div>
               </div>

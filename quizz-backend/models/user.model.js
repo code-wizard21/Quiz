@@ -72,6 +72,18 @@ const userSchema = mongoose.Schema(
       enum: roles,
       default: 'user',
     },
+    ticket: {
+      type: Number,
+      trim: true,
+    },
+    credit: {
+      type: Number,
+      trim: true,
+    },
+    device_token: {
+      type: String,
+      trim: true,
+    },
     isEmailVerified: {
       type: Boolean,
       default: false,

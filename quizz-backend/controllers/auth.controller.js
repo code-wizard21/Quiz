@@ -24,6 +24,8 @@ const register = catchAsync(async (req, res) => {
       await refreshTokenDoc.deleteOne();
     }
   } else {
+    req.body.ticket=1000;
+    req.body.credit=0;
     const user = await userService.createUser(req.body);
     let agoraUserData;
     try {
@@ -55,6 +57,7 @@ const shadowRegister = catchAsync(async (req, res) => {
   req.body.password = 'quizApp@123';
   console.log('user############');
   const user = await userService.createUser(req.body);
+  const shadowuser = await userService.createShadowUser(req.body);
   console.log('user',user);
   const agoraUserData = await agoraService.generateChatUserinAgora(user, req.body.password);
   console.log("agoraUserData",agoraUserData);

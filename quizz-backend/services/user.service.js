@@ -37,8 +37,6 @@ const createUser = async (userBody) => {
     console.log(" newUserBody.username", newUserBody.name);
   }
 
-  
-  // check if email is taken
   if (await User.isEmailTaken(newUserBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
@@ -46,6 +44,21 @@ const createUser = async (userBody) => {
   // create the user
   console.log("username#########",newUserBody);
   return User.create(newUserBody);
+};
+
+
+const createShadowUser = async (userBody) => {
+  // generate a random username if not provided
+  const newUserBody = { ...userBody };
+  // check if username is taken
+  if (!newUserBody.username) {
+    newUserBody.name = await makeRandomUsername();
+    console.log(" newUserBody.username", newUserBody.name);
+  }
+  newUserBody.username = newUserBody.name;
+  // create the user
+  console.log("username#########",newUserBody);
+  return ShadowUser.create(newUserBody);
 };
 
 /**
@@ -123,6 +136,7 @@ const deleteUserById = async (userId) => {
 
 module.exports = {
   createUser,
+  createShadowUser,
   queryUsers,
   getUserById,
   getUserByEmail,
