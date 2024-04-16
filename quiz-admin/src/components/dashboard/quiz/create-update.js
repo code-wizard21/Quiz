@@ -110,7 +110,6 @@ const QuizCreateUpdate = (props) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const getQuizById = useCallback(async () => {
-
     const result = await axiosClient.get("quizes/all?_id=" + quizId);
     const quiz = result?.data?.data?.results[0];
     formik.setValues({
@@ -120,8 +119,6 @@ const QuizCreateUpdate = (props) => {
         _id: quiz.host._id,
         value: quiz.host._id,
         label: quiz.host.name,
-      //   value: "Test",
-      // label: "Test",
       },
       category: {
         _id: quiz?.category?._id,
@@ -223,7 +220,26 @@ const QuizCreateUpdate = (props) => {
       });
   };
 
- 
+  const getAllCategories = useCallback(async () => {
+    axiosClient
+      .get("/categories")
+      .then((response) => {
+        if (response?.data?.data?.results) {
+          const data = response?.data?.data?.results?.map((item) => {
+            return {
+              value: item.id,
+              label: item.name,
+            };
+          });
+          setCategoryList(data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Something went wrong");
+      });
+  }, []);
+
   const checkAndUpdateRadioButton = (event, index, optionIndex) => {
     formik.setFieldValue(
       `questions[${index}].options`,
@@ -253,9 +269,7 @@ const QuizCreateUpdate = (props) => {
               value: item.id,
               label: item.name,
             };
-           
           });
-
           setHostList(data);
         }
       })
@@ -263,27 +277,7 @@ const QuizCreateUpdate = (props) => {
         toast.error("Something went wrong");
       });
   };
-  const getAllCategories = useCallback(async () => {
-    axiosClient
-      .get("/categories")
-      .then((response) => {
-       
-        if (response?.data?.data?.results) {
-          const data = response?.data?.data?.results?.map((item) => {
-            return {
-              value: item.id,
-              label: item.name,
-            };
-          });
 
-          setCategoryList(data);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error("Something went wrong");
-      });
-  }, []);
   useEffect(async () => {
     try {
       getAllCategories();
@@ -642,14 +636,6 @@ const QuizCreateUpdate = (props) => {
                 disabled={isProcessing}
               >
                 {{ quizId } ? "Update" : "Create"}
-              </Button>
-              <Button
-                color="secondary"
-                variant="contained"
-                onClick={() => router.push('/dashboard/quizzes/')}
-               
-              >
-                Cancel
               </Button>
             </CardActions>
           </Card>

@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const mongoose = require('mongoose');
+const {  LiveStream  } = require('../models');
 const catchAsync = require('../utils/catchAsync');
 const { quizService } = require('../services');
 const pick = require('../utils/pick');
@@ -85,13 +86,24 @@ const getAllQuizesWithDetails = catchAsync(async (req, res) => {
 });
 
 const updateQuiz = catchAsync(async (req, res) => {
+  console.log('req.params.quiz_id, req.body',req.params.quiz_id, req.body);
   const quiz = await quizService.updateQuizById(req.params.quiz_id, req.body);
+  let updatedDoc = await LiveStream.updateOne(
+    { quiz: req.params.quiz_id }, // Condition to match the documents you want to update.
+    { 
+      $set: { 
+        host: req.body.host,
+      }
+    }
+ );
+  console.log('updatedDoc',updatedDoc);
   res.json(success(httpStatus.OK, 'Quiz updated successfully', quiz));
 });
 
 const getQuizesOverview = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['paid', 'free']);
   const result = await quizService.getQuizesOverview(filter);
+  
   res.json(success(httpStatus.OK, 'Quizes overview retrieved successfully', result));
 });
 
