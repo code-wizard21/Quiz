@@ -43,7 +43,7 @@ const QuizOverview: React.FC<{}> = (): React.ReactElement => {
         })}
         {(!user || user?.role === USER_ROLE.SHADOW) && (
           <div>
-            <Link to="/signup">
+            <Link to="/login">
               <Button
                 type="primary"
                 className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full sticky"

@@ -148,7 +148,6 @@ export const DashboardSidebar = (props) => {
             p: 2,
           }}
         >
-       
           <List disablePadding>
             <li>
               <NextLink href='/dashboard/reports' passHref>
@@ -393,9 +392,7 @@ export const DashboardSidebar = (props) => {
               </NextLink>
             </li>
           </List>
-          <Box sx={{ flexGrow: 1 }} />
 
-          <Divider />
         </Box>
       </Scrollbar>
     </Drawer>

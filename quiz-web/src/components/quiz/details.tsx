@@ -638,7 +638,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               style={{ backgroundColor: '#090B40' }}
               className="w-full flex max-w-430 pb-3 pt-4 rounded-t-2xl z-50 fixed bottom-0"
             >
-              <Link to="/signup" className="w-full px-5">
+              <Link to="/login" className="w-full px-5">
                 <Button type="primary" className="w-full text-black h-12 rounded-3xl">
                   Join Community
                 </Button>

@@ -15,22 +15,22 @@ const getUsers = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
   const options = pick(req.query, ['sort_by', 'limit', 'page']);
   const users = await User.paginate(filter, options);
-  User.find({ role: 'user' })
+  User.find({ role: 'user' }).sort({ createdAt: -1 })
     .then((result) => {
-       res.json(success(httpStatus.OK, 'Users retrieved successfully', result));
+      res.json(success(httpStatus.OK, 'Users retrieved successfully', result));
     })
     .catch((err) => {
       console.log(err);
     });
 
   // const result = await userService.queryUsers(filter, options);
-
 });
 
 const getTicket = async (req, res) => {
   console.log('req.body', req.body);
   try {
     const result = await User.findById(req.body.id);
+    console.log('result',result)
     res.json(success(httpStatus.OK, 'Shadow users retrieved successfully', result));
   } catch (error) {
     console.error(error);

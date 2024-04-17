@@ -5,14 +5,38 @@ import frame from '../../assets/figma/Frame.svg';
 import vector from '../../assets/figma/Vector1.svg';
 import background from '../../assets/figma/Graphic.svg';
 import { useNavigate } from 'react-router-dom';
+import { getTicket } from '../../service/user/user.service';
 import { useSelector } from 'react-redux';
-
+import { useCallback, useEffect, useState } from 'react';
 const Payment=()=>{
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  const [ticket, setTicket] = useState(0);
+  const [credit, setCredit] = useState(0);
+
+  useEffect(() => {
+    if(user!=null){
+      if (user.role == 'user') {
+        const data = { id: user.id };
+  
+        getTicket(data)
+          .then((res) => {
+            setTicket(res.data.data.ticket); // Set tickets
+            setCredit(res.data.data.credit); // Set credits
+            console.log('findById', res); // Log Response
+          })
+          .catch((e) => console.log(e)); // Log any error occurred
+  
+        console.log('###############'); // Logging ###############
+      }
+    }
+
+  }, []);
   const handleChange = () => {
     navigate('/selectmode');
   };
-  const { user } = useSelector((state) => state.auth);
+
+  
   return (
     <>
       <div
@@ -28,7 +52,7 @@ const Payment=()=>{
         <div className="flex flex-col mt-2">
           <div className="mt-4 flex flex-row justify-center p-4">
             <img src={frame} alt="frame" />
-            <div className="text-customYellowBorder ml-2 text-5xl font-bold text-center studregular">$8402</div>
+            <div className="text-customYellowBorder ml-2 text-5xl font-bold text-center studregular">$0</div>
           </div>
 
           <div className="studregular text-center text-sm text-2xl font-bold  text-white">
@@ -56,11 +80,11 @@ const Payment=()=>{
                       style={{ position: 'absolute', left: '5px', top: '8px' }}
                       className="border-4 rounded-full"
                     />
-                    <div className="studregular ml-1 text-white font-bold text-2xl">10</div>
+                    <div className="studregular ml-1 text-white font-bold text-2xl">{credit}</div>
                   </div>
                   <div className="flex justify-center items-center ml-3">
                     <img src={group_red} alt="user2" className="border-4  rounded-full" />
-                    <div className="studregular ml-1  text-white font-bold text-2xl">10</div>
+                    <div className="studregular ml-1  text-white font-bold text-2xl">{ticket}</div>
                   </div>
                 </div>
               </>

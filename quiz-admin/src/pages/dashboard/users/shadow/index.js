@@ -132,7 +132,7 @@ const Customers = () => {
   return (
     <>
       <Head>
-        <title>Users: List | Quiz Dashboard</title>
+        <title>Guests: List | Quiz Dashboard</title>
       </Head>
       <Box sx={{ flexGrow: 1 }}>
         <Container
@@ -151,7 +151,7 @@ const Customers = () => {
               }}
             >
               <Typography color="textPrimary" variant="h4">
-                Users{" "}
+                Guests{" "}
                 {customersState.data?.customersCount && `(${customersState.data?.customersCount})`}
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
