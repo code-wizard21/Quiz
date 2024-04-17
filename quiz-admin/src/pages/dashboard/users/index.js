@@ -33,10 +33,11 @@ const Customers = () => {
 
     try {
       const result = await getUsers(controller.page + 1, 10, "desc", "createdAt:desc");
+      console.log("result",result); 
       if (isMounted()) {
         setCustomersState(() => ({
           isLoading: false,
-          data: { customers: result.results, customersCount: result.total_results },
+          data: { customers: result, customersCount: result.total_results },
         }));
       }
     } catch (err) {
