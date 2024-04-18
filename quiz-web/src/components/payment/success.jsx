@@ -1,13 +1,27 @@
-
-import user1 from '../../assets/user/user2.svg';
 import background from '../../assets/figma/Graphic.svg';
-
-import React from 'react';
+import sideMenuSvg from '../../assets/side-menu.svg';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { getTicket } from '../../service/user/user.service';
 
 const BuyTicket = () => {
+  const { user } = useSelector((state) => state.auth);
+  const [imageUrl, setImageUrl] = useState(sideMenuSvg);
   const navigate = useNavigate();
+  useEffect(() => {
+    if (user != null) {
+      if (user.role == 'user') {
+        const data = { id: user.id };
 
+        getTicket(data)
+          .then((res) => {
+            setImageUrl(res.data.data.avatar);
+          })
+          .catch((e) => console.log(e)); // Log any error occurred
+      }
+    }
+  }, []);
 
   return (
     <>
@@ -17,7 +31,7 @@ const BuyTicket = () => {
       >
         <div className="flex flex-col mb-4">
           <div className="mt-8 flex justify-center z-20">
-            <img src={user1} alt="user2" className=" border-4  rounded-full" width={90} height={90} />
+            <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={90} height={90} />
           </div>
         </div>
         <div className="modal-box bg-white mt-12 ml-4 mr-4 border-4 rounded-lg pt-4">

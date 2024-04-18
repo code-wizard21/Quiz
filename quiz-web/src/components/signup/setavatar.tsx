@@ -1,6 +1,5 @@
 import { Button, Upload, Col, Row, Avatar } from 'antd';
 import { setAvatar } from '../../service/user/user.service';
-
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import sideMenuSvg from '../../assets/side-menu.svg';
@@ -8,7 +7,7 @@ import { useSelector } from 'react-redux';
 import type { UploadProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import {UploadURL} from '../../../env.config';
-
+import { getTicket } from '../../service/user/user.service';
 interface User {
   agora: {
     uuid: string;
@@ -43,7 +42,12 @@ const SingUp: React.FC = () => {
     console.log('user', user);
     if (user != null) {
       if (user.role == 'user') {
-        console.log('###############'); // Logging ###############
+        const data = { id: user.id };
+        getTicket(data)
+          .then((res) => {
+            setImageUrl(res.data.data.avatar);
+          })
+          .catch((e) => console.log(e)); 
       } else {
         navigate('/login');
         toast.error('Please login as User', {

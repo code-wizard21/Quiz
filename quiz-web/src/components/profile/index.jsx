@@ -80,8 +80,9 @@ const Payment = () => {
         <div className="rounded-bl-3xl rounded-br-3xl bg-cover bg-center bg-no-repeat  bg-profile_gray h-[50vh]">
           <div className="flex flex-col">
             <div className="mt-12 flex justify-center z-20">
-              
+              <Link to='/setavatar'>
               <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={90} height={90} />
+              </Link>
             </div>
           </div>
 

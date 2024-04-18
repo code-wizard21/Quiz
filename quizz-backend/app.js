@@ -61,7 +61,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
         console.log(err);
       });
 
-    let user = await User.findOne({ _id: request.body.id });  // Use request instead of req
+    let user = await User.findOne({ email: info.metadata.email });  // Use request instead of req
     let updatedDoc = await User.updateOne(
       { _id: request.body.id },
       {
