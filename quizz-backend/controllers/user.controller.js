@@ -62,7 +62,7 @@ const setAvatar = async (req, res) => {
 
 const reduceTicket = async (req, res) => {
   try {
-    let user = await User.findOne({ _id: req.body.id }); // First find the user to get the current ticket count
+    let user = await User.findOne({ _id: req.body.id }); 
     let updatedDoc = await User.updateOne(
       { _id: req.body.id },
       {
