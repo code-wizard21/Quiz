@@ -17,6 +17,9 @@ export const createShadowUser = async (): Promise<AxiosResponse<ILoginResponse>>
 export const getTicket = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('users/ticket/getall', userData);
 };
+export const setAvatar = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
+  return post('users/setavatar', userData);
+};
 export const reduceTicket = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('users/ticket/reduceticket', userData);
 };

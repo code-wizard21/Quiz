@@ -8,6 +8,7 @@ import { setUserData } from '../../redux/actions/auth.action';
 import { login } from '../../service/auth/auth.service';
 import { ILoginResponse, IUser } from '../../types/user.type';
 import { toast } from 'react-toastify';
+import { Divider } from "antd";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -101,7 +102,7 @@ const Login: React.FC = () => {
           <Checkbox className="text-white">Remember me</Checkbox>
         </Form.Item>
 
-        <Form.Item className="pt-24">
+        <Form.Item className="pt-12">
           <Button
             type="primary"
             htmlType="submit"
@@ -117,6 +118,19 @@ const Login: React.FC = () => {
           </div>
         </Form.Item>
       </Form>
+      <Divider style={{ borderColor: 'white', color: 'white' }}>Or Create an account</Divider>
+      <Link to="/signup">
+        <Button
+          className="quiz-action-btn h-12 mt-6 shadow-none font-bold rounded-3xl w-full"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            color: '#FFFFFF',
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+          }}
+        >
+          Create account
+        </Button>
+      </Link>
     </div>
   );
 };

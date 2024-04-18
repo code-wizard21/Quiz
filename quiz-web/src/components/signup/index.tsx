@@ -25,13 +25,12 @@ const SingUp: React.FC = () => {
   const onFinish = useCallback(
     (values: TCreateUser) => {
       if (!termsAgreed) {
-       
-       toast.error('Please agree to the terms and conditions',   {
-            autoClose: false,
-          });
+        toast.error('Please agree to the terms and conditions', {
+          autoClose: false,
+        });
         return;
       }
-      
+
       setIsCheckingCred(true);
 
       // check if users local storage already has a shadow account details
@@ -41,7 +40,7 @@ const SingUp: React.FC = () => {
         values.shadow_user_id = user?.user?.id;
         values.refresh_token = user?.tokens?.refresh?.token;
       }
-      console.log('valuse',values);
+      console.log('valuse', values);
       register(values)
         .then((res: AxiosResponse<ILoginResponse>) => {
           toast.success('Register was successful', {
@@ -49,10 +48,10 @@ const SingUp: React.FC = () => {
           });
           localStorage.setItem('user', JSON.stringify(res.data));
           dispatch(setUserData(res.data.user));
-          navigate('/dashboard');
+          navigate('/setavatar');
         })
         .catch((err) => {
-          toast.error(err.message,   {
+          toast.error(err.message, {
             autoClose: false,
           });
         })
@@ -105,7 +104,7 @@ const SingUp: React.FC = () => {
             {
               message: `${t('error.cred_error')}`,
               validateTrigger: 'onSubmit',
-              validator: async (_) => {
+              validator: async () => {
                 if (isCorrect) {
                   return Promise.resolve();
                 } else {
@@ -133,6 +132,18 @@ const SingUp: React.FC = () => {
           </Button>
         </Form.Item>
       </Form>
+      <Link to="/login">
+        <Button
+          className="quiz-action-btn h-12 mt-6 shadow-none font-bold rounded-3xl w-full"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            color: '#FFFFFF',
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+          }}
+        >
+          Login
+        </Button>
+      </Link>
     </Row>
   );
 };

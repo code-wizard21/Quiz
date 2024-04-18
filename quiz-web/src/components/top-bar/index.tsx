@@ -1,13 +1,11 @@
-import { Col, Divider, Row } from 'antd';
-import { useCallback, useEffect, useState } from 'react';
+import { Avatar, Col, Divider, Row } from 'antd';
+import {  useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import coinImg from '../../assets/coin.svg';
 import sideMenuSvg from '../../assets/side-menu.svg';
 import ticketImg from '../../assets/ticket.svg';
 import { RootState } from '../../redux/reducers';
-import { logout } from '../../service/auth/auth.service';
-import { ILoginResponse } from '../../types/user.type';
 import { TMiscellaneousSettings } from '../../types/miscellaneous.type';
 import { USER_ROLE } from '../../constants/enum';
 import { getTicket } from '../../service/user/user.service';
@@ -16,8 +14,9 @@ const TopBar: React.FC = () => {
   const navigate = useNavigate();
   const [ticket, setTicket] = useState(0);
   const [credit, setCredit] = useState(0);
-
+  const [imageUrl, setImageUrl] = useState(sideMenuSvg);
   const { user } = useSelector((state: RootState) => state.auth);
+ 
   useEffect(() => {
     if(user!=null){
       if (user.role == 'user') {
@@ -25,28 +24,23 @@ const TopBar: React.FC = () => {
   
         getTicket(data)
           .then((res) => {
-            setTicket(res.data.data.ticket); // Set tickets
-            setCredit(res.data.data.credit); // Set credits
-            console.log('findById', res); // Log Response
+            setImageUrl(res.data.data.avatar);
+            setTicket(res.data.data.ticket); 
+            setCredit(res.data.data.credit);
           })
-          .catch((e) => console.log(e)); // Log any error occurred
+          .catch((e) => console.log(e)); 
   
-        console.log('###############'); // Logging ###############
+        console.log('###############'); 
       }
     }
    console.log('user',user);
   }, []);
 
-  const logoutUser = useCallback(async () => {
-    const localUser = localStorage.getItem('user');
-    const paredUserData: ILoginResponse = JSON.parse(localUser || '{}');
-    const refreshToken = paredUserData?.tokens?.refresh?.token || '';
-    await logout(refreshToken);
-    localStorage.clear();
-    navigate('/');
-  }, []);
   const goPayment = () => {
-    navigate('/payment');
+    navigate('/selectmode');
+  };
+  const goProfile = () => {
+    navigate('/profile');
   };
   const { topBarVisibility }: TMiscellaneousSettings = useSelector((state: RootState) => state.miscellaneous);
 
@@ -67,8 +61,8 @@ const TopBar: React.FC = () => {
           {user && user?.role !== USER_ROLE.SHADOW ? (
             <Col span={24}>
               <div className="flex justify-between mx-4 mt-4">
-                <a className="items-center" onClick={logoutUser}>
-                  <img src={sideMenuSvg} alt="side-menu" />
+                <a className="items-center" onClick={goProfile}>
+                <Avatar src={imageUrl} alt="side-menu" size={40} />
                 </a>
                 <div className="flex">
                   <a className="flex items-center bg-blue-600 px-3 rounded-full" onClick={goPayment}>

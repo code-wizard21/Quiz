@@ -8,6 +8,8 @@ const router = express.Router();
 router.get('/shadow-users', userController.getShadowUsers);
 router.post('/ticket/getall', userController.getTicket);
 router.post('/ticket/reduceticket', userController.reduceTicket);
+router.post('/setavatar', userController.setAvatar);
+
 
 
 router

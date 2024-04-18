@@ -6,10 +6,12 @@ const { tokenTypes } = require('../config/tokens');
 
 const register = catchAsync(async (req, res) => {
   let updatedUser;
-
+  req.body.ticket=1000;
+  req.body.credit=0;
   if (req.body.shadow_user_id) {
     const shadowUser = await userService.getUserById(req.body.shadow_user_id);
     if (shadowUser) {
+
       delete req.body.shadow_user_id;
       const userUpdateBody = { ...req.body, role: 'user' };
 
@@ -24,8 +26,6 @@ const register = catchAsync(async (req, res) => {
       await refreshTokenDoc.deleteOne();
     }
   } else {
-    req.body.ticket=1000;
-    req.body.credit=0;
     const user = await userService.createUser(req.body);
     let agoraUserData;
     try {

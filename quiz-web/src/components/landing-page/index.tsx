@@ -13,20 +13,22 @@ const LandingPage: React.FC = () => {
           Test your wits with our daily live quiz shows and win cash! Free quizzes of a variety of themes updated daily
           for all you brainiacs out there.
         </p>
-        <Link to="/signup">
+        <Link to="/login">
           <Button
             type="primary"
             className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full"
           >
-            Sign up
+            Log in / Sign up
           </Button>
         </Link>
-        <div className="mt-auto text-center text-base">
-          <span className="text-gray-300">Already have an account? </span>
-          <Link to="/login" className="text-white">
-            Log in.
-          </Link>
-        </div>
+        <Link to="/dashboard">
+          <Button
+            className="quiz-action-btn h-12 mt-6 shadow-none font-bold rounded-3xl w-full"
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: '#FFFFFF', borderColor: 'rgba(255, 255, 255, 0.2)' }}
+          >
+            Continue as Guest
+          </Button>
+        </Link>
       </Col>
     </Row>
   );

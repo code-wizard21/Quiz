@@ -15,7 +15,8 @@ import PageNotFound from './pages/page-not-found/page-not-found';
 import { RootState } from './redux/reducers';
 import { TGeneralSettings } from './types/settings.type';
 import PaymentLayout from './components/payment/layout';
-
+import SelectAvatar from './components/signup/setavatar';
+import Profile from './components/profile';
 
 const load = (Component: any) => (props: any) =>
   (
@@ -55,6 +56,7 @@ const Router: React.FC<{}> = (): React.ReactElement => {
         <Route element={<AuthLayout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SingUp />} />
+          <Route path="/setavatar" element={<SelectAvatar />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forget-password" element={<ForgetPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
@@ -63,6 +65,8 @@ const Router: React.FC<{}> = (): React.ReactElement => {
           <Route path="/payment" element={<QuizPayment />} />
           <Route path="/selectmode" element={<SelectPayment />} />
           <Route path="/success" element={<Success />} />
+          <Route path="/profile" element={<Profile />} />
+          
         </Route>
 
         <Route path="*" element={<PageNotFound />} />

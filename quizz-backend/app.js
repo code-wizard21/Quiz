@@ -15,21 +15,20 @@ const morgan = require('./config/morgan');
 const { jwtStrategy } = require('./config/passport');
 const { authLimiter } = require('./middlewares/common');
 const routes = require('./routes/v1');
+const multer  = require('multer');
+const { User } = require('./models');
+
+
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 
-// const whitelist = ['http://localhost:3001', 'https://quiz-web-five.vercel.app'];
-const whitelist =
-  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'local'
-    ? ['http://localhost:3001', 'https://quiz-web-five.vercel.app', 'https://www.quizmobb.com']
-    : ['https://quiz-web-five.vercel.app', 'https://www.quizmobb.com'];
 
 const endpointSecret = 'whsec_hm0gPh68j8RunfG1DEbrF2RzSKqDo0Dm';
 
 const app = express();
 const bodyParser = require('body-parser');
 
-app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (request, response) => {
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (request, response) => {  // Add async here
   const sig = request.headers['stripe-signature'];
   let event;
 
@@ -40,41 +39,56 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (request, res
     response.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
+  
   const info = event.data.object;
-  let ticketCount = 0;
-  
-  const ticketMapping = {
-    300: 1,
-    500: 2,
-    2200: 10,
-    3600: 20,
-  };
-  
-  ticketCount = ticketMapping[info.amount_total] || 0;
-  if (event.type == 'checkout.session.completed') {
 
+  if (event.type == 'checkout.session.completed') {
     const newData = new Payment({
       amount: info.amount_total,
       status: info.payment_status,
       item: info.metadata.ticket,
       user: info.metadata.user,
       email: info.metadata.email,
-      trx_date:new Date(),
+      trx_date: new Date(),
     });
-    newData
+
+    await newData
       .save()
       .then((res) => {
-        console.log('res',res);
+        console.log('res', res);
       })
       .catch((err) => {
         console.log(err);
       });
-    console.log('checkoutSessionCompleted', checkoutSessionCompleted);
-  }
 
-  // Return a 200 response to acknowledge receipt of the event
-  response.send();
+    let user = await User.findOne({ _id: request.body.id });  // Use request instead of req
+    let updatedDoc = await User.updateOne(
+      { _id: request.body.id },
+      {
+        $set: {
+          ticket: user.ticket + info.metadata.ticket,
+        },
+      }
+    );
+
+    console.log('checkoutSessionCompleted', checkoutSessionCompleted);
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.json(success(httpStatus.OK, 'Buy Ticket was successfully', updatedDoc));  // Use response instead of res
+  }
 });
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'upload/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '.jpg'); // Add '.jpg' here
+  }
+})
+
+const upload = multer({ storage: storage });
+
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -84,7 +98,6 @@ if (config.env !== 'test') {
 // set security HTTP headers
 app.use(helmet());
 
-// parse json request body
 app.use(express.json());
 
 // parse urlencoded request body
@@ -96,10 +109,18 @@ app.use(mongoSanitize());
 
 // gzip compression
 app.use(compression());
-
+app.use('/upload', express.static('upload'));
 // enable cors
 app.use(cors());
 app.options('*', cors());
+
+app.post('/upload', upload.single('avatar'), (req, res, next) => {
+  console.log("req",req.file);
+  res.status(200).json({ message: 'Image uploaded successfully',filePath:req.file.filename });
+}, (error, req, res, next) => {
+  console.log('error.message',error.message);
+  res.status(400).send({ error: error.message });
+});
 
 // jwt authentication
 app.use(passport.initialize());

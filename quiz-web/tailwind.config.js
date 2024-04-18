@@ -11,6 +11,7 @@ export default {
         customYellowBg: '#FFF8CC',
         customBuleBg: '#1A3EEC',
         custom_gray: '#EFEFEF',
+        profile_gray:'#F3ECFF'
       },
       fontFamily: {
         studregular: ['Circular Std'],

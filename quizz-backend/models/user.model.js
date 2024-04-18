@@ -47,6 +47,10 @@ const userSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    avatar: {
+      type: String,
+      trim: true,
+    },
     username: {
       type: String,
       unique: true,
@@ -89,6 +93,7 @@ const userSchema = mongoose.Schema(
       default: false,
     },
   },
+  
   {
     timestamps: true,
   }

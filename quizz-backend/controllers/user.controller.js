@@ -37,8 +37,30 @@ const getTicket = async (req, res) => {
     res.status(500).json({ message: 'An error occurred while querying shadow users.' });
   }
 };
-const reduceTicket = async (req, res) => {
+
+
+
+const setAvatar = async (req, res) => {
   console.log('req.body', req.body);
+  try {
+    let user = await User.findOne({ email: req.body.email }); // First find the user to get the current ticket count
+   console.log('user',user);
+    let updatedDoc = await User.updateOne(
+      { email: req.body.email },
+      {
+        $set: {
+          avatar: req.body.avatar, // Reduce the ticket count by 1
+        },
+      }
+    );
+    res.json(success(httpStatus.OK, 'Ticket reduced successfully', updatedDoc));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while updating the ticket count.' });
+  }
+};
+
+const reduceTicket = async (req, res) => {
   try {
     let user = await User.findOne({ _id: req.body.id }); // First find the user to get the current ticket count
     let updatedDoc = await User.updateOne(
@@ -59,16 +81,11 @@ const reduceTicket = async (req, res) => {
 const getShadowUsers = async (req, res) => {
   const filter = pick(req.query, []);
   const options = pick(req.query, ['sort_by', 'limit', 'page']);
-  console.log('#########getShadowUsersgetShadowUsers');
   try {
     const result = await userService.queryShadowUsers(filter, options);
     res.json(success(httpStatus.OK, 'Shadow users retrieved successfully', result));
-    // Handle result here, such as send response or further processing
   } catch (error) {
-    // Log error details, for debugging
     console.error(error);
-
-    // If you are inside a request handler, send a response here
     res.status(500).json({ message: 'An error occurred while querying shadow users.' });
   }
 };
@@ -92,6 +109,7 @@ const deleteUser = catchAsync(async (req, res) => {
 
 module.exports = {
   createUser,
+  setAvatar,
   getTicket,
   getShadowUsers,
   getUsers,

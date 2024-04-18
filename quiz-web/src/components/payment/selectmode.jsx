@@ -1,17 +1,34 @@
-import user1 from '../../assets/user/user2.svg';
+import { useEffect, useState } from 'react';
 import group_red from '../../assets/figma/Group_red.svg';
 import background from '../../assets/figma/Graphic.svg';
 import vector from '../../assets/figma/Vector.svg';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import { checkOutSession } from '../../service/payment/payment.service';
+import sideMenuSvg from '../../assets/side-menu.svg';
+import { useSelector } from 'react-redux';
+import { getTicket } from '../../service/user/user.service';
 
 const SelectMode = () => {
   const navigate = useNavigate();
-
   const [value, setValue] = useState(1);
+  const { user } = useSelector((state) => state.auth);
+  const [imageUrl, setImageUrl] = useState(sideMenuSvg);
 
-  
+  useEffect(() => {
+    if (user != null) {
+      if (user.role == 'user') {
+        const data = { id: user.id };
+
+        getTicket(data)
+          .then((res) => {
+            setImageUrl(res.data.data.avatar);
+          })
+          .catch((e) => console.log(e)); // Log any error occurred
+
+        console.log('###############'); // Logging ###############
+      }
+    }
+  }, []);
   const handleClick = () => {
     let amount, ticket;
     switch (value) {
@@ -56,10 +73,13 @@ const SelectMode = () => {
   };
   return (
     <>
-      <div style={{ backgroundImage: `url(${background})` }} className="bg-cover bg-center bg-no-repeat">
+      <div
+        style={{ backgroundImage: `url(${background})` }}
+        className="rounded-2xl bg-cover bg-center bg-no-repeat h-screen"
+      >
         <div className="flex flex-col mb-1">
           <div className="mt-4 flex justify-center z-20">
-            <img src={user1} alt="user2" className="border-4  rounded-full" width={90} height={90} />
+            <img src={imageUrl} alt="user2" className="border-4  rounded-full" width={90} height={90} />
           </div>
         </div>
         <div className="pt-2">

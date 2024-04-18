@@ -1,4 +1,3 @@
-import user1 from '../../assets/user/user2.svg';
 import group_red from '../../assets/figma/Group_red.svg';
 import group_yel from '../../assets/figma/Ellipse1.svg';
 import frame from '../../assets/figma/Frame.svg';
@@ -7,23 +6,25 @@ import background from '../../assets/figma/Graphic.svg';
 import { useNavigate } from 'react-router-dom';
 import { getTicket } from '../../service/user/user.service';
 import { useSelector } from 'react-redux';
-import { useCallback, useEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
+import sideMenuSvg from '../../assets/side-menu.svg';
+
 const Payment=()=>{
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [ticket, setTicket] = useState(0);
   const [credit, setCredit] = useState(0);
-
+  const [imageUrl, setImageUrl] = useState(sideMenuSvg);
+  
   useEffect(() => {
     if(user!=null){
       if (user.role == 'user') {
         const data = { id: user.id };
-  
         getTicket(data)
           .then((res) => {
-            setTicket(res.data.data.ticket); // Set tickets
-            setCredit(res.data.data.credit); // Set credits
-            console.log('findById', res); // Log Response
+            setTicket(res.data.data.ticket);
+            setCredit(res.data.data.credit); 
+            setImageUrl(res.data.data.avatar);
           })
           .catch((e) => console.log(e)); // Log any error occurred
   
@@ -32,6 +33,7 @@ const Payment=()=>{
     }
 
   }, []);
+
   const handleChange = () => {
     navigate('/selectmode');
   };
@@ -45,7 +47,7 @@ const Payment=()=>{
       >
         <div className="flex flex-col">
           <div className="mt-6 flex justify-center z-20">
-            <img src={user1} alt="user2" className=" border-4  rounded-full" width={90} height={90} />
+            <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={90} height={90} />
           </div>
         </div>
 
