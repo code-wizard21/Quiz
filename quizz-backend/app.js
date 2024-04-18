@@ -61,7 +61,8 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
         console.log(err);
       });
 
-    let user = await User.findOne({ email: info.metadata.email });  // Use request instead of req
+    let user = await User.findOne({ email: info.metadata.email }); 
+    console.log('user',user);
     let updatedDoc = await User.updateOne(
       { _id: request.body.id },
       {
@@ -70,8 +71,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
         },
       }
     );
-
-    console.log('checkoutSessionCompleted', checkoutSessionCompleted);
+    console.log('updatedDoc',updatedDoc);
 
     // Return a 200 response to acknowledge receipt of the event
     response.json(success(httpStatus.OK, 'Buy Ticket was successfully', updatedDoc));  // Use response instead of res
