@@ -42,14 +42,14 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
   if (event.type == 'checkout.session.completed') {
     const newData = new Payment({
       amount: info.amount_total,
-      credit:info.amount.credit,
+      credit:info.metadata.credit,
       status: info.payment_status,
       ticket: info.metadata.ticket,
       user: info.metadata.user,
       email: info.metadata.email,
       trx_date: new Date(),
     });
-
+    console.log('newData',newData);
     await newData
       .save()
       .then((res) => {
