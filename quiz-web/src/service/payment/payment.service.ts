@@ -7,12 +7,14 @@ import { post } from '../../wrappers/request';
  * @param {TCreateUser} userData
  * @returns {Promise<AxiosResponse>}
  */
-export const checkOutSession = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
-  return post('payment/create-checkout-session', userData);
+export const checkOutBuyticketSession = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
+  return post('payment/create-checkout-ticket', userData);
 };
-export const buyticket = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
-  return post('payment/buyticket', userData);
+
+export const checkOutBuyCreditSession = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
+  return post('payment/create-checkout-credit', userData);
 };
+
 
 export const createShadowUser = async (): Promise<AxiosResponse<ILoginResponse>> => {
   return post('auth/shadow/register', {});

@@ -84,8 +84,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     role: 'audience',
   });
 
-
-
   useEffect(() => {
     // display to none for video element
     videoRef.current?.style.setProperty('display', 'none');
@@ -272,7 +270,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       leaveChannel();
     });
 
-
     console.log(socket);
 
     if (!socket?.connected) {
@@ -322,10 +319,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    if(user!=null){
+    if (user != null) {
       if (user.role == 'user') {
         const data = { id: user.id };
-  
+
         getTicket(data)
           .then((res) => {
             setTicket(res.data.data.ticket); // Set tickets
@@ -333,11 +330,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             console.log('findById', res); // Log Response
           })
           .catch((e) => console.log(e)); // Log any error occurred
-  
+
         console.log('###############'); // Logging ###############
       }
     }
-   console.log('user',user);
+    console.log('user', user);
   }, []);
 
   const toggleLeaderboardHandler = useCallback((status: boolean) => {
@@ -410,7 +407,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const joinChannel = async () => {
     // message.loading("Joining Quiz");
     showMessages('loading', 'Joining Quiz');
-    
+
     if (isJoined) {
       showMessages('error', 'You are already in the quiz');
       await leaveChannel();
@@ -420,33 +417,38 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
       dispatch(setUserData(shadowUser.data.user));
       localStorage.setItem('user', JSON.stringify(shadowUser.data));
-    } else{
-      if(user.role=='user'){
-          if(ticket<1){
-            showMessages('error', 'Please buy the ticket');
-            return;
-          }
-          else{
-            console.log("ticket######",ticket);
-            const data = { id: user.id };
-            reduceTicket(data);
-          }
+    } else {
+      if (user.role == 'user') {
+        if (ticket < 1) {
+          showMessages('error', 'Please buy the ticket');
+          return;
+        } else {
+          console.log('ticket######', ticket);
+          const data = { id: user.id };
+          reduceTicket(data);
+        }
       }
     }
-    console.log('ticket',ticket);
-   
+    console.log('ticket', ticket);
 
     if (!socket?.connected) {
       socket?.connect();
       showMessages('error', 'Please wait while we connect you to the quiz');
     }
-    socket?.emit(SOCKET_EMITTERS .USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+    socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
 
     const randomUid = Math.floor(Math.random() * 1000);
 
     const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
-
-    await client.join(appId, channelName, rtcToken.data.data, randomUid);
+    console.log('appId, channelName, rtcToken.data.data, randomUid',appId, channelName, rtcToken.data.data, randomUid);
+    await client
+      .join(appId, channelName, rtcToken.data.data, randomUid)
+      .then((res) => {
+        console.log('resres###########',res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     setIsJoined(true);
     message.destroy();
@@ -515,6 +517,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     if (id) {
       getQuizDetail(id)
         .then((res) => {
+          console.log('quiz data', res.data.data);
           setQuizData(res.data.data);
         })
         .catch((err) => {

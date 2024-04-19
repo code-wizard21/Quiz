@@ -9,6 +9,7 @@ import { post } from '../../wrappers/request';
  * @returns {Promise<AxiosResponse>}
  */
 export const login = async (credentials: TAuthCredentials): Promise<AxiosResponse> => {
+  console.log('##########');
   return post('auth/user/login', credentials);
 };
 

@@ -1,7 +1,23 @@
 import { Button, Col, Row } from 'antd';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage: React.FC = () => {
+
+const navigate = useNavigate();
+  const handleButtonClick = () => {
+    // Check handleGotoPage the user has registered before
+    const hasRegistered = localStorage.getItem('hasRegistered') === 'true';
+
+    // Check based on local storage
+    if (hasRegistered) {
+      // Direct to login page if user has registered before
+      navigate('/login');
+    } else {
+      // Direct to register page as user has not registered before
+      navigate('/signup');
+    }
+  };
   return (
     <Row className="landing-page pt-96">
       <Col className="px-6 flex flex-col pb-6">
@@ -13,14 +29,15 @@ const LandingPage: React.FC = () => {
           Test your wits with our daily live quiz shows and win cash! Free quizzes of a variety of themes updated daily
           for all you brainiacs out there.
         </p>
-        <Link to="/login">
+
           <Button
+          onClick={handleButtonClick}
             type="primary"
             className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full"
           >
             Log in / Sign up
           </Button>
-        </Link>
+    
         <Link to="/dashboard">
           <Button
             className="quiz-action-btn h-12 mt-6 shadow-none font-bold rounded-3xl w-full"

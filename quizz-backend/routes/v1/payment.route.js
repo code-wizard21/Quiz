@@ -5,10 +5,9 @@ const payController = require('../../controllers/pay.controller');
 const auth = require('../../middlewares/auth');
 
 const router = express.Router();
-
-router.post('/buyticket', payController.buyticket);
  
- router.post('/create-checkout-session', payController.checkoutsession);
+ router.post('/create-checkout-ticket', payController.buyticket);
+ router.post('/create-checkout-credit', payController.buyCredit);
 
 
  router.get('/history', payController.gethistory);

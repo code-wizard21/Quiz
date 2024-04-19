@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Checkbox, Form, Input, Row, Col } from 'antd';
 import { AxiosError, AxiosResponse } from 'axios';
 import React, { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,9 @@ import { setUserData } from '../../redux/actions/auth.action';
 import { login } from '../../service/auth/auth.service';
 import { ILoginResponse, IUser } from '../../types/user.type';
 import { toast } from 'react-toastify';
-import { Divider } from "antd";
+import { Divider } from 'antd';
+import facebook from '../../assets/social/facebook.svg';
+import google from '../../assets/social/Google.svg';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -32,12 +34,13 @@ const Login: React.FC = () => {
           });
           setIsCorrect(true);
           localStorage.setItem('user', JSON.stringify(res.data));
+          localStorage.setItem('hasRegistered', 'true');
           dispatch(setUserData(res.data.user));
           navigate('/dashboard');
         })
         .catch((err: AxiosError) => {
-          console.log('err',err);
-          toast.error(err.message,   {
+          console.log('err', err);
+          toast.error(err.message, {
             autoClose: false,
           });
           if (Number(err.code) === 401) {
@@ -118,19 +121,41 @@ const Login: React.FC = () => {
           </div>
         </Form.Item>
       </Form>
-      <Divider style={{ borderColor: 'white', color: 'white' }}>Or Create an account</Divider>
-      <Link to="/signup">
-        <Button
-          className="quiz-action-btn h-12 mt-6 shadow-none font-bold rounded-3xl w-full"
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-            color: '#FFFFFF',
-            borderColor: 'rgba(255, 255, 255, 0.2)',
-          }}
-        >
-          Create account
-        </Button>
-      </Link>
+      <Divider style={{ borderColor: 'white', color: 'white' }}>Or Log in with</Divider>
+      <Row>
+        <Col span={12}>
+          <Button
+            className="quiz-action-btn h-12 mt-6 shadow-none font-bold rounded-3xl w-full"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              color: '#FFFFFF',
+              borderColor: 'rgba(255, 255, 255, 0.2)',
+            }}
+          >
+            
+            <div className="flex items-center justify-center">
+              <img src={facebook} alt="user2" />
+              <div className="ml-2 studregular text-center text-base font-bold text-white mr-2 ">Facebook</div>
+            </div>
+          </Button>
+        </Col>
+        <Col span={12}>
+          <Button
+            className="quiz-action-btn h-12 mt-6 shadow-none font-bold ml-4 rounded-3xl w-full"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              color: '#FFFFFF',
+              borderColor: 'rgba(255, 255, 255, 0.2)',
+            }}
+          >
+            <div className="flex items-center justify-center">
+              <img src={google} alt="user2" />
+              <div className="ml-2 studregular text-center text-base font-bold text-white mr-2 ">Google</div>
+            </div>
+             
+          </Button>
+        </Col>
+      </Row>
     </div>
   );
 };

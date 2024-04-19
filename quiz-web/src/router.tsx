@@ -17,6 +17,7 @@ import { TGeneralSettings } from './types/settings.type';
 import PaymentLayout from './components/payment/layout';
 import SelectAvatar from './components/signup/setavatar';
 import Profile from './components/profile';
+import BuyCredit from './components/payment/buycredit';
 
 const load = (Component: any) => (props: any) =>
   (
@@ -66,7 +67,8 @@ const Router: React.FC<{}> = (): React.ReactElement => {
           <Route path="/selectmode" element={<SelectPayment />} />
           <Route path="/success" element={<Success />} />
           <Route path="/profile" element={<Profile />} />
-          
+          <Route path="/buycredit" element={<BuyCredit />} />
+           
         </Route>
 
         <Route path="*" element={<PageNotFound />} />

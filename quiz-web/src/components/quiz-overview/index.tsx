@@ -42,11 +42,11 @@ const QuizOverview: React.FC<{}> = (): React.ReactElement => {
           return <QuizCard quiz={quiz} key={index} />;
         })}
         {(!user || user?.role === USER_ROLE.SHADOW) && (
-          <div>
-            <Link to="/login">
+          <div className=' sticky bottom-2'>
+            <Link to="/">
               <Button
                 type="primary"
-                className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full sticky"
+                className="quiz-action-btn h-12 shadow-none text-black font-bold rounded-3xl w-full p-4"
               >
                 Join Community
               </Button>
@@ -54,6 +54,7 @@ const QuizOverview: React.FC<{}> = (): React.ReactElement => {
           </div>
         )}
       </div>
+      
     </div>
   );
 };

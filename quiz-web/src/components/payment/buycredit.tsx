@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import group_red from '../../assets/figma/Group_red.svg';
 import background from '../../assets/figma/Graphic.svg';
 import vector from '../../assets/figma/Vector.svg';
+import vector1 from '../../assets/figma/Vector1.svg';
 import { useNavigate } from 'react-router-dom';
-import { checkOutBuyCreditSession } from '../../service/payment/payment.service';
+import { checkOutSession } from '../../service/payment/payment.service';
 import sideMenuSvg from '../../assets/side-menu.svg';
 import { useSelector } from 'react-redux';
 import { getTicket } from '../../service/user/user.service';
+import group_yel from '../../assets/figma/Ellipse1.svg';
 
 const SelectMode = () => {
   const navigate = useNavigate();
@@ -59,7 +61,7 @@ const SelectMode = () => {
       amount: amount,
       ticket: ticket,
     };
-    checkOutSession(data)
+    checkOutBuyCreditSession(data)
       .then((res) => {
         console.log(res);
         if (res.status == 200) {
@@ -97,7 +99,15 @@ const SelectMode = () => {
             >
               <div className="text-xl font-bold text-center studregular">S$3.00</div>
               <div className="ml-auto text-xl font-bold mr-3 text-center studregular">1</div>
-              <img src={group_red} alt="user2" className="border-4  rounded-full" />
+              <div className="justify-center  items-center relative">
+                <img src={group_yel} alt="user2" className="border-4 rounded-full" />
+                <img
+                  src={vector1}
+                  alt="user2"
+                  style={{ position: 'absolute', left: '5px', top: '4px' }}
+                  className="border-4 rounded-full"
+                />
+              </div>
             </button>
             {/* <button
               onClick={() => setValue(3)}
@@ -116,22 +126,30 @@ const SelectMode = () => {
             
             </button> */}
 
-            <button
-              onClick={() => setValue(2)}
+<button
+              onClick={() => setValue(3)}
               className={`mt-4 flex pt-2 pb-2  border-2 ${
-                value === 2 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                value === 3 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
               } rounded-3xl`}
             >
               <div className="flex items-center">
                 <div className="flex flex-col justify-center">
-                  <div className="ml-4 text-xl font-bold text-center studregular">S$5.00</div>
+                  <div className="ml-4 text-xl font-bold text-center studregular">S$22.00</div>
                   <div className="ml-4 bg-customBuleBg pr-1 pl-1 text-white text-sm font-bold text-center studregular">
-                    Save 16%
+                    Save 24%
                   </div>
                 </div>
 
-                <div className="ml-28 text-xl font-bold mr-2 text-center studregular">2</div>
-                <img src={group_red} alt="user2" className="border-4  rounded-full" />
+                <div className="ml-28 text-xl font-bold mr-2 text-center studregular">10</div>
+                <div className="justify-center  items-center relative">
+                <img src={group_yel} alt="user2" className="border-4 rounded-full" />
+                <img
+                  src={vector1}
+                  alt="user2"
+                  style={{ position: 'absolute', left: '5px', top: '4px' }}
+                  className="border-4 rounded-full"
+                />
+              </div>
               </div>
             </button>
             <button
@@ -149,7 +167,15 @@ const SelectMode = () => {
                 </div>
 
                 <div className="ml-28 text-xl font-bold mr-2 text-center studregular">10</div>
-                <img src={group_red} alt="user2" className="border-4  rounded-full" />
+                <div className="justify-center  items-center relative">
+                <img src={group_yel} alt="user2" className="border-4 rounded-full" />
+                <img
+                  src={vector1}
+                  alt="user2"
+                  style={{ position: 'absolute', left: '5px', top: '4px' }}
+                  className="border-4 rounded-full"
+                />
+              </div>
               </div>
             </button>
             <button
@@ -167,7 +193,15 @@ const SelectMode = () => {
                 </div>
 
                 <div className="ml-28 text-xl font-bold mr-2 text-center studregular">20</div>
-                <img src={group_red} alt="user2" className="border-4  rounded-full" />
+                <div className="justify-center  items-center relative">
+                <img src={group_yel} alt="user2" className="border-4 rounded-full" />
+                <img
+                  src={vector1}
+                  alt="user2"
+                  style={{ position: 'absolute', left: '5px', top: '4px' }}
+                  className="border-4 rounded-full"
+                />
+              </div>
               </div>
             </button>
             <div className="mt-4 ml-2 text-base font-bold text-center studregular">

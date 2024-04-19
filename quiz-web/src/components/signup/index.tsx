@@ -47,6 +47,7 @@ const SingUp: React.FC = () => {
             autoClose: false,
           });
           localStorage.setItem('user', JSON.stringify(res.data));
+          localStorage.setItem('hasRegistered', 'true');
           dispatch(setUserData(res.data.user));
           navigate('/setavatar');
         })
@@ -132,18 +133,7 @@ const SingUp: React.FC = () => {
           </Button>
         </Form.Item>
       </Form>
-      <Link to="/login">
-        <Button
-          className="quiz-action-btn h-12 mt-6 shadow-none font-bold rounded-3xl w-full"
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-            color: '#FFFFFF',
-            borderColor: 'rgba(255, 255, 255, 0.2)',
-          }}
-        >
-          Login
-        </Button>
-      </Link>
+  
     </Row>
   );
 };

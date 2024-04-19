@@ -17,7 +17,11 @@ const paymentSchema = mongoose.Schema(
 		paymeny_method: {
 			type: String,
 		},
-		item: {
+		credit: {
+			type: String,
+			default: true,
+		},
+		ticket: {
 			type: String,
 			default: true,
 		},

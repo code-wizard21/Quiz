@@ -15,23 +15,20 @@ const morgan = require('./config/morgan');
 const { jwtStrategy } = require('./config/passport');
 const { authLimiter } = require('./middlewares/common');
 const routes = require('./routes/v1');
-const multer  = require('multer');
+const multer = require('multer');
 const { User } = require('./models');
-
 
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
-
 
 const endpointSecret = 'whsec_hm0gPh68j8RunfG1DEbrF2RzSKqDo0Dm';
 
 const app = express();
 const bodyParser = require('body-parser');
 
-app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (request, response) => {  // Add async here
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (request, response) => {
   const sig = request.headers['stripe-signature'];
   let event;
-
   try {
     event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
   } catch (err) {
@@ -39,14 +36,15 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
     response.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
-  
+
   const info = event.data.object;
 
   if (event.type == 'checkout.session.completed') {
     const newData = new Payment({
       amount: info.amount_total,
+      credit:info.amount.credit,
       status: info.payment_status,
-      item: info.metadata.ticket,
+      ticket: info.metadata.ticket,
       user: info.metadata.user,
       email: info.metadata.email,
       trx_date: new Date(),
@@ -61,34 +59,35 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
         console.log(err);
       });
 
-    let user = await User.findOne({ email: info.metadata.email }); 
-    console.log('user',user);
+    let user = await User.findOne({ email: info.metadata.email });
+    console.log('info.metadata.ticket', info.metadata.ticket,typeof(info.metadata.ticket));
+    console.log('user.ticket', user.ticket,typeof(user.ticket));
     let updatedDoc = await User.updateOne(
-      { _id: request.body.id },
+      { email: info.metadata.email },
       {
         $set: {
-          ticket: user.ticket + info.metadata.ticket,
+          ticket: user.ticket + parseInt(info.metadata.ticket),
+          credit: user.credit + parseInt(info.metadata.credit),
         },
       }
     );
-    console.log('updatedDoc',updatedDoc);
 
-    // Return a 200 response to acknowledge receipt of the event
-    response.json(success(httpStatus.OK, 'Buy Ticket was successfully', updatedDoc));  // Use response instead of res
+    console.log('updatedDoc', updatedDoc);
+
+    response.send(200);
   }
 });
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'upload/')
+    cb(null, 'upload/');
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '.jpg'); // Add '.jpg' here
-  }
-})
+  },
+});
 
 const upload = multer({ storage: storage });
-
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -114,13 +113,18 @@ app.use('/upload', express.static('upload'));
 app.use(cors());
 app.options('*', cors());
 
-app.post('/upload', upload.single('avatar'), (req, res, next) => {
-  console.log("req",req.file);
-  res.status(200).json({ message: 'Image uploaded successfully',filePath:req.file.filename });
-}, (error, req, res, next) => {
-  console.log('error.message',error.message);
-  res.status(400).send({ error: error.message });
-});
+app.post(
+  '/upload',
+  upload.single('avatar'),
+  (req, res, next) => {
+    console.log('req', req.file);
+    res.status(200).json({ message: 'Image uploaded successfully', filePath: req.file.filename });
+  },
+  (error, req, res, next) => {
+    console.log('error.message', error.message);
+    res.status(400).send({ error: error.message });
+  }
+);
 
 // jwt authentication
 app.use(passport.initialize());
