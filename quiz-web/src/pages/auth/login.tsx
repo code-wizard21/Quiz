@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { Divider } from 'antd';
 import facebook from '../../assets/social/facebook.svg';
 import google from '../../assets/social/Google.svg';
+import evaarrow from '../../assets/eva_arrow-back-fill_white.svg'
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -63,7 +64,13 @@ const Login: React.FC = () => {
 
   return (
     <div className="registration-page px-8">
-      <div className="pt-40 pb-4 text-3xl text-white font-stud-bold text-left">Welcome back</div>
+      <div className="pt-5  flex justify-start z-20">
+        <Link to="/">
+          <img src={evaarrow} alt="user2" className=" border-4  rounded-full" width={15} height={15} />
+        </Link>
+      </div>
+      <div className="pt-5 pb-4 text-2xl text-white font-stud-bold text-left">Welcome back</div>
+      
       <Form
         name="login"
         layout="vertical"
@@ -105,7 +112,7 @@ const Login: React.FC = () => {
           <Checkbox className="text-white">Remember me</Checkbox>
         </Form.Item>
 
-        <Form.Item className="pt-12">
+        <Form.Item className="pt-6">
           <Button
             type="primary"
             htmlType="submit"
@@ -114,7 +121,7 @@ const Login: React.FC = () => {
           >
             Login
           </Button>
-          <div className="text-center text-base mt-4">
+          <div className="text-center text-sm mt-2">
             <Link to="/login" className="text-white">
               Forgot Password?
             </Link>
@@ -125,14 +132,13 @@ const Login: React.FC = () => {
       <Row>
         <Col span={12}>
           <Button
-            className="quiz-action-btn h-12 mt-6 shadow-none font-bold rounded-3xl w-full"
+            className="quiz-action-btn h-12  shadow-none font-bold rounded-3xl w-full"
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
               color: '#FFFFFF',
               borderColor: 'rgba(255, 255, 255, 0.2)',
             }}
           >
-            
             <div className="flex items-center justify-center">
               <img src={facebook} alt="user2" />
               <div className="ml-2 studregular text-center text-base font-bold text-white mr-2 ">Facebook</div>
@@ -141,7 +147,7 @@ const Login: React.FC = () => {
         </Col>
         <Col span={12}>
           <Button
-            className="quiz-action-btn h-12 mt-6 shadow-none font-bold ml-4 rounded-3xl w-full"
+            className="quiz-action-btn h-12 shadow-none font-bold ml-4 rounded-3xl w-full"
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
               color: '#FFFFFF',
@@ -152,7 +158,6 @@ const Login: React.FC = () => {
               <img src={google} alt="user2" />
               <div className="ml-2 studregular text-center text-base font-bold text-white mr-2 ">Google</div>
             </div>
-             
           </Button>
         </Col>
       </Row>

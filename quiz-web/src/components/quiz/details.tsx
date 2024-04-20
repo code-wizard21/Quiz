@@ -30,7 +30,7 @@ import Leaderboard from '../leaderboard';
 import './style.css';
 import { getTicket } from '../../service/user/user.service';
 import { reduceTicket } from '../../service/user/user.service';
-
+import {toast} from 'react-toastify';
 const channelName = 'test';
 const appId = 'b75cc48b972d4ccc92edb71a1c75fb23';
 
@@ -116,11 +116,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // host_live_change
     socket?.on('host_live_change', (data: any) => {
+      toast.success("host_live_change");
       console.log('host_live_change :: ', data);
     });
 
     socket?.on(SOCKET_LISTENERS.QUIZ_LIVE_START, (data: QuizLiveStart) => {
-      console.log('quiz_live_start :: ', data);
+      toast.success("quiz_live_start");
+      console.log('quiz_live_start ::######### ', data);
 
       // check if quiz id is same as current quiz id and then update quiz status
     });
@@ -129,6 +131,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // listen for user quiz live calculation start
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_START, (data: any) => {
+      toast.success("quiz_live_start");
       console.log('user_quiz_live_calculation_start :: ', data);
     });
 
@@ -136,6 +139,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // listen for user quiz live calculation end
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END, (data: any) => {
+      toast.success("user_quiz_live_calculation");
       console.log('user_quiz_live_calculation_end :: ', data);
       toggleLeaderboardHandler(true);
     });
@@ -149,7 +153,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     // listen for user quiz live question
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION, (data: IQuestionResponse) => {
       console.log('user_quiz_live_question :: ', data);
-
+      toast.success("user_quiz_live_question");
       if (data.question_index) setQuestionIndex(data.question_index);
       if (data.total_questions) setTotalNumberOfQuestions(data.total_questions);
 
@@ -162,6 +166,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // listen for user quiz live question options
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_OPTIONS, (data: IQuestionResponse) => {
+      toast.success("user_quiz_live_question_options");
       console.log('user_quiz_live_question_options :: ', data);
       setOptionStartTime(moment());
       timerRef.current?.style.setProperty('display', 'block');
@@ -204,6 +209,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // listen for user quiz live question result
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_RESULT, (data: any) => {
+      toast.success("quiz_live_start");
       console.log('user_quiz_live_question_result :: ', data);
     });
 
@@ -211,6 +217,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // listen for user quiz last question
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LAST_QUESTION, (data: any) => {
+      toast.success("user_quiz_last_question");
       console.log('user_quiz_last_question :: ', data);
     });
 
@@ -218,6 +225,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // listen for user quiz live viewer count
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
+      toast.success("quiz_live_start");
       setLiveUserCount(data.viewer_count);
       console.log('user_quiz_live_viewer_count :: ', data);
     });
@@ -226,6 +234,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // listen for host emoji received
     socket?.on(SOCKET_LISTENERS.HOST_EMOJI_RECEIVED, (data: any) => {
+      toast.success("host_emoji_received ::");
       console.log('host_emoji_received :: ', data);
     });
 

@@ -1,10 +1,10 @@
 import React ,{useState}  from 'react';
 import TopBar from '../top-bar';
 import { Outlet } from 'react-router-dom';
-import { Button, Drawer } from 'antd';
+import {  Drawer } from 'antd';
 import group_red from '../../assets/figma/Group_red.svg';
 import group_yel from '../../assets/figma/Ellipse1.svg';
-import vector from '../../assets/figma/Vector1.svg';
+import vector from '../../assets/figma/Vector.svg';
 import vector1 from '../../assets/figma/Vector1.svg';
 import { checkOutBuyticketSession } from '../../service/payment/payment.service';
 import { checkOutBuyCreditSession } from '../../service/payment/payment.service';

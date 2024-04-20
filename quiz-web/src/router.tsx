@@ -64,7 +64,7 @@ const Router: React.FC<{}> = (): React.ReactElement => {
         </Route>
         <Route element={<PaymentLayout />}>
           <Route path="/payment" element={<QuizPayment />} />
-          <Route path="/selectmode" element={<SelectPayment />} />
+
           <Route path="/success" element={<Success />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/buycredit" element={<BuyCredit />} />
