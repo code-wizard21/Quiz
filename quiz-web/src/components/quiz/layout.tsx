@@ -119,7 +119,7 @@ const QuizLayout: React.FC = (): React.ReactElement => {
       <TopBar showDrawer={showDrawer} showDrawer1={showDrawer1} />
       <Outlet/>
       <Drawer title="Basic Drawer" size="large" onClose={onClose} open={open} placement="bottom">
-        <div className="bg-profile_gray max-w-430 m-auto min-h-screen bg-cover bg-center ">
+        <div className="">
           <div className="pt-2">
             <div className="flex flex-col p-4 bg-gradient-to-bl bg-white m-6 rounded-2xl">
               <div className=" flex flex-row justify-center">
@@ -213,7 +213,7 @@ const QuizLayout: React.FC = (): React.ReactElement => {
         </div>
       </Drawer>
       <Drawer title="Basic Drawer" size="large" onClose={onClose1} open={open1} placement="bottom">
-        <div className="bg-profile_gray max-w-430 m-auto min-h-screen bg-cover bg-center ">
+        <div className="">
           <div className="pt-2">
             <div className="flex flex-col p-4 bg-gradient-to-bl bg-white m-6 rounded-2xl">
               <div className=" flex flex-row justify-center">
