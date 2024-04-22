@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 import { Divider } from 'antd';
 import facebook from '../../assets/social/facebook.svg';
 import google from '../../assets/social/Google.svg';
-import evaarrow from '../../assets/eva_arrow-back-fill_white.svg'
+import evaarrow from '../../assets/eva_arrow-back-fill_white.svg';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -64,13 +64,13 @@ const Login: React.FC = () => {
 
   return (
     <div className="registration-page px-8">
-      <div className="pt-5  flex justify-start z-20">
+      <div className="pt-20  flex justify-start z-20">
         <Link to="/">
-          <img src={evaarrow} alt="user2" className=" border-4  rounded-full" width={15} height={15} />
+          <img src={evaarrow} alt="user2" className=" border-4  rounded-full" width={20} height={17.5} />
         </Link>
       </div>
-      <div className="pt-5 pb-4 text-2xl text-white font-stud-bold text-left">Welcome back</div>
-      
+      <div className="pt-5 pb-10 text-2xl text-white font-stud-bold text-left">Welcome back</div>
+
       <Form
         name="login"
         layout="vertical"

@@ -74,7 +74,7 @@ const SingUp: React.FC = () => {
     <Row className="registration-page px-8 block">
         <div className="pt-5  flex justify-start z-20">
         <Link to="/">
-          <img src={evaarrow} alt="user2" className=" border-4  rounded-full" width={15} height={15} />
+          <img src={evaarrow} alt="user2" className=" border-4  rounded-full" width={25} height={25} />
         </Link>
       </div>
       <div className="text-xl font-stud-regular text-white pt-5">Create account</div>

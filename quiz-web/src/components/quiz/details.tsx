@@ -347,6 +347,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   }, []);
 
   const toggleLeaderboardHandler = useCallback((status: boolean) => {
+    console.log('toggleLeaderboardHandler',toggleLeaderboardHandler,)
     if (status) {
       videoRef.current?.style.setProperty('display', 'none');
       timerRef.current?.style.setProperty('display', 'none');
@@ -522,8 +523,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   useEffect(() => {
     dispatch(setMiscellaneousData({ topBarVisibility: false }));
-    console.log('@@@@@@@@',id);
-    toast.error('@@@@@',id);
     if (id) {
       getQuizDetail(id)
         .then((res) => {
