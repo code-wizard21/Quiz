@@ -121,15 +121,15 @@ const Login: React.FC = () => {
           >
             Login
           </Button>
-          <div className="text-center text-sm mt-2">
+          <div className="text-center text-sm mt-4">
             <Link to="/login" className="text-white">
               Forgot Password?
             </Link>
           </div>
         </Form.Item>
       </Form>
-      <Divider style={{ borderColor: 'white', color: 'white' }}>Or Log in with</Divider>
-      <Row>
+      <Divider className="mt-6" style={{ borderColor: 'white', color: 'white' }}>Or Log in with</Divider>
+      <Row className="mt-16">
         <Col span={12}>
           <Button
             className="quiz-action-btn h-12  shadow-none font-bold rounded-3xl w-full"
