@@ -16,7 +16,7 @@ export default {
       },
       fontFamily: {
         studregular: ['Circular Std'],
-      },
+      },  
     },
   },
   corePlugins: {

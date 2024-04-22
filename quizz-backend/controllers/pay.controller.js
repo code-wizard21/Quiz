@@ -65,8 +65,8 @@ const buyticket = catchAsync(async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `${YOUR_DOMAIN}/success`,
-      cancel_url: `${YOUR_DOMAIN}/selectmode`,
+      success_url: `${YOUR_DOMAIN}/dashboard`,
+      cancel_url: `${YOUR_DOMAIN}/dashboard`,
       metadata: {
         email: email, // Replace with your customer's email
         user: user,

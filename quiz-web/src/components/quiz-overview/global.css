@@ -1,0 +1,5 @@
+.sticky-bottom {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  bottom: 0.5rem; /* or whatever bottom distance you want */ 
+}

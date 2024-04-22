@@ -9,7 +9,7 @@ import { RootState } from '../../redux/reducers';
 import { getQuizList } from '../../service/quiz/quiz.service';
 import { IQuiz, IQuizesResponse } from '../../types/quiz.types';
 import QuizCard from '../quiz-card';
-
+import './global.css'
 const QuizOverview: React.FC<{}> = (): React.ReactElement => {
   const dispatch = useDispatch();
   const [quizList, setQuizList] = useState<IQuiz[]>([]);
@@ -42,7 +42,7 @@ const QuizOverview: React.FC<{}> = (): React.ReactElement => {
           return <QuizCard quiz={quiz} key={index} />;
         })}
         {(!user || user?.role === USER_ROLE.SHADOW) && (
-          <div className=' sticky bottom-2'>
+          <div className='sticky-bottom bottom-2'>
             <Link to="/">
               <Button
                 type="primary"
