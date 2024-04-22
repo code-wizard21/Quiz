@@ -42,7 +42,7 @@ const QuizOverview: React.FC<{}> = (): React.ReactElement => {
           return <QuizCard quiz={quiz} key={index} />;
         })}
         {(!user || user?.role === USER_ROLE.SHADOW) && (
-          <div className='sticky-bottom bottom-2'>
+          <div className='items-center justify-center fixed bottom-2 item w-[42vh]'>
             <Link to="/">
               <Button
                 type="primary"
