@@ -217,7 +217,7 @@ const Payment = () => {
 
       <Drawer title="Basic Drawer" onClose={onClose} height={500} open={open} placement="bottom" >
         <div>
-          <div  className="max-w-430 m-auto shadow-xl bg-white ">
+          <div  >
             <div className="flex flex-col p-2 bg-gradient-to-bl bg-white ">
               <div className=" flex flex-row justify-center">
                 <div className="ml-2 text-xl font-bold text-center studregular">Purchase Tickets</div>
@@ -230,8 +230,8 @@ const Payment = () => {
                   value === 1 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
                 } rounded-3xl`}
               >
-                <div className="pl-2 text-base font-bold text-center studregular">S$10.00</div>
-                <div className="ml-auto text-base font-bold mr-3 text-center studregular">100</div>
+                <div className="pl-2 text-base text-black font-bold text-center studregular">S$10.00</div>
+                <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">100</div>
                 <div className="justify-center  items-center relative">
                   <img src={group_yel} alt="user2" className="border-4 rounded-full" />
                   <img
@@ -251,11 +251,11 @@ const Payment = () => {
                 } rounded-3xl`}
               >
                 <div className="flex flex-col  justify-center">
-                  <div className="ml-2 text-base font-bold text-center ">S$14.00</div>
+                  <div className="ml-2 text-base text-black font-bold text-center ">S$14.00</div>
                   <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">Save 16%</div>
                 </div>
 
-                <div className="ml-auto text-base font-bold mr-3 text-center studregular">160</div>
+                <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">160</div>
                 <div className="justify-center  items-center relative">
                   <img src={group_yel} alt="user2" className="border-4 rounded-full" />
                   <img
@@ -275,11 +275,11 @@ const Payment = () => {
                 } rounded-3xl`}
               >
                 <div className="flex flex-col  justify-center">
-                  <div className="ml-2 text-base font-bold text-center ">S$20.00</div>
+                  <div className="ml-2 text-base text-black font-bold text-center ">S$20.00</div>
                   <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">Save 24%</div>
                 </div>
 
-                <div className="ml-auto text-base font-bold mr-3 text-center studregular">260</div>
+                <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">260</div>
                 <div className="justify-center  items-center relative">
                   <img src={group_yel} alt="user2" className="border-4 rounded-full" />
                   <img
@@ -299,11 +299,11 @@ const Payment = () => {
                 } rounded-3xl`}
               >
                 <div className="flex flex-col  justify-center">
-                  <div className="ml-2 text-base font-bold text-center ">S$28.00</div>
+                  <div className="ml-2 text-base text-black font-bold text-center ">S$28.00</div>
                   <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">Save 30%</div>
                 </div>
 
-                <div className="ml-auto text-base font-bold mr-3 text-center studregular">400</div>
+                <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">400</div>
                 <div className="justify-center  items-center relative">
                   <img src={group_yel} alt="user2" className="border-4 rounded-full" />
                   <img
