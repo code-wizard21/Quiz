@@ -121,7 +121,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
 
     socket?.on(SOCKET_LISTENERS.QUIZ_LIVE_START, (data: QuizLiveStart) => {
-      toast.success("quiz_live_start");
+      toast.success("quiz_live_start",data);
       console.log('quiz_live_start ::######### ', data);
 
       // check if quiz id is same as current quiz id and then update quiz status
@@ -131,7 +131,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // listen for user quiz live calculation start
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_START, (data: any) => {
-      toast.success("quiz_live_start");
+      toast.success("user_quiz_live_calculation_start ");
       console.log('user_quiz_live_calculation_start :: ', data);
     });
 
@@ -209,7 +209,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // listen for user quiz live question result
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_RESULT, (data: any) => {
-      toast.success("quiz_live_start");
+      toast.success("user_quiz_live_question_result");
       console.log('user_quiz_live_question_result :: ', data);
     });
 
@@ -225,7 +225,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     // listen for user quiz live viewer count
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
-      toast.success("quiz_live_start");
+      toast.success("user_quiz_live_viewer_count ::");
       setLiveUserCount(data.viewer_count);
       console.log('user_quiz_live_viewer_count :: ', data);
     });
@@ -522,7 +522,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   useEffect(() => {
     dispatch(setMiscellaneousData({ topBarVisibility: false }));
-
+    console.log('@@@@@@@@',id);
+    toast.error('@@@@@',id);
     if (id) {
       getQuizDetail(id)
         .then((res) => {

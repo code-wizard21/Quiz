@@ -71,13 +71,13 @@
                   <Avatar src={imageUrl} alt="side-menu" size={40} />
                   </a>
                   <div className="flex">
-                    <button className="flex items-center bg-blue-600 px-3 rounded-full" onClick={buyCredit }>
+                    <button className="flex items-center bg-blue-600 px-2 rounded-full border-white" onClick={buyCredit }>
                       <img src={coinImg} alt="coin" />
-                      <div className="text-xl font-bold ml-2 text-white font-stud-regular">{credit}</div>
+                      <div className="text-sm font-bold  text-white font-stud-regular">{credit}</div>
                     </button>
-                    <button className="flex items-center ml-5 bg-blue-600 px-3 rounded-full" onClick={buyTicket }>
+                    <button className="flex items-center ml-2 bg-blue-600 px-2 rounded-full border-white" onClick={buyTicket }>
                       <img src={ticketImg} alt="ticket" />
-                      <div className="text-xl font-bold ml-2 text-white font-stud-regular">{ticket}</div>
+                      <div className="text-sm font-bold  text-white font-stud-regular">{ticket}</div>
                     </button>
                   </div>
                 </div>

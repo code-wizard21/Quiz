@@ -187,11 +187,12 @@ const Payment = () => {
                 <UsergroupAddOutlined style={{ fontSize: '24px' }} />
                 <div className="studregular text-center text-sm text-black mr-2">Invite Friends</div>
               </button>
-              <button className="flex flex-col justify-center items-center  ml-2 bg-white w-20 h-20   rounded-[30px] space-x-[6px] border-inherit">
+              <button
+                onClick={showDrawer}
+                className="flex flex-col justify-center items-center  ml-2 bg-white w-20 h-20   rounded-[30px] space-x-[6px] border-inherit"
+              >
                 <PlusCircleOutlined style={{ fontSize: '24px' }} />
-                <div className="studregular text-center text-sm text-black mr-2" onClick={showDrawer}>
-                  Buy Credits
-                </div>
+                <div className="studregular text-center text-sm text-black mr-2">Buy Credits</div>
               </button>
               <button className="flex flex-col justify-center items-center  ml-2 bg-white w-20 h-20  rounded-[30px] space-x-[6px] border-inherit">
                 <ProfileOutlined style={{ fontSize: '24px' }} />
@@ -213,8 +214,8 @@ const Payment = () => {
         </div>
       </>
 
-      <Drawer title="Basic Drawer"  onClose={onClose} open={open} placement="bottom">
-        <div >
+      <Drawer title="Basic Drawer" onClose={onClose} open={open} placement="bottom">
+      <div >
           <div>
             <div className="flex flex-col p-2 bg-gradient-to-bl bg-white ">
               <div className=" flex flex-row justify-center">
@@ -224,11 +225,11 @@ const Payment = () => {
                 onClick={() => {
                   setValue(1);
                 }}
-                className={`mt-2 flex p-2 border-3 border-solid items-center ${
+                className={`mt-2 flex p-2  border-3 border-solid items-center ${
                   value === 1 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
                 } rounded-3xl`}
               >
-                <div className="text-sm font-bold text-center studregular">S$10.00</div>
+                <div className="pl-2 text-sm font-bold text-center studregular">S$10.00</div>
                 <div className="ml-auto text-sm font-bold mr-3 text-center studregular">100</div>
                 <div className="justify-center  items-center relative">
                   <img src={group_yel} alt="user2" className="border-4 rounded-full" />
@@ -244,11 +245,17 @@ const Payment = () => {
                 onClick={() => {
                   setValue(2);
                 }}
-                className={`mt-2 flex p-2 border-3 border-solid items-center ${
+                className={`mt-2 flex pb-1 px-2 border-3 border-solid items-center ${
                   value === 2 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
                 } rounded-3xl`}
               >
-                <div className="text-sm font-bold text-center studregular">S$14.00</div>
+                <div className="flex flex-col  justify-center">
+                  <div className="ml-2 text-sm font-bold text-center ">S$14.00</div>
+                  <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">
+                    Save 16%
+                  </div>
+                </div>
+                
                 <div className="ml-auto text-sm font-bold mr-3 text-center studregular">160</div>
                 <div className="justify-center  items-center relative">
                   <img src={group_yel} alt="user2" className="border-4 rounded-full" />
@@ -264,11 +271,17 @@ const Payment = () => {
                 onClick={() => {
                   setValue(3);
                 }}
-                className={`mt-2 flex p-2 border-3 border-solid items-center ${
+                className={`mt-2 flex pb-1 px-2 border-3 border-solid items-center ${
                   value === 3 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
                 } rounded-3xl`}
               >
-                <div className="text-sm font-bold text-center studregular">S$20.00</div>
+                <div className="flex flex-col  justify-center">
+                  <div className="ml-2 text-sm font-bold text-center ">S$20.00</div>
+                  <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">
+                    Save 24%
+                  </div>
+                </div>
+                
                 <div className="ml-auto text-sm font-bold mr-3 text-center studregular">260</div>
                 <div className="justify-center  items-center relative">
                   <img src={group_yel} alt="user2" className="border-4 rounded-full" />
@@ -284,11 +297,17 @@ const Payment = () => {
                 onClick={() => {
                   setValue(4);
                 }}
-                className={`mt-2 flex p-2 border-3 border-solid items-center ${
+                className={`mt-2 flex pb-1 px-2 border-3 border-solid items-center ${
                   value === 4 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
                 } rounded-3xl`}
               >
-                <div className="text-sm font-bold text-center studregular">S$28.00</div>
+                <div className="flex flex-col  justify-center">
+                  <div className="ml-2 text-sm font-bold text-center ">S$28.00</div>
+                  <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">
+                    Save 30%
+                  </div>
+                </div>
+                
                 <div className="ml-auto text-sm font-bold mr-3 text-center studregular">400</div>
                 <div className="justify-center  items-center relative">
                   <img src={group_yel} alt="user2" className="border-4 rounded-full" />
@@ -308,7 +327,7 @@ const Payment = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-center mt-4 mb-14">
+          <div className="flex justify-center mt-2 mb-2">
             <button
               onClick={handlebuyCreditClick}
               className="bg-customYellowBorder border-white w-45 rounded-[30px] space-x-[6px]"
