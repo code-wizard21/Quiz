@@ -320,19 +320,19 @@ const Payment = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-center mt-2 mb-2">
-            <button
-              onClick={handlebuyCreditClick}
-              className="bg-customYellowBorder border-white w-45 rounded-[30px] space-x-[6px]"
-            >
-              <div className="flex items-center justify-center">
-                <img src={vector} alt="user2" />
-                <div className="ml-2 studregular text-center text-sm font-bold text-black mr-2 ">
-                  Continue to Payment
+          <div className="flex justify-center mt-2 mb-4">
+              <button
+                onClick={handlebuyCreditClick}
+                className="bg-customYellowBorder border-white w-[295px] h-[45px] top-[320px] rounded-[30px] space-x-[6px]"
+              >
+                <div className="flex items-center justify-center">
+                  <img src={vector} alt="user2" />
+                  <div className="ml-2 studregular text-center text-base font-bold text-black mr-2 ">
+                    Continue to Payment
+                  </div>
                 </div>
-              </div>
-            </button>
-          </div>
+              </button>
+            </div>
         </div>
       </Drawer>
     </>

@@ -5,19 +5,12 @@ import { useNavigate } from 'react-router-dom';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const handleButtonClick = () => {
-    // Check handleGotoPage the user has registered before
-    const hasRegistered = localStorage.getItem('hasRegistered') === 'true';
 
-    // Check based on local storage
-    if (hasRegistered) {
-      // Direct to login page if user has registered before
-      navigate('/login');
-    } else {
-      // Direct to register page as user has not registered before
-      navigate('/signup');
-    }
-  };
+  const handleButtonClick = async() => {
+    await localStorage.clear();
+    navigate('/dashboard');
+    window.location.reload();
+};
   return (
     <Row className="landing-page pt-96">
      
@@ -38,9 +31,10 @@ const LandingPage: React.FC = () => {
             Log in / Sign up
           </Button>
         </Link>
-        <Link to="/dashboard">
+       
           <Button
             className="quiz-action-btn h-12 mt-6 shadow-none font-bold rounded-3xl w-full"
+           onClick={handleButtonClick}
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
               color: '#FFFFFF',
@@ -49,7 +43,7 @@ const LandingPage: React.FC = () => {
           >
             Continue as Guest
           </Button>
-        </Link>
+        
       </Col>
     </Row>
   );
