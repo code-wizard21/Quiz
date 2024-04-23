@@ -707,7 +707,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         </div>
       )}
-      {!isVideoSubed && quizData && (
+      {/* {!isVideoSubed && quizData && (
         <div className="py-2">
           <img src={getQuizBackgroundImage(quizData.category.name).bgImage} alt="quiz-back" className="m-auto w-full" />
           <div className="mx-6 ">
@@ -739,7 +739,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       <div>
         {quizData && user?.role === 'shadow' && (isVideoSubed || isPaused) && (
           <div className="absolute flex h-screen">

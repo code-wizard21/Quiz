@@ -81,6 +81,14 @@ const initaliseWebSocket = (server) => {
         io.in(liveStream.room_id).emit('user_quiz_live_change', { quiz: quiz_id, status });
       });
 
+      socket.on('host_show_pool', async (data) => {
+        console.log('host_show_pool####',data);
+  
+        
+        
+      });
+
+
       socket.on('host_live_quiz_calculation_start', async (data) => {
         // get room_id from livestreams collection via quiz_id and host_id
         const { quiz_id, host_id } = data;
@@ -233,6 +241,7 @@ const initaliseWebSocket = (server) => {
         // TODO: another trigger to send correct answer of the question to the user
         // io.in(room).emit('user_quiz_live_question_answer', {});
       });
+      
 
       socket.on('user_join_live_quiz', async (data) => {
         if (!data || !data.quiz_id || !data.user_id) {
