@@ -41,6 +41,7 @@ export enum SOCKET_LISTENERS {
   HOST_LIVE_CHANGE = 'host_live_change',
   HOST_EMOJI_RECEIVED = 'host_emoji_received',
   HOST_LIVE_QUIZ_QUESTION_START = 'host_live_quiz_question_start',
+  HOST_SHOW_POOL = 'host_show_pool',
 }
 
 export enum OPTION_PROGRESS_COLORS {
