@@ -53,7 +53,7 @@ const initaliseWebSocket = (server) => {
         // emit quiz live emitting quiz_id and room_id
 
         // TODO: Pending in #APP
-        io.in(room).emit('quiz_live_start', { quiz_id, room_id: room });
+        io.emit('quiz_live_start', { quiz_id, room_id: room });
         console.log('quiz_live_start');
         // emit quiz live emitting quiz_id and room_id
         // TODO: rethink this implementation
@@ -226,7 +226,7 @@ const initaliseWebSocket = (server) => {
           liveStream.end_time = new Date();
           await liveStream.save();
           const room = liveStream.room_id;
-          io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
+          io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
           // emit quiz live emitting quiz_id and room_id
           // TODO: rethink this implementation
           // io.emit('user_quiz_live_start', { quiz_id });

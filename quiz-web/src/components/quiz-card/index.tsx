@@ -21,38 +21,53 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
   const navigate = useNavigate();
   const socket = useContext(SocketContext)?.socket;
   const [liveQuiz, setLiveQuiz] = useState('');
+  const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     const logConnectionStatus = () => {
+      // console.log('Socket connected:', socket?.connected);
+      setIsSocketConnected(socket?.connected);
       showMessages('success', 'Socket connected: ' + socket?.connected);
     };
+
     socket?.on('connect', logConnectionStatus);
     console.log('socket,', socket);
     if (!socket?.connected) {
       socket?.connect();
     }
-    const { bgImage, textImage } = getQuizBackgroundImage(quiz.category as any);
-    setQuizBgImage(bgImage);
-    setQuizTextImage(textImage);
-    getLiveQuiz(quiz._id)
-      .then((res) => {
-        const data: any = res.data.data;
-        setLiveQuiz(data.status);
-      })
-      .catch((err) => console.log(err));
-
-    socket?.on(SOCKET_LISTENERS.QUIZ_LIVE_START, (data: any) => {
+    socket?.on(SOCKET_LISTENERS.QUIZ_LIVE_START, (data) => {
       console.log('quiz_live_start ::######### ', data);
       if (quiz._id == data.quiz_id) {
         setLiveQuiz('ongoing');
       }
     });
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END, (data: any) => {
-      if (quiz._id == data.quiz_id) {
+      if (quiz._id == data.quiz) {
         setLiveQuiz('complete');
       }
     });
+    const { bgImage, textImage } = getQuizBackgroundImage(quiz.category as any);
+    setQuizBgImage(bgImage);
+    setQuizTextImage(textImage);
+    getLiveQuiz(quiz._id)
+      .then((res) => {
+        const data = res.data.data;
+        setLiveQuiz(data.status);
+      })
+      .catch((err) => console.log(err));
+
+    
+    if (!socket?.connected) {
+      // retry socket connection
+      socket?.connect();
+      
+    } else {
+      setIsSocketConnected(socket?.connected);
+      showMessages('success', 'Socket connected: ' + socket?.connected);
+    }
   }, [quiz.category]);
+
+
 
   const navigateToQuiz = (id: string) => {
     navigate(`/quiz/${id}`);

@@ -79,7 +79,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [isMuted, setIsMuted] = useState(false);
   const [numberParticipants, setNumberParticipants] = useState(0);
   const [ticket, setTicket] = useState(0);
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState(50);
   const [credit, setCredit] = useState(0);
   const [isParticipants, setIsParticipants] = useState(false);
   const [imageUrl, setImageUrl] = useState(sideMenuSvg);
@@ -137,13 +137,17 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           switch (res.data.data.status) {
             case 'paused':
               setIsPaused(true);
+              setIsShowpool(false);
               break;
             case 'showpool':
+              setIsPaused(false);
               setIsShowpool(true);
               setAmount(res.data.data.pool);
               setNumberParticipants(res.data.data.contestants);
               break;
             case 'quiz':
+              setIsPaused(false);
+              setIsShowpool(false);
               const query_question_start = { question_id: res.data.data.question_id };
               const quizStartQuestions = await getOnlyQuestion(query_question_start);
               if (quizStartQuestions.data.question_index) setQuestionIndex(quizStartQuestions.data.question_index);
@@ -154,6 +158,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               setIsOptionSubmitted(false);
               break;
             case 'quiz_answer':
+              setIsPaused(false);
+              setIsShowpool(false);
               const query_answer = { question_id: res.data.data.question_id };
               toggleQuestion(true);
               const quizAnswerQuestions = await getQuestionWithOption(query_answer);
@@ -191,6 +197,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         videoRef.current?.style.setProperty('display', 'block');
       } else {
         setIsPaused(true);
+        setIsShowpool(false);
         videoRef.current?.style.setProperty('display', 'none');
       }
     });
@@ -235,6 +242,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       if (data.status == 'hide') {
         setIsShowpool(false);
       } else {
+        setIsPaused(false);
         setIsShowpool(true);
       }
     });
