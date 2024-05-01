@@ -1,14 +1,15 @@
 const httpStatus = require('http-status');
 const mongoose = require('mongoose');
-const {  LiveStream  } = require('../models');
+const { LiveStream } = require('../models');
 const catchAsync = require('../utils/catchAsync');
 const { quizService } = require('../services');
 const pick = require('../utils/pick');
 const { success } = require('../utils/ApiResponse');
 const ApiError = require('../utils/ApiError');
+const livequiz = require('../models/live-quiz.model');
 const { Question, UserAnswer } = require('../models');
 const UserParticipation = require('../models/participation.model');
-
+const { questionService } = require('../services');
 const createQuiz = catchAsync(async (req, res) => {
   const mongooseSession = await mongoose.startSession();
 
@@ -31,12 +32,10 @@ const createQuiz = catchAsync(async (req, res) => {
 });
 
 const getQuiz = catchAsync(async (req, res) => {
-  console.log('req.body',req.body);
   const authUserId = req?.user?._id || null;
-  console.log('authUserId',authUserId);
-  
+
   const quiz = await quizService.getQuizById(req.params.quiz_id, authUserId);
-  console.log('quiz',quiz);
+
   if (!quiz) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Quiz not found');
   }
@@ -70,6 +69,39 @@ const getQuizes = catchAsync(async (req, res) => {
   res.json(success(httpStatus.OK, 'Quizes retrieved successfully', result));
 });
 
+const getQuizeState = catchAsync(async (req, res) => {
+  let docs;
+  try {
+    docs = await livequiz.find({});
+    console.log('All data:', docs[0]);
+  } catch (err) {
+    console.error(err);
+  }
+
+  console.log('##########getQuizeStategetQuizeStategetQuizeState');
+
+  if (docs) {
+    res.json(success(httpStatus.OK, 'successfully', docs[0]));
+  } else {
+    // handle the situation when docs are not fetched
+  }
+});
+const getQuestion = catchAsync(async (req, res) => {
+console.log('req.bodyreq.body',req.body);
+
+  const quizQuestion = await questionService.getQuestionWithOption(req.body.question_id);
+
+   console.log('quizQuestion',quizQuestion);
+  res.status(200).json({question:quizQuestion})
+});
+const getOnlyQuestion = catchAsync(async (req, res) => {
+  console.log('req.bodyreq.body',req.body);
+  
+    const quizQuestion = await questionService.getQuestionById(req.body.question_id);
+  
+     console.log('quizQuestion',quizQuestion);
+    res.status(200).json({question:quizQuestion})
+  });
 const getAllQuizesWithDetails = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['host', 'category', 'is_paid', 'upcoming', '_id']);
 
@@ -81,29 +113,28 @@ const getAllQuizesWithDetails = catchAsync(async (req, res) => {
   const options = pick(req.query, ['sort_by', 'limit', 'page']);
 
   const result = await quizService.queryQuizesWithDetails(filter, options);
- 
+
   res.json(success(httpStatus.OK, 'successfully', result));
 });
 
 const updateQuiz = catchAsync(async (req, res) => {
-  console.log('req.params.quiz_id, req.body',req.params.quiz_id, req.body);
   const quiz = await quizService.updateQuizById(req.params.quiz_id, req.body);
   let updatedDoc = await LiveStream.updateOne(
     { quiz: req.params.quiz_id }, // Condition to match the documents you want to update.
-    { 
-      $set: { 
+    {
+      $set: {
         host: req.body.host,
-      }
+      },
     }
- );
-  console.log('updatedDoc',updatedDoc);
+  );
+
   res.json(success(httpStatus.OK, 'Quiz updated successfully', quiz));
 });
 
 const getQuizesOverview = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['paid', 'free']);
   const result = await quizService.getQuizesOverview(filter);
-  
+
   res.json(success(httpStatus.OK, 'Quizes overview retrieved successfully', result));
 });
 
@@ -194,6 +225,20 @@ const getQuizLeaderboard = catchAsync(async (req, res) => {
   }
 });
 
+const getLiveQuiz = catchAsync(async (req, res) => {
+  const quiz_id = req.params.quiz_id;
+
+  LiveStream.findOne({ quiz: quiz_id })
+    .then((livestream) => {
+      const result = livestream;
+      res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', result));
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ message: 'An error occurred' }); // send an error response
+    });
+});
+
 const getQuizUserSummary = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const quizSummary = await quizService.getQuizUserSummary(req.params.quiz_id, userId);
@@ -214,6 +259,8 @@ const deleteAllUserAnswerAndParticipation = catchAsync(async (req, res) => {
 module.exports = {
   createQuiz,
   getQuiz,
+  getLiveQuiz,
+  getQuestion,
   getQuizes,
   updateQuiz,
   getQuizesOverview,
@@ -223,7 +270,9 @@ module.exports = {
   createQuizLiveStream,
   getQuizLeaderboard,
   getQuizUserSummary,
+  getOnlyQuestion,
   getTopThreeRankerInQuiz,
+  getQuizeState,
   // patchQuizLive,
   deleteAllUserAnswerAndParticipation,
   getAllQuizesWithDetails,

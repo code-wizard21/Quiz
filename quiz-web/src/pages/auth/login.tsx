@@ -40,7 +40,7 @@ const Login: React.FC = () => {
           navigate('/dashboard');
         })
         .catch((err: AxiosError) => {
-          console.log('err', err);
+  
           toast.error(err.message, {
             autoClose: false,
           });

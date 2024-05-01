@@ -13,7 +13,10 @@ router.get('/', validate(quizValidation.getQuizes), quizController.getQuizes);
 // get all quizes with questions and options
 router.get('/all', auth('getAllQuizDetails'), validate(quizValidation.getQuizes), quizController.getAllQuizesWithDetails);
 
-// route for quiz overview
+router.get('/getstate', validate(quizValidation.getQuizes), quizController.getQuizeState);
+router.post('/getquestion',  quizController.getQuestion);
+router.post('/getonlyquestion',  quizController.getOnlyQuestion);
+
 router.get('/overview', auth(), validate(quizValidation.getQuizesOverview), quizController.getQuizesOverview);
 
 router.get('/:quiz_id', validate(quizValidation.getQuiz), quizController.getQuiz);
@@ -47,7 +50,10 @@ router.get(
   quizController.getTopThreeRankerInQuiz
 );
 
+router.get('/:quiz_id/livequiz',  validate(quizValidation.quizIdParams), quizController.getLiveQuiz);
+
 router.get('/:quiz_id/user/summary', auth(), validate(quizValidation.quizIdParams), quizController.getQuizUserSummary);
+
 
 router.delete('/temp', quizController.deleteAllUserAnswerAndParticipation);
 

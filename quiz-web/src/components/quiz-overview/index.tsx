@@ -10,18 +10,21 @@ import { getQuizList } from '../../service/quiz/quiz.service';
 import { IQuiz, IQuizesResponse } from '../../types/quiz.types';
 import QuizCard from '../quiz-card';
 import './global.css'
-const QuizOverview: React.FC<{}> = (): React.ReactElement => {
+
+const QuizOverview: React.FC = (): React.ReactElement => {
+ 
   const dispatch = useDispatch();
   const [quizList, setQuizList] = useState<IQuiz[]>([]);
 
   const { topBarVisibility } = useSelector((state: RootState) => state.miscellaneous);
 
   const { user } = useSelector((state: RootState) => state.auth);
-
+ 
   useEffect(() => {
     getQuizList()
       .then((res: AxiosResponse<IQuizesResponse>) => {
-        setQuizList(res.data.data.results); 
+         setQuizList(res.data.data.results); 
+        console.log('res.data.data.results',res.data.data.results);
       })
       .catch((err) => {
         console.log(err);
@@ -43,7 +46,7 @@ const QuizOverview: React.FC<{}> = (): React.ReactElement => {
         })}
         {(!user || user?.role === USER_ROLE.SHADOW) && (
           <div className='items-center justify-center fixed bottom-2 item w-[42vh]'>
-            <Link to="/">
+            <Link to="/login">
               <Button
                 type="primary"
                 className="quiz-action-btn h-12 shadow-none text-black font-bold rounded-3xl w-full p-4"

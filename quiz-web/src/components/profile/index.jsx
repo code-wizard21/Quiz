@@ -37,7 +37,7 @@ const Payment = () => {
   const [value, setValue] = useState(1);
 
   useEffect(() => {
-    console.log('user', user);
+
     if (user != null) {
       if (user.role == 'user') {
         setName(user.name);

@@ -1,16 +1,29 @@
 import { AxiosResponse } from 'axios';
 // import { ILoggedInUser } from 'common/types/user.type';
-import { get } from '../../wrappers/request';
+import { get,post } from '../../wrappers/request';
 import { IAgoraRtcTokenResponse, IQuizLeaderboardResponse, IQuizResponse, IQuizesResponse, IUserQuizGameSummaryResponse } from '../../types/quiz.types';
 
 export const getQuizList = async (): Promise<AxiosResponse<IQuizesResponse>> => {
   return get('quizes');
 };
+export const getQuestionWithOption = async (userData): Promise<AxiosResponse<IQuizesResponse>> => {
+  return post('quizes/getquestion',userData);
+};
+export const getOnlyQuestion = async (userData): Promise<AxiosResponse<IQuizesResponse>> => {
+  return post('quizes/getonlyquestion',userData);
+};
+
 
 export const getQuizDetail = async (
   quizId: string,
 ): Promise<AxiosResponse<IQuizResponse>> => {
   return get(`quizes/${quizId}`);
+}
+
+export const getQuizState = async (
+
+): Promise<AxiosResponse<IQuizResponse>> => {
+  return get(`quizes/getstate`);
 }
 
 export const getAgoraRtcToken = async (
@@ -32,6 +45,12 @@ export const getQuizTopThree = async (
   quizId: string,
 ): Promise<AxiosResponse<IQuizLeaderboardResponse>> => {
   return get(`quizes/${quizId}/leaderboard/toppers`);
+}
+
+export const getLiveQuiz = async (
+  quizId: string,
+): Promise<AxiosResponse<IQuizLeaderboardResponse>> => {
+  return get(`quizes/${quizId}/livequiz`);
 }
 
 export const getUserQuizGameSummary = async (

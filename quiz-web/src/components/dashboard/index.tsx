@@ -28,7 +28,7 @@ const Dashboard: React.FC = (): React.ReactElement => {
     //   })
     // );
     dispatch(logoutUserData());
-    navigate('/login');
+    
   }, []);
 
   return (

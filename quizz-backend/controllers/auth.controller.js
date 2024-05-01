@@ -6,12 +6,11 @@ const { tokenTypes } = require('../config/tokens');
 
 const register = catchAsync(async (req, res) => {
   let updatedUser;
-  req.body.ticket=1000;
-  req.body.credit=0;
+  req.body.ticket = 1000;
+  req.body.credit = 0;
   if (req.body.shadow_user_id) {
     const shadowUser = await userService.getUserById(req.body.shadow_user_id);
     if (shadowUser) {
-
       delete req.body.shadow_user_id;
       const userUpdateBody = { ...req.body, role: 'user' };
 
@@ -55,21 +54,21 @@ const shadowRegister = catchAsync(async (req, res) => {
   req.body.role = 'shadow';
   // default password for shadow user is 'quizApp@123'
   req.body.password = 'quizApp@123';
-  console.log('user############');
+
   const user = await userService.createUser(req.body);
   const shadowuser = await userService.createShadowUser(req.body);
-  console.log('user',user);
+
   const agoraUserData = await agoraService.generateChatUserinAgora(user, req.body.password);
-  console.log("agoraUserData",agoraUserData);
+
   const userUpdateID = {
     agora: {
       uuid: agoraUserData.uuid,
       username: agoraUserData.username,
     },
   };
-  console.log("userUpdateID",userUpdateID);
+
   const updatedUser = await userService.updateUserById(user.id, userUpdateID);
-  console.log("updatedUser",updatedUser);
+
   const tokens = await tokenService.generateAuthTokens(updatedUser);
 
   res.status(httpStatus.CREATED).send({ user: updatedUser, tokens });
@@ -95,7 +94,6 @@ const getShadowUser = catchAsync(async (req, res, next) => {
 
 const userLogin = catchAsync(async (req, res) => {
   const { email, password } = req.body;
-  console.log('userLogin',req.body);
   const user = await authService.loginUserWithEmailAndPassword(email, password, 'user');
   const tokens = await tokenService.generateAuthTokens(user);
   // TODO: Implement coin service
@@ -106,14 +104,23 @@ const userLogin = catchAsync(async (req, res) => {
   res.send({ user, tokens, coin });
 });
 
-const hostLogin = catchAsync(async (req, res) => {
-  console.log('req.body',req.body);
-  const { email, password } = req.body;
-  const user = await authService.loginUserWithEmailAndPassword(email, password, 'host');
-  const tokens = await tokenService.generateAuthTokens(user);
+const hostLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  res.json({ user, tokens });
-});
+    const user = await userService.getUserByEmailAndRole(email, 'host');
+
+    if (!user || !(await user.isPasswordMatch(password))) {
+      return res.json(null);
+    } else {
+      const tokens = await tokenService.generateAuthTokens(user);
+
+      return res.json({ user, tokens });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const adminLogin = catchAsync(async (req, res) => {
   const { email, password } = req.body;
@@ -128,8 +135,7 @@ const adminRegister = async (req, res) => {
   try {
     req.body.role = 'admin';
 
-  const user = await userService.createUser(req.body);
-
+    const user = await userService.createUser(req.body);
 
     return res.status(200).send({
       id: user._id,

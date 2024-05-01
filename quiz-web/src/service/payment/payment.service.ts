@@ -10,6 +10,9 @@ import { post } from '../../wrappers/request';
 export const checkOutBuyticketSession = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('payment/create-checkout-ticket', userData);
 };
+export const checkOutBuyticketSessionSocket = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
+  return post('payment/create-checkout-ticket-socket', userData);
+};
 
 export const checkOutBuyCreditSession = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('payment/create-checkout-credit', userData);

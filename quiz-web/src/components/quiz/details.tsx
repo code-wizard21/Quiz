@@ -4,7 +4,8 @@ import { Button, Progress, message } from 'antd';
 import { AxiosResponse } from 'axios';
 import { Drawer } from 'antd';
 import frame from '../../assets/figma/Frame.svg';
-import vector from '../../assets/figma/Vector1.svg';
+import vector from '../../assets/figma/Vector.svg';
+import vector1 from '../../assets/figma/Vector1.svg';
 import sideMenuSvg from '../../assets/side-menu.svg';
 import moment, { Duration } from 'moment';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -21,7 +22,13 @@ import { convertDate, getQuizBackgroundImage, showMessages } from '../../helpers
 import { setUserData } from '../../redux/actions/auth.action';
 import { setMiscellaneousData } from '../../redux/actions/miscellaneous.action';
 import { RootState } from '../../redux/reducers';
-import { getAgoraRtcToken, getQuizDetail } from '../../service/quiz/quiz.service';
+import {
+  getAgoraRtcToken,
+  getQuizDetail,
+  getQuizState,
+  getQuestionWithOption,
+  getOnlyQuestion,
+} from '../../service/quiz/quiz.service';
 import { createShadowUser } from '../../service/user/user.service';
 import { IOption, IQuestionResponse, IQuestionStats, IQuiz } from '../../types/quiz.types';
 import { QuizLiveStart } from '../../types/socket.types';
@@ -29,6 +36,7 @@ import { ILoginResponse } from '../../types/user.type';
 import BackTab from '../back-tab';
 import Leaderboard from '../leaderboard';
 import './style.css';
+import { useLocation } from 'react-router-dom';
 import group_red from '../../assets/figma/Group_red.svg';
 import group_yel from '../../assets/figma/Ellipse1.svg';
 import facebookImg from '../../assets/social/facebook.svg';
@@ -37,7 +45,8 @@ import twitterImg from '../../assets/social/twitter.svg';
 import whatsappImg from '../../assets/social/whatsapp.svg';
 import { getTicket } from '../../service/user/user.service';
 import { reduceTicket } from '../../service/user/user.service';
-import { toast } from 'react-toastify';
+import { checkOutBuyticketSessionSocket } from '../../service/payment/payment.service';
+
 const channelName = 'test';
 const appId = 'b75cc48b972d4ccc92edb71a1c75fb23';
 
@@ -53,9 +62,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [quizData, setQuizData] = useState<IQuiz>();
   const [isVideoSubed, setIsVideoSubed] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
+  const [isShowpool, setIsShowpool] = useState(false);
   const [viewQuestions, setViewQuestions] = useState(false);
-  // const [liveVideoHeight, setLiveVideoHeight] = useState(700);
-  // const [liveVideoWidth, setLiveVideoWidth] = useState(430);
   const [currentQuestion, setCurrentQuestion] = useState<IQuestionResponse>();
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [totalNumberOfQuestions, setTotalNumberOfQuestions] = useState<number>(0);
@@ -69,48 +77,34 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [remoteVideoTracks, setRemoteVideoTracks] = useState<any>(null);
   const [remoteAudioTracks, setRemoteAudioTracks] = useState<any>(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [numberParticipants, setNumberParticipants] = useState(0);
   const [ticket, setTicket] = useState(0);
+  const [amount, setAmount] = useState(0);
   const [credit, setCredit] = useState(0);
+  const [isParticipants, setIsParticipants] = useState(false);
   const [imageUrl, setImageUrl] = useState(sideMenuSvg);
-  // temp
-  // const [socket, setSocket] = useState<Socket>(io(serverUrl, { autoConnect: true }).connect());
   const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
-  // const [socket, setSocket] = useState<Socket | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
   const { user } = useSelector((state: RootState) => state.auth);
-
   const [isPaused, setIsPaused] = useState(false);
-
   const videoRef = useRef<any>(null);
   const timerRef = useRef<any>(null);
   const viewQuestionRef = useRef<any>(null);
-  const showDrawer = () => {
-    setOpen(true);
-  };
-  const onClose = () => {
-    setOpen(false);
-  };
-  const client: IAgoraRTCClient = createClient({
-    mode: 'rtc',
-    codec: 'vp8',
-    role: 'audience',
-  });
-  const handleChange = () => {
-    navigate('/selectmode');
-  };
+  const [value, setValue] = useState(1);
+  const location = useLocation();
+  const [isdoing, setIsDoing] = useState(false);
+
   useEffect(() => {
-    console.log('user', user);
+    socket?.on('amount_update_user_broadcast', (data) => {
+      setAmount(data.amount);
+      setNumberParticipants(data.playCount);
+    });
+
+    return () => {
+      socket?.off('amount_update_user_broadcast');
+    };
+  }, []);
+  useEffect(() => {
     if (user != null) {
       if (user.role == 'user') {
         const data = { id: user.id };
@@ -126,7 +120,52 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         console.log('###############');
       }
     }
-    console.log('user', user);
+  }, []);
+
+  useEffect(() => {
+    const fetchQuizState = async () => {
+      const statejoin = localStorage.getItem('isjoinchanel');
+      const res = await getQuizState();
+      console.log('resres', res);
+      if (res != undefined) {
+        setIsDoing(true);
+      }
+
+      if (statejoin == 'true' && res != undefined) {
+        try {
+          socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+          switch (res.data.data.status) {
+            case 'paused':
+              setIsPaused(true);
+              break;
+            case 'showpool':
+              setIsShowpool(true);
+              setAmount(res.data.data.pool);
+              setNumberParticipants(res.data.data.contestants);
+              break;
+            case 'quiz':
+              const query_question_start = { question_id: res.data.data.question_id };
+              const quizStartQuestions = await getOnlyQuestion(query_question_start);
+              if (quizStartQuestions.data.question_index) setQuestionIndex(quizStartQuestions.data.question_index);
+              if (quizStartQuestions.data.total_questions)
+                setTotalNumberOfQuestions(quizStartQuestions.data.total_questions);
+              setCurrentQuestion(quizStartQuestions.data);
+              toggleQuestion(true);
+              setIsOptionSubmitted(false);
+              break;
+            case 'quiz_answer':
+              const query_answer = { question_id: res.data.data.question_id };
+              toggleQuestion(true);
+              const quizAnswerQuestions = await getQuestionWithOption(query_answer);
+              setCurrentQuestion(quizAnswerQuestions.data);
+              break;
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    };
+    fetchQuizState();
   }, []);
   useEffect(() => {
     // display to none for video element
@@ -141,13 +180,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     };
 
     socket?.on('connect', logConnectionStatus);
-
     // Add a listener for the 'test' event
     socket?.on('test', (data: any) => {
       console.log('test :: ', data);
     });
 
-    // listen for user quiz live change i.e pause, resume, stop
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CHANGE, (data: any) => {
       if (data?.status === 'ongoing') {
         setIsPaused(false);
@@ -157,47 +194,36 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         videoRef.current?.style.setProperty('display', 'none');
       }
     });
-
+    socket?.on('amount_update_user_broadcast', (data) => {
+      setAmount(data.amount);
+      setNumberParticipants(data.playCount);
+    });
     // host_live_change
     socket?.on('host_live_change', (data: any) => {
-      toast.success('host_live_change');
       console.log('host_live_change :: ', data);
     });
-
+    socket?.on('host_live_change', (data: any) => {
+      console.log('host_live_change :: ', data);
+    });
     socket?.on(SOCKET_LISTENERS.QUIZ_LIVE_START, (data: QuizLiveStart) => {
-      toast.success('quiz_live_start', data);
       console.log('quiz_live_start ::######### ', data);
 
       // check if quiz id is same as current quiz id and then update quiz status
     });
 
-    // io.in(room).emit('user_quiz_live_calculation_start', { quiz: quiz_id });
-
-    // listen for user quiz live calculation start
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_START, (data: any) => {
-      toast.success('user_quiz_live_calculation_start ');
       console.log('user_quiz_live_calculation_start :: ', data);
     });
 
-    // io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
-
-    // listen for user quiz live calculation end
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END, (data: any) => {
-      toast.success('user_quiz_live_calculation');
+      localStorage.setItem('isjoinchanel', 'false');
+
       console.log('user_quiz_live_calculation_end :: ', data);
       toggleLeaderboardHandler(true);
     });
 
-    // io.in(room).emit('user_quiz_live_question', {
-    //     question: quizQuestion,
-    //     question_index,
-    //     total_questions: totalNumberOfQuestions,
-    // });
-
-    // listen for user quiz live question
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION, (data: IQuestionResponse) => {
       console.log('user_quiz_live_question :: ', data);
-      toast.success('user_quiz_live_question');
       if (data.question_index) setQuestionIndex(data.question_index);
       if (data.total_questions) setTotalNumberOfQuestions(data.total_questions);
 
@@ -205,26 +231,21 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       toggleQuestion(true);
       setIsOptionSubmitted(false);
     });
-    socket?.on(SOCKET_LISTENERS.HOST_SHOW_POOL, (data: IQuestionResponse) => {
-      console.log('HOST_SHOW_POOL ', data);
-      toast.success('HOST_SHOW_POOL');
-   
+    socket?.on(SOCKET_LISTENERS.USER_SHOW_POOL, (data: IQuestionResponse) => {
+      if (data.status == 'hide') {
+        setIsShowpool(false);
+      } else {
+        setIsShowpool(true);
+      }
     });
-    
 
-    // io.in(room).emit('user_quiz_live_question_options', { question: quizQuestions });
-
-    // listen for user quiz live question options
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_OPTIONS, (data: IQuestionResponse) => {
-      toast.success('user_quiz_live_question_options');
-      console.log('user_quiz_live_question_options :: ', data);
       setOptionStartTime(moment());
       timerRef.current?.style.setProperty('display', 'block');
       startTimer(15);
       setCurrentQuestion(data);
     });
 
-    // listen for user quiz live question end
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_END, (data: IQuestionResponse) => {
       const totalNumberOfAllOptionsAnswered = data?.question?.options?.reduce((acc: number, curr: IOption) => {
         return acc + (curr.total_answers || 0);
@@ -258,39 +279,21 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
 
     // listen for user quiz live question result
-    socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_RESULT, (data: any) => {
-      toast.success('user_quiz_live_question_result');
-      console.log('user_quiz_live_question_result :: ', data);
-    });
+    socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_RESULT, (data: any) => {});
 
-    // io.in(room).emit('user_quiz_last_question', {});
-
-    // listen for user quiz last question
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LAST_QUESTION, (data: any) => {
-      toast.success('user_quiz_last_question');
       console.log('user_quiz_last_question :: ', data);
     });
 
-    // io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: liveStream.viewer_count });
-
-    // listen for user quiz live viewer count
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
-      toast.success('user_quiz_live_viewer_count ::');
       setLiveUserCount(data.viewer_count);
       console.log('user_quiz_live_viewer_count :: ', data);
     });
 
-    // io.emit('host_emoji_received', data.emoji_no);
-
-    // listen for host emoji received
     socket?.on(SOCKET_LISTENERS.HOST_EMOJI_RECEIVED, (data: any) => {
-      toast.success('host_emoji_received ::');
       console.log('host_emoji_received :: ', data);
     });
 
-    // io.to(room).emit('user_quiz_live_question_answer', { totalAnswers });
-
-    // listen for user quiz live question answer
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_ANSWER, (data: IQuestionStats) => {
       const totalNumberOfAllOptionsAnswered = data.totalAnswers.reduce((acc: number, curr: IOption) => {
         return acc + (curr.total_answers || 0);
@@ -326,6 +329,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
 
     socket?.on('host_live_end', (_: any) => {
+      localStorage.setItem('isjoinchanel', 'false');
       leaveChannel();
     });
 
@@ -353,9 +357,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       // Remove event listeners
       socket?.off('connect', logConnectionStatus);
       socket?.off('test');
+      // socket?.off(SOCKET_LISTENERS.USER_SHOW_POOL);
+
       socket?.off(SOCKET_LISTENERS.USER_QUIZ_LIVE_CHANGE);
       socket?.off('host_live_change');
       socket?.off(SOCKET_LISTENERS.QUIZ_LIVE_START);
+
       socket?.off(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_START);
       socket?.off(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END);
       socket?.off(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION);
@@ -377,24 +384,40 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     };
   }, []);
 
-  useEffect(() => {
-    if (user != null) {
-      if (user.role == 'user') {
-        const data = { id: user.id };
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
 
-        getTicket(data)
-          .then((res) => {
-            setTicket(res.data.data.ticket); // Set tickets
-            setCredit(res.data.data.credit); // Set credits
-            console.log('findById', res); // Log Response
-          })
-          .catch((e) => console.log(e)); // Log any error occurred
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
-        console.log('###############'); // Logging ###############
-      }
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+  const client: IAgoraRTCClient = createClient({
+    mode: 'rtc',
+    codec: 'vp8',
+    role: 'audience',
+  });
+
+  const useTicket = async () => {
+    if (ticket < 1) {
+      showMessages('error', 'Please buy the ticket');
+      return;
+    } else {
+      const data = { id: user.id };
+      socket?.emit('increase_pool_amount_user', { email: user?.email, quiz_id: id, ticket: 1 });
+      setTicket((prevAmount) => prevAmount - 1);
+      await reduceTicket(data);
+      setIsParticipants(true);
+      setIsModalOpen(false);
     }
-    console.log('user', user);
-  }, []);
+  };
+
   const useCredit = () => {
     showModal();
   };
@@ -480,19 +503,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
       dispatch(setUserData(shadowUser.data.user));
       localStorage.setItem('user', JSON.stringify(shadowUser.data));
-    } else {
-      if (user.role == 'user') {
-        if (ticket < 1) {
-          showMessages('error', 'Please buy the ticket');
-          return;
-        } else {
-          console.log('ticket######', ticket);
-          const data = { id: user.id };
-          reduceTicket(data);
-        }
-      }
     }
-    console.log('ticket', ticket);
 
     if (!socket?.connected) {
       socket?.connect();
@@ -514,6 +525,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       });
 
     setIsJoined(true);
+    localStorage.setItem('isjoinchanel', 'true');
     message.destroy();
     videoRef.current.hidden = false;
     videoRef.current?.style.setProperty('display', 'block');
@@ -531,9 +543,41 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       }
       leaveChannel();
     });
+    if (isdoing == true) {
+      const res = await getQuizState();
+      switch (res.data.data.status) {
+        case 'paused': {
+          setIsPaused(true);
+          break;
+        }
+        case 'showpool': {
+          setIsShowpool(true);
+          setAmount(res.data.data.pool);
+          setNumberParticipants(res.data.data.contestants);
+          break;
+        }
+        case 'quiz': {
+          const query_question_start = { question_id: res.data.data.question_id };
+          const quizStartQuestions = await getOnlyQuestion(query_question_start);
+          if (quizStartQuestions.data.question_index) setQuestionIndex(quizStartQuestions.data.question_index);
+          if (quizStartQuestions.data.total_questions)
+            setTotalNumberOfQuestions(quizStartQuestions.data.total_questions);
+          setCurrentQuestion(quizStartQuestions.data);
+          toggleQuestion(true);
+          setIsOptionSubmitted(false);
+          break;
+        }
+        case 'quiz_answer': {
+          const query_answer = { question_id: res.data.data.question_id };
+          toggleQuestion(true);
+          const quizAnswerQuestions = await getQuestionWithOption(query_answer);
+          setCurrentQuestion(quizAnswerQuestions.data);
+          break;
+        }
+      }
+    }
   };
 
-  const [value, setValue] = useState(1);
   const startTimer = useCallback((duration: number) => {
     const intervalDuration = (duration / 100) * 1000;
     const timerInterval = setInterval(() => {
@@ -549,9 +593,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setTimerInterval(timerInterval);
   }, []);
   const handleBuyTicketClick = () => {
-    let amount,
-      ticket,
-      credit = 0;
+    let amount, ticket;
     switch (value) {
       case 1:
         amount = 300;
@@ -574,18 +616,20 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         ticket = 0;
     }
 
-    const data = {
+    console.log('location.pathname', location.pathname);
+    const data: any = {
       user: JSON.parse(localStorage.getItem('user')).user.name,
       email: JSON.parse(localStorage.getItem('user')).user.email,
       amount: amount,
       ticket: ticket,
       credit: credit,
+      successful_url: location.pathname,
     };
-    checkOutBuyticketSession(data)
-      .then((res) => {
+    checkOutBuyticketSessionSocket(data as any)
+      .then((res: any) => {
         console.log(res);
         if (res.status == 200) {
-          window.location.href = res.data;
+          window.location.href = res.data as any;
         }
       })
       .catch((err) => {
@@ -707,7 +751,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         </div>
       )}
-      {/* {!isVideoSubed && quizData && (
+      {!isVideoSubed && quizData && (
         <div className="py-2">
           <img src={getQuizBackgroundImage(quizData.category.name).bgImage} alt="quiz-back" className="m-auto w-full" />
           <div className="mx-6 ">
@@ -739,9 +783,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </div>
           </div>
         </div>
-      )} */}
+      )}
       <div>
-        {quizData && user?.role === 'shadow' && (isVideoSubed || isPaused) && (
+        {quizData && user?.role === 'shadow' && isVideoSubed && (
           <div className="absolute flex h-screen">
             <div
               style={{ backgroundColor: '#090B40' }}
@@ -815,80 +859,119 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         </div>
       </div>
 
-      {/* <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-        <div className="flex flex-col">
-          <div className="mt-6 flex justify-center z-20">
-            <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={70} height={70} />
-          </div>
-        </div>
-
-        <div className="flex flex-col mt-2">
-          <div className="mt-4 flex flex-row justify-center p-4">
-            <img src={frame} width={38.99} height={40} alt="frame" />
-            <div className="text-customYellowBorder text-5xl font-bold text-center studregular">$50</div>
+      {isParticipants && isShowpool && (
+        <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
+          <div className="flex flex-col">
+            <div className="mt-6 flex justify-center z-20">
+              <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={70} height={70} />
+            </div>
           </div>
 
-          <div className="studregular text-center text-sm text-2xl font-bold  text-white">
-            Estimated Prize Pool, each Ticket adds $1
-          </div>
-        </div>
+          <div className="flex flex-col mt-2">
+            <div className="mt-4 flex flex-row justify-center p-4">
+              <img src={frame} width={38.99} height={40} alt="frame" />
+              <div className="text-customYellowBorder text-5xl font-bold text-center studregular">{amount}</div>
+            </div>
 
-        <div className="pr-8 pl-8 mt-2">
-          <div className="studregular text-center text-xl font-bold  text-white p-1">
-            Join the Quiz and compete to be the winner by entering with a Ticket
+            <div className="studregular text-center text-sm text-2xl font-bold  text-white">
+              Estimated Prize Pool, each Ticket adds $1
+            </div>
+          </div>
+
+          <div className="pr-8 pl-8 mt-4">
+            <div className="studregular text-center text-2xl font-bold  text-white p-1">No. of Players:</div>
+          </div>
+          <div className="pr-8 pl-8 mt-4">
+            <div className="studregular text-center text-4xl font-bold  text-white p-1">{numberParticipants}</div>
+          </div>
+          <div className="pr-8 pl-8 mt-8">
+            <div className="studregular text-customYellowBorder text-center text-xl font-bold  p-1">
+              You are now a Contestant
+            </div>
+            <div className="studregular text-customYellowBorder text-center text-xl font-bold   p-1">
+              eligible to win from the
+            </div>
+            <div className="studregular text-customYellowBorder text-center text-xl font-bold  p-1">prize pool</div>
           </div>
         </div>
-        {user?.role === 'user' && (
-          <>
-            <div className="mt-2 p-4">
-              <div className="flex justify-center">
-                <>
-                  <div className="studregular font-bold text-xl text-white">Your account:</div>
-                  <div className="flex ml-2">
-                    <div className="flex justify-center items-center relative">
-                      <img src={group_yel} alt="user2" className="border-4 rounded-full" />
-                      <img
-                        src={vector}
-                        alt="user2"
-                        style={{ position: 'absolute', left: '5px', top: '8px' }}
-                        className="border-4 rounded-full"
-                      />
-                      <div className="studregular ml-1 text-white font-bold text-xl">{credit}</div>
+      )}
+
+      {!isParticipants && isShowpool && (
+        <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
+          <div className="flex flex-col">
+            <div className="mt-6 flex justify-center z-20">
+              <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={70} height={70} />
+            </div>
+          </div>
+
+          <div className="flex flex-col mt-2">
+            <div className="mt-4 flex flex-row justify-center p-4">
+              <img src={frame} width={38.99} height={40} alt="frame" />
+              <div className="text-customYellowBorder text-5xl font-bold text-center studregular">{amount}</div>
+            </div>
+
+            <div className="studregular text-center text-sm text-2xl font-bold  text-white">
+              Estimated Prize Pool, each Ticket adds $1
+            </div>
+          </div>
+
+          <div className="pr-8 pl-8 mt-2">
+            <div className="studregular text-center text-xl font-bold  text-white p-1">
+              Join the Quiz and compete to be the winner by entering with a Ticket
+            </div>
+          </div>
+          {user?.role === 'user' && (
+            <>
+              <div className="mt-2 p-4">
+                <div className="flex justify-center">
+                  <>
+                    <div className="studregular font-bold text-xl text-white">Your account:</div>
+                    <div className="flex ml-2">
+                      <div className="flex justify-center items-center relative">
+                        <img src={group_yel} alt="user2" className="border-4 rounded-full" />
+                        <img
+                          src={vector1}
+                          alt="user2"
+                          style={{ position: 'absolute', left: '5px', top: '8px' }}
+                          className="border-4 rounded-full"
+                        />
+                        <div className="studregular ml-1 text-white font-bold text-xl">{credit}</div>
+                      </div>
+                      <div className="flex justify-center items-center ml-3">
+                        <img src={group_red} alt="user2" className="border-4  rounded-full" />
+                        <div className="studregular ml-1  text-white font-bold text-xl">{ticket}</div>
+                      </div>
                     </div>
-                    <div className="flex justify-center items-center ml-3">
-                      <img src={group_red} alt="user2" className="border-4  rounded-full" />
-                      <div className="studregular ml-1  text-white font-bold text-xl">{ticket}</div>
-                    </div>
-                  </div>
-                </>
+                  </>
+                </div>
               </div>
-            </div>
 
-            <div className="flex justify-center mt-6">
-              <button
-                onClick={useCredit}
-                className="bg-customBlue w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
-              >
-                <div className="flex items-center justify-center">
-                  <div className="studregular text-center text-xl font-bold text-white mr-2 ">Use 1 Ticket</div>
-                  <img src={group_red} alt="user2" />
-                </div>
-              </button>
-            </div>
-            <div className="flex justify-center mt-8 mb-4">
-              <button
-                onClick={showDrawer}
-                className="bg-customYellowBorder w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
-              >
-                <div className="flex items-center justify-center">
-                  <div className="studregular text-black text-center text-xl font-bold  mr-2">Buy Tickets</div>
-                  <img src={group_red} alt="user2" />
-                </div>
-              </button>
-            </div>
-          </>
-        )}
-      </div> */}
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={useCredit}
+                  className="bg-customBlue w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
+                >
+                  <div className="flex items-center justify-center">
+                    <div className="studregular text-center text-xl font-bold text-white mr-2 ">Use 1 Ticket</div>
+                    <img src={group_red} alt="user2" />
+                  </div>
+                </button>
+              </div>
+              <div className="flex justify-center mt-8 mb-4">
+                <button
+                  onClick={showDrawer}
+                  className="bg-customYellowBorder w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
+                >
+                  <div className="flex items-center justify-center">
+                    <div className="studregular text-black text-center text-xl font-bold  mr-2">Buy Tickets</div>
+                    <img src={group_red} alt="user2" />
+                  </div>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
       <Drawer title="Basic Drawer" height={500} onClose={onClose} open={open} placement="bottom">
         <div>
           <div>
@@ -980,7 +1063,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       </Drawer>
       <Modal title="" open={isModalOpen} footer={null} width={'300px'} onCancel={handleCancel}>
         <div className="modal-box">
-          <div className="flex justify-center mt-4 text-2xl font-bold text-center studregular mb-6">Confirm Ticket Use?</div>
+          <div className="flex justify-center mt-4 text-2xl font-bold text-center studregular mb-6">
+            Confirm Ticket Use?
+          </div>
           <div className="py-1 flex text-base  justify-center">You will use 1 Ticket and become a </div>
           <div className="py-1 flex text-base justify-center"> contestant in this quiz, eligible to </div>
           <div className="py-1 flex text-base  justify-center"> win the Prize Pool.</div>
@@ -988,10 +1073,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <div className="justify-center flex">
               <button
                 className="bg-customBlue   mt-8 w-[285px] h-[52px] top-[320px] rounded-[30px] space-x-[6px] border-white"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate('/dashboard');
-                }}
+                onClick={useTicket}
               >
                 <div className="flex text-white justify-center text-base font-bold text-center studregular">
                   Yes, confirm!

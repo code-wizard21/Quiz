@@ -1,12 +1,16 @@
 import { Card } from 'antd';
+import { useContext, useEffect, useState } from 'react';
 import Meta from 'antd/es/card/Meta';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import shareImg from '../../assets/share.svg';
-import { convertDate, getQuizBackgroundImage } from '../../helpers/utils';
 import { IQuiz } from '../../types/quiz.types';
+import { SOCKET_LISTENERS } from '../../constants/enum';
+import { SocketContext } from '../../context/socket.context';
+import { convertDate, getQuizBackgroundImage, showMessages } from '../../helpers/utils';
+import { getLiveQuiz } from '../../service/quiz/quiz.service';
 import './style.css';
+
 
 type QuizCardProps = {
   quiz: IQuiz;
@@ -15,19 +19,47 @@ type QuizCardProps = {
 const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
   const currentTimestamp = moment();
   const navigate = useNavigate();
+  const socket = useContext(SocketContext)?.socket;
+  const [liveQuiz, setLiveQuiz] = useState('');
+
+  useEffect(() => {
+    const logConnectionStatus = () => {
+      showMessages('success', 'Socket connected: ' + socket?.connected);
+    };
+    socket?.on('connect', logConnectionStatus);
+    console.log('socket,', socket);
+    if (!socket?.connected) {
+      socket?.connect();
+    }
+    const { bgImage, textImage } = getQuizBackgroundImage(quiz.category as any);
+    setQuizBgImage(bgImage);
+    setQuizTextImage(textImage);
+    getLiveQuiz(quiz._id)
+      .then((res) => {
+        const data: any = res.data.data;
+        setLiveQuiz(data.status);
+      })
+      .catch((err) => console.log(err));
+
+    socket?.on(SOCKET_LISTENERS.QUIZ_LIVE_START, (data: any) => {
+      console.log('quiz_live_start ::######### ', data);
+      if (quiz._id == data.quiz_id) {
+        setLiveQuiz('ongoing');
+      }
+    });
+    socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END, (data: any) => {
+      if (quiz._id == data.quiz_id) {
+        setLiveQuiz('complete');
+      }
+    });
+  }, [quiz.category]);
+
   const navigateToQuiz = (id: string) => {
     navigate(`/quiz/${id}`);
   };
 
   const [quizBgImage, setQuizBgImage] = useState<string>('');
   const [quizTextImage, setQuizTextImage] = useState<string>('');
-
-  useEffect(() => {
-    // TODO: Fix this any type issue and make sure to fix this in HOST APP before deploying as it'll break the app
-    const { bgImage, textImage } = getQuizBackgroundImage(quiz.category as any);
-    setQuizBgImage(bgImage);
-    setQuizTextImage(textImage);
-  }, [quiz.category]);
 
   return (
     <div className="py-2" key={quiz._id}>
@@ -40,7 +72,9 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
             </div>
           </div>
         }
-        className="shadow-xl hover:cursor-pointer rounded-3xl max-w-xs"
+        className={`shadow-xl hover:cursor-pointer rounded-3xl max-w-xs ${
+          liveQuiz == 'ongoing' ? 'bg-quiz_back' : ''
+        } `}
         onClick={() => navigateToQuiz(quiz._id)}
       >
         <Meta

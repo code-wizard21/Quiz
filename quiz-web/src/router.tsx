@@ -17,7 +17,7 @@ import { TGeneralSettings } from './types/settings.type';
 import PaymentLayout from './components/payment/layout';
 import SelectAvatar from './components/signup/setavatar';
 import Profile from './components/profile';
-import BuyCredit from './components/payment/buycredit';
+
 
 const load = (Component: any) => (props: any) =>
   (
@@ -27,9 +27,8 @@ const load = (Component: any) => (props: any) =>
   );
 
 const QuizOverview = load(lazy(() => import('./components/quiz-overview')));
-const QuizPayment = load(lazy(() => import('./components/payment')));
-const SelectPayment = load(lazy(() => import('./components/payment/selectmode')));
-const Success = load(lazy(() => import('./components/payment/success')));
+
+
 
 const Router: React.FC<{}> = (): React.ReactElement => {
   const { language }: TGeneralSettings = useSelector((state: RootState) => state.settings.generalSettings);
@@ -63,14 +62,8 @@ const Router: React.FC<{}> = (): React.ReactElement => {
           <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
         <Route element={<PaymentLayout />}>
-          <Route path="/payment" element={<QuizPayment />} />
-
-          <Route path="/success" element={<Success />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/buycredit" element={<BuyCredit />} />
-           
         </Route>
-
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>

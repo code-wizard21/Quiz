@@ -8,6 +8,7 @@ const router = express.Router();
  
  router.post('/create-checkout-ticket', payController.buyticket);
  router.post('/create-checkout-credit', payController.buyCredit);
+ router.post('/create-checkout-ticket-socket', payController.buyCreditSocket);
 
 
  router.get('/history', payController.gethistory);

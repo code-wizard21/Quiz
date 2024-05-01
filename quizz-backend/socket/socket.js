@@ -9,7 +9,12 @@ const { questionService } = require('../services');
 const { calculateLeaderboard } = require('../services/quiz.service');
 const { Leaderboard, User } = require('../models');
 const { getNumberOfUsersInChannel } = require('../services/agora.service');
+const liveQuiz = require('../models/live-quiz.model');
+const quizticket = require('../models/quizticket.model');
+let amount = 50;
+let playCount = 0;
 
+const quizPoolData = { amount: 50, playCount: 0 };
 const initaliseWebSocket = (server) => {
   try {
     const io = socketio(server, {
@@ -22,18 +27,14 @@ const initaliseWebSocket = (server) => {
     io.on('connection', (socket) => {
       // create listener when host starts live stream on a quiz and creates a room and emits room code
       socket.on('host_live_start', async (data) => {
-        console.log('data',data);
         // get room_id from livestreams collection via quiz_id and host_id
         const { quiz_id, host_id } = data;
-        console.log('quiz_id',quiz_id, 'host_id',host_id);
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
-        console.log('liveStrean',liveStream);
         if (!liveStream) {
           console.log('live stream not found');
           return;
         }
 
-        // TODO: must remove after testing
         await UserAnswer.deleteMany({});
         await UserParticipation.deleteMany({});
 
@@ -52,21 +53,88 @@ const initaliseWebSocket = (server) => {
         // emit quiz live emitting quiz_id and room_id
 
         // TODO: Pending in #APP
-        io.emit('quiz_live_start', { quiz_id, room_id: room });
-
+        io.in(room).emit('quiz_live_start', { quiz_id, room_id: room });
+        console.log('quiz_live_start');
         // emit quiz live emitting quiz_id and room_id
         // TODO: rethink this implementation
         // io.emit('user_quiz_live_start', { quiz_id });
       });
 
+      socket.emit('amount_update_user_broadcast', quizPoolData); // Send the initial amount
+
+      socket.on('increase_pool_amount_user', async (data) => {
+        const newData = new quizticket({
+          email: data.email,
+          ticket: data.ticket,
+          quiz: data.quiz_id,
+        });
+        await newData
+          .save()
+          .then((res) => {
+            console.log('res');
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        amount++;
+        playCount++;
+        const channelViewerCount = await getNumberOfUsersInChannel('test');
+
+        const quizPoolData = { amount: amount, playCount: playCount, channelViewerCount: channelViewerCount };
+        try {
+          await liveQuiz.deleteMany({});
+          console.log('Successful deletion');
+        } catch (err) {
+          console.error(err);
+        }
+        const newData1 = new liveQuiz({
+          status: 'showpool',
+          pool: amount,
+          contestants: playCount,
+          viewer_count: channelViewerCount,
+        });
+
+        await newData1
+          .save()
+          .then((res) => {
+            console.log('res');
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        console.log('increase_amount_pool_host_user');
+        io.emit('amount_update_user_broadcast', quizPoolData); // Send the updated amount to all clients
+
+        io.emit('increase_amount_pool_host_user', quizPoolData); // Send the updated amount to all clients
+      });
       // socket to pause and resume the live stream
       socket.on('host_live_change', async (data) => {
         // get room_id from livestreams collection via quiz_id and host_id
+
         const { quiz_id, host_id, status } = data;
         if (!status || (status != 'paused' && status != 'ongoing')) {
           return;
         }
+        if (status == 'paused') {
+          try {
+            await liveQuiz.deleteMany({});
+            console.log('Successful deletion');
+          } catch (err) {
+            console.error(err);
+          }
+          const newData = new liveQuiz({
+            status: 'paused',
+          });
 
+          await newData
+            .save()
+            .then((res) => {
+              console.log('res');
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
         // Check if the livestream exists
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
         if (!liveStream) {
@@ -82,20 +150,47 @@ const initaliseWebSocket = (server) => {
       });
 
       socket.on('host_show_pool', async (data) => {
-        console.log('host_show_pool####',data);
-  
-        
-        
-      });
+        console.log('host_show_pool####');
+        const { quiz_id, host_id } = data;
+        const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
+        // TODO: calculate the leaderboard and emit the result to the host and users
+        if (!liveStream) {
+          console.log('liveStream not found');
+          return;
+        }
+        try {
+          await liveQuiz.deleteMany({});
+          console.log('Successful deletion');
+        } catch (err) {
+          console.error(err);
+        }
+        const newData = new liveQuiz({
+          status: 'showpool',
+        });
 
+        await newData
+          .save()
+          .then((res) => {
+            console.log('res');
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        const room = liveStream.room_id;
+        data.room_id = room;
+        io.in(room).emit('user_show_pool', data);
+      });
 
       socket.on('host_live_quiz_calculation_start', async (data) => {
         // get room_id from livestreams collection via quiz_id and host_id
         const { quiz_id, host_id } = data;
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
-
+        console.log('host_live_quiz_calculation_start');
         // TODO: calculate the leaderboard and emit the result to the host and users
-
+        if (!liveStream) {
+          console.log('liveStream not found');
+          return;
+        }
         // emit live quiz calculation start to all the users in the room
 
         const room = liveStream.room_id;
@@ -113,8 +208,6 @@ const initaliseWebSocket = (server) => {
 
         setTimeout(() => {
           io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
-          // emit to host as well
-          // TO DO: think of a way to send to a specific host but for now we only have one host
           io.emit('host_quiz_live_calculation_end', { quiz: quiz_id });
         }, 5000);
       });
@@ -122,19 +215,22 @@ const initaliseWebSocket = (server) => {
       socket.on('host_live_end', async (data) => {
         try {
           const { quiz_id, host_id } = data;
-
+          console.log('host_live_quiz_calculation_end');
           // Find the corresponding LiveStream document
           const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
-
+          quizPoolData.amount = 50;
+          quizPoolData.playCount = 0;
+          await liveQuiz.deleteMany({});
           // Update LiveStream status and end time
           liveStream.status = 'completed';
           liveStream.end_time = new Date();
           await liveStream.save();
+          const room = liveStream.room_id;
+          io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
           // emit quiz live emitting quiz_id and room_id
           // TODO: rethink this implementation
           // io.emit('user_quiz_live_start', { quiz_id });
 
-          const room = liveStream.room_id;
           // TODO: to be removed after testing
           // Delete all user answer data for the quiz
           await UserAnswer.deleteMany({ quiz: quiz_id });
@@ -161,26 +257,45 @@ const initaliseWebSocket = (server) => {
       // display question trigger
       socket.on('host_live_quiz_question_start', async (data) => {
         // get room_id from livestreams collection via quiz_id and host_id
+        console.log('host_live_quiz_question_star');
         const { quiz_id, host_id, question_id, question_index } = data;
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
         if (!liveStream) {
           return;
         }
+        try {
+          await liveQuiz.deleteMany({});
+          console.log('Successful deletion');
+        } catch (err) {
+          console.error(err);
+        }
+        const newData = new liveQuiz({
+          status: 'quiz',
+          question_id: question_id,
+        });
 
+        await newData
+          .save()
+          .then((res) => {
+            console.log('res');
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         const room = liveStream.room_id;
 
         const quizQuestion = await questionService.getQuestionById(question_id);
 
         const totalNumberOfQuestions = await QuizQuestion.countDocuments({ quiz: new ObjectId(quiz_id) });
-
-        // emit quiz live emitting quiz_id and room_id
+        console.log('user_quiz_live_question');
+        // emit quiz live emittin,g quiz_id and room_id
         io.in(room).emit('user_quiz_live_question', {
           question: quizQuestion,
           question_index,
           total_questions: totalNumberOfQuestions,
         });
       });
-
+      /////////////////////////////////////////////////
       // socket to display all the options of the question
       socket.on('host_live_quiz_question_options', async (data) => {
         // get room_id from livestreams collection via quiz_id and host_id
@@ -195,11 +310,28 @@ const initaliseWebSocket = (server) => {
         if (!liveStream) {
           return;
         }
-
+        try {
+          await liveQuiz.deleteMany({});
+          console.log('Successful deletion');
+        } catch (err) {
+          console.error(err);
+        }
+        const newData = new liveQuiz({
+          status: 'quiz_answer',
+          question_id: question_id,
+        });
+        await newData
+          .save()
+          .then((res) => {
+            console.log('res');
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         const room = liveStream.room_id;
 
         const quizQuestions = await questionService.getQuestionWithOption(question_id);
-
+        console.log('user_quiz_live_question_options');
         io.in(room).emit('user_quiz_live_question_options', { question: quizQuestions });
       });
 
@@ -208,9 +340,10 @@ const initaliseWebSocket = (server) => {
         if (!data || !data.quiz_id || !data.host_id || !data.question_id) {
           return;
         }
-
+        console.log('host_live_quiz_question_end');
         // get room_id from livestreams collection via quiz_id and host_id
         const { quiz_id, host_id, question_id, is_last } = data;
+        console.log('question_id, is_last',question_id, is_last);
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
         if (!liveStream) {
           return;
@@ -219,9 +352,9 @@ const initaliseWebSocket = (server) => {
         const room = liveStream.room_id;
 
         // const optionWithCorrectAndTotalAnswers = await optionService.getOptionWithCorrectAndTotalAnswers(question_id);
-
+        //     await liveQuiz.deleteMany({});
         const quizQuestions = await questionService.getQuestionWithOptionAndTotalAnswers(question_id);
-
+        console.log('quizQuestions',quizQuestions);
         io.in(room).emit('user_quiz_live_question_end', { question: quizQuestions });
 
         // TODO: another tigger with question result with percentage correct answer
@@ -241,15 +374,14 @@ const initaliseWebSocket = (server) => {
         // TODO: another trigger to send correct answer of the question to the user
         // io.in(room).emit('user_quiz_live_question_answer', {});
       });
-      
 
       socket.on('user_join_live_quiz', async (data) => {
         if (!data || !data.quiz_id || !data.user_id) {
           return;
         }
-
+        console.log('user_join_live_quiz');
         const { quiz_id, user_id } = data;
-        console.log('quiz_id, user_id ',quiz_id, user_id );
+        console.log('quiz_id, user_id ', quiz_id, user_id);
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id) });
 
         if (!liveStream) {
@@ -265,7 +397,6 @@ const initaliseWebSocket = (server) => {
           quiz: new ObjectId(quiz_id),
           user: new ObjectId(user_id),
         });
-
 
         if (userParticipation) {
           // update user participation status to ongoing
@@ -307,7 +438,7 @@ const initaliseWebSocket = (server) => {
         if (!data || !data.quiz_id || !data.user_id) {
           return;
         }
-
+        console.log('user_leave_live_quiz');
         const { quiz_id, user_id } = data;
 
         // update user participation status to completed
@@ -343,6 +474,7 @@ const initaliseWebSocket = (server) => {
       });
 
       socket.on('user_send_emoji', async (data) => {
+        console.log('user_send_emoji');
         if (!data || !data.quiz_id) {
           return;
         }
@@ -352,7 +484,7 @@ const initaliseWebSocket = (server) => {
         if (!data || !data.quiz_id || !data.user_id || !data.question_id || !data.option_id) {
           return;
         }
-
+        console.log('user_submit_live_quiz_answer');
         const { quiz_id, user_id, question_id, option_id, duration } = data;
 
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id) });

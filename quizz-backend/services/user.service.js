@@ -34,7 +34,7 @@ const createUser = async (userBody) => {
   // check if username is taken
   if (!newUserBody.username) {
     newUserBody.name = await makeRandomUsername();
-    console.log(" newUserBody.username", newUserBody.name);
+   
   }
 
   if (await User.isEmailTaken(newUserBody.email)) {
@@ -42,7 +42,7 @@ const createUser = async (userBody) => {
   }
   newUserBody.username = newUserBody.name;
   // create the user
-  console.log("username#########",newUserBody);
+  
   return User.create(newUserBody);
 };
 
@@ -53,11 +53,11 @@ const createShadowUser = async (userBody) => {
   // check if username is taken
   if (!newUserBody.username) {
     newUserBody.name = await makeRandomUsername();
-    console.log(" newUserBody.username", newUserBody.name);
+   
   }
   newUserBody.username = newUserBody.name;
   // create the user
-  console.log("username#########",newUserBody);
+ 
   return ShadowUser.create(newUserBody);
 };
 
@@ -75,7 +75,7 @@ const queryUsers = async (filter, options) => {
   return users;
 };
 const queryShadowUsers = async (filter, options) => {
-  console.log('###queryShadowUsersqueryShadowUsersqueryShadowUsers');
+  
   const users = await ShadowUser.paginate(filter, options);
   return users;
 };

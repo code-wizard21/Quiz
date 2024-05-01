@@ -22,6 +22,7 @@ export enum REQUEST_METHODS {
 export enum SOCKET_EMITTERS {
   USER_JOIN_LIVE_QUIZ = 'user_join_live_quiz',
   USER_LEAVE_LIVE_QUIZ = 'user_leave_live_quiz',
+  USER_USE_TICKET = 'user_use_ticket',
   USER_SUBMIT_LIVE_QUIZ_ANSWER = 'user_submit_live_quiz_answer',
   USER_QUIZ_LIVE_QUESTION_ANSWER = 'user_quiz_live_question_answer',
 }
@@ -41,7 +42,7 @@ export enum SOCKET_LISTENERS {
   HOST_LIVE_CHANGE = 'host_live_change',
   HOST_EMOJI_RECEIVED = 'host_emoji_received',
   HOST_LIVE_QUIZ_QUESTION_START = 'host_live_quiz_question_start',
-  HOST_SHOW_POOL = 'host_show_pool',
+  USER_SHOW_POOL = 'user_show_pool',
 }
 
 export enum OPTION_PROGRESS_COLORS {

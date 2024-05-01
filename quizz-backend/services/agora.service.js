@@ -145,7 +145,7 @@ const generateChatUserinAgora = async (user, password) => {
       password: password,
       nickname: user.name,
     };
-    console.log('chatUser', chatUser);
+   
     const chatUserResponse = await axios.post(
       `https://${AGORA_CHAT_BASE_URL}/${AGORA_CHAT_ORG_NAME}/${AGORA_CHAT_APP_NAME}/users`,
       JSON.stringify(chatUser),
@@ -188,7 +188,7 @@ const getNumberOfUsersInChannel = async (channelName) => {
     });
 
     if (apiRes?.status !== 200) {
-      console.log(JSON.stringify(apiRes));
+
       return 0;
       // throw new Error('Error getting number of users in channel');
     } else if (apiRes?.data?.data?.channels?.length !== 0) {

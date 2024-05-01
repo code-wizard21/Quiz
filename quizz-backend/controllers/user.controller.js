@@ -27,10 +27,10 @@ const getUsers = catchAsync(async (req, res) => {
 });
 
 const getTicket = async (req, res) => {
-  console.log('req.body', req.body);
+
   try {
     const result = await User.findById(req.body.id);
-    console.log('result',result)
+  
     res.json(success(httpStatus.OK, 'Shadow users retrieved successfully', result));
   } catch (error) {
     console.error(error);
@@ -41,10 +41,10 @@ const getTicket = async (req, res) => {
 
 
 const setAvatar = async (req, res) => {
-  console.log('req.body', req.body);
+
   try {
     let user = await User.findOne({ email: req.body.email }); // First find the user to get the current ticket count
-   console.log('user',user);
+   
     let updatedDoc = await User.updateOne(
       { email: req.body.email },
       {

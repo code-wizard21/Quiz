@@ -12,7 +12,8 @@ export default {
         customBuleBg: '#1A3EEC',
         custom_gray: '#EFEFEF',
         profile_gray:'#F3ECFF',
-        payment_gray:'#F8F8F8'
+        payment_gray:'#F8F8F8',
+        quiz_back:'#F9DC30'
       },
       fontFamily: {
         studregular: ['Circular Std'],

@@ -49,7 +49,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
       email: info.metadata.email,
       trx_date: new Date(),
     });
-    console.log('newData',newData);
+ 
     await newData
       .save()
       .then((res) => {
@@ -60,8 +60,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
       });
 
     let user = await User.findOne({ email: info.metadata.email });
-    console.log('info.metadata.ticket', info.metadata.ticket,typeof(info.metadata.ticket));
-    console.log('user.ticket', user.ticket,typeof(user.ticket));
+
     let updatedDoc = await User.updateOne(
       { email: info.metadata.email },
       {
@@ -117,7 +116,7 @@ app.post(
   '/upload',
   upload.single('avatar'),
   (req, res, next) => {
-    console.log('req', req.file);
+
     res.status(200).json({ message: 'Image uploaded successfully', filePath: req.file.filename });
   },
   (error, req, res, next) => {

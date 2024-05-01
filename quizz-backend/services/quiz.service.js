@@ -808,12 +808,12 @@ const getQuizQuestions = async (quizId) => {
 
 const createQuizLiveStream = async (quizId, hostId, transaction) => {
   // create a entry in livestreams collection
-  console.log('createQuizLiveStream',quizId, hostId, transaction);
+ 
   const liveStream = new LiveStream({
     quiz: quizId,
     host: hostId,
   });
-  console.log('livestream',liveStream);
+
   await liveStream.save({ session: transaction });
 
   return LiveStream.findById(liveStream._id);
