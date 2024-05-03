@@ -226,7 +226,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       localStorage.setItem('isjoinchanel', 'false');
 
       console.log('user_quiz_live_calculation_end :: ', data);
-      toggleLeaderboardHandler(true);
+      toggleLeaderboardHandler(false);
+      
     });
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION, (data: IQuestionResponse) => {
