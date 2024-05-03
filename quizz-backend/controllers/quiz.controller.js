@@ -66,6 +66,7 @@ const getQuizes = catchAsync(async (req, res) => {
   const authUserId = req?.user?._id || null;
 
   const result = await quizService.queryQuizes(filter, options, authUserId);
+  console.log('result',result);
   res.json(success(httpStatus.OK, 'Quizes retrieved successfully', result));
 });
 

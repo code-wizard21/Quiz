@@ -741,7 +741,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           }}
         />
       )}
-      {isVideoSubed && (
+      {!isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-4" id="live-stream-header">
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={16} />
@@ -915,7 +915,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           <div className="flex flex-col mt-2">
             <div className="mt-4 flex flex-row justify-center p-4">
               <img src={frame} width={38.99} height={40} alt="frame" />
-              <div className="text-customYellowBorder text-5xl font-bold text-center studregular">{amount}</div>
+              <div className="text-customYellowBorder text-5xl font-bold text-center studregular">{amount}$</div>
             </div>
 
             <div className="studregular text-center text-sm text-2xl font-bold  text-white">
