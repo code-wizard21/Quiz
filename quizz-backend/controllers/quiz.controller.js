@@ -66,7 +66,7 @@ const getQuizes = catchAsync(async (req, res) => {
   const authUserId = req?.user?._id || null;
 
   const result = await quizService.queryQuizes(filter, options, authUserId);
-  console.log('result',result);
+
   res.json(success(httpStatus.OK, 'Quizes retrieved successfully', result));
 });
 
@@ -74,7 +74,7 @@ const getQuizeState = catchAsync(async (req, res) => {
   let docs;
   try {
     docs = await livequiz.find({});
-    console.log('All data:', docs[0]);
+   
   } catch (err) {
     console.error(err);
   }
@@ -88,19 +88,17 @@ const getQuizeState = catchAsync(async (req, res) => {
   }
 });
 const getQuestion = catchAsync(async (req, res) => {
-console.log('req.bodyreq.body',req.body);
+
 
   const quizQuestion = await questionService.getQuestionWithOption(req.body.question_id);
 
-   console.log('quizQuestion',quizQuestion);
+
   res.status(200).json({question:quizQuestion})
 });
 const getOnlyQuestion = catchAsync(async (req, res) => {
-  console.log('req.bodyreq.body',req.body);
+
   
     const quizQuestion = await questionService.getQuestionById(req.body.question_id);
-  
-     console.log('quizQuestion',quizQuestion);
     res.status(200).json({question:quizQuestion})
   });
 const getAllQuizesWithDetails = catchAsync(async (req, res) => {

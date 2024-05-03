@@ -905,7 +905,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         </div>
       )}
 
-      {!isParticipants && isShowpool && (
+      {isShowpool && (
         <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
           <div className="flex flex-col">
             <div className="mt-6 flex justify-center z-20">
