@@ -3,6 +3,7 @@ import { IAgoraRTCClient, IAgoraRTCRemoteUser, createClient } from 'agora-rtc-sd
 import { Button, Progress, message } from 'antd';
 import { AxiosResponse } from 'axios';
 import { Drawer } from 'antd';
+import AgoraRTC from 'agora-rtc-sdk-ng';
 import frame from '../../assets/figma/Frame.svg';
 import vector from '../../assets/figma/Vector.svg';
 import vector1 from '../../assets/figma/Vector1.svg';
@@ -166,43 +167,44 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           console.log(e);
         }
         videoRef.current?.style.setProperty('display', 'none');
-        console.log('res.data.data.status',res.data.data.status);
-        // switch (res.data.data.status) {
-        //   case 'paused':
-        //     setIsPaused(true);
-        //     setIsShowpool(false);
-        //     break;
-        //   case 'showpool':
-        //     setIsPaused(false);
-        //     setIsShowpool(true);
-        //     setAmount(res.data.data.pool);
-        //     setNumberParticipants(res.data.data.contestants);
-        //     break;
-        //   case 'quiz':
-        //     setIsPaused(false);
-        //     setIsShowpool(false);
-        //     const query_question_start = { question_id: res.data.data.question_id };
-        //     const quizStartQuestions = await getOnlyQuestion(query_question_start);
-        //     console.log('quizStartQuestions', quizStartQuestions);
-        //     if (quizStartQuestions.data.question_index) setQuestionIndex(quizStartQuestions.data.question_index);
-        //     if (quizStartQuestions.data.total_questions)
-        //       setTotalNumberOfQuestions(quizStartQuestions.data.total_questions);
-        //     setCurrentQuestion(quizStartQuestions.data);
-        //     toggleQuestion(true);
-        //     setIsOptionSubmitted(false);
-        //     break;
-        //   case 'quiz_answer':
-        //     setIsPaused(false);
-        //     setIsShowpool(false);
-        //     const query_answer = { question_id: res.data.data.question_id };
-        //     toggleQuestion(true);
-        //     const quizAnswerQuestions = await getQuestionWithOption(query_answer);
-        //     setCurrentQuestion(quizAnswerQuestions.data);
-        //     break;
-        //   case 'waitting':
-        //     videoRef.current?.style.setProperty('display', 'block');
-        //     break;
-        // }
+        console.log('res.data.data.status', res.data.data);
+        switch (res.data.data.status) {
+          case 'paused':
+            setIsPaused(true);
+            setIsShowpool(false);
+            break;
+          case 'showpool':
+            setIsPaused(false);
+            setIsShowpool(true);
+            setAmount(res.data.data.pool);
+            setNumberParticipants(res.data.data.contestants);
+            break;
+          case 'quiz':
+            setIsPaused(false);
+            setIsShowpool(false);
+            const query_question_start = { question_id: res.data.data.question_id };
+            const quizStartQuestions = await getOnlyQuestion(query_question_start);
+            console.log('quizStartQuestions', quizStartQuestions);
+            setQuestionIndex(res.data.data.question_index);
+              setTotalNumberOfQuestions(res.data.data.total_questions);
+            setCurrentQuestion(quizStartQuestions.data);
+            toggleQuestion(true);
+            setIsOptionSubmitted(false);
+            break;
+          case 'quiz_answer':
+            setIsPaused(false);
+            setIsShowpool(false);
+            const query_answer = { question_id: res.data.data.question_id };
+            toggleQuestion(true);
+            const quizAnswerQuestions = await getQuestionWithOption(query_answer);
+            setCurrentQuestion(quizAnswerQuestions.data);
+            setQuestionIndex(res.data.data.question_index);
+            setTotalNumberOfQuestions(res.data.data.total_questions);
+            break;
+          case 'waitting':
+            videoRef.current?.style.setProperty('display', 'block');
+            break;
+        }
       }
     };
     fetchQuizState();
@@ -273,6 +275,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       setIsOptionSubmitted(false);
     });
     socket?.on(SOCKET_LISTENERS.USER_SHOW_POOL, (data: IQuestionResponse) => {
+      // Assuming you have a localAudioTrack already
+    
       if (data?.status === 'hide') {
         setIsPaused(false);
         setIsShowpool(false);
@@ -332,8 +336,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     socket?.on('user_quiz_live_end', (data: any) => {
       localStorage.setItem('isjoinchanel', 'false');
       console.log('user_quiz_live_end :: ', data);
+      leaveChannel();
     });
-
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
       setLiveUserCount(data.viewer_count);
@@ -455,6 +459,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   });
 
   const useTicket = async () => {
+    const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+
+    // To mute
+    localAudioTrack.setEnabled(false);
     if (ticket < 1) {
       showMessages('error', 'Please buy the ticket');
       return;
@@ -486,6 +494,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   }, []);
 
   const onUserPublish = async (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+    console.log(`User with ID: ${user.uid} has joined the channel with ${mediaType}`);
     if (mediaType === 'video') {
       const remoteVideoTrack = await client.subscribe(user, mediaType);
       remoteVideoTrack.play('remote-video');
@@ -520,7 +529,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       remoteVideoTracks.stop();
     }
 
-    await client.leave();
+    await client
+      .leave()
+      .then(() => {
+        console.log('Left the channel successfully');
+      })
+      .catch((err) => {
+        console.log('Failed to leave the channel', err);
+      });
 
     videoRef.current?.srcObject?.getTracks().forEach((track: any) => track.stop());
     videoRef.current.srcObject = null;

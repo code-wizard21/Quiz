@@ -209,7 +209,12 @@ const initaliseWebSocket = (server) => {
         await calculateLeaderboard(quiz_id);
 
         // for now settimg a timeout of 10 seconds to send the result
-
+        try {
+          await liveQuiz.deleteMany({});
+          console.log('Successful deletion');
+        } catch (err) {
+          console.error(err);
+        }
         setTimeout(() => {
           io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
 
@@ -232,8 +237,8 @@ const initaliseWebSocket = (server) => {
           liveStream.end_time = new Date();
           await liveStream.save();
           const room = liveStream.room_id;
-       //   io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
-       io.emit('user_quiz_live_end', { quiz: quiz_id });
+          //   io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
+          io.emit('user_quiz_live_end', { quiz: quiz_id });
           // emit quiz live emitting quiz_id and room_id
           // TODO: rethink this implementation
           // io.emit('user_quiz_live_start', { quiz_id });
@@ -270,17 +275,25 @@ const initaliseWebSocket = (server) => {
         if (!liveStream) {
           return;
         }
+        
         try {
           await liveQuiz.deleteMany({});
           console.log('Successful deletion');
         } catch (err) {
           console.error(err);
         }
+
+        const room = liveStream.room_id;
+
+        const quizQuestion = await questionService.getQuestionById(question_id);
+
+        const totalNumberOfQuestions = await QuizQuestion.countDocuments({ quiz: new ObjectId(quiz_id) });
         const newData = new liveQuiz({
           status: 'quiz',
           question_id: question_id,
+          question_index: question_index,
+          total_questions: totalNumberOfQuestions,
         });
-
         await newData
           .save()
           .then((res) => {
@@ -289,11 +302,6 @@ const initaliseWebSocket = (server) => {
           .catch((err) => {
             console.log(err);
           });
-        const room = liveStream.room_id;
-
-        const quizQuestion = await questionService.getQuestionById(question_id);
-
-        const totalNumberOfQuestions = await QuizQuestion.countDocuments({ quiz: new ObjectId(quiz_id) });
         console.log('user_quiz_live_question');
         // emit quiz live emittin,g quiz_id and room_id
         io.in(room).emit('user_quiz_live_question', {
@@ -317,24 +325,24 @@ const initaliseWebSocket = (server) => {
         if (!liveStream) {
           return;
         }
-        try {
-          await liveQuiz.deleteMany({});
-          console.log('Successful deletion');
-        } catch (err) {
-          console.error(err);
-        }
-        const newData = new liveQuiz({
-          status: 'quiz_answer',
-          question_id: question_id,
-        });
-        await newData
-          .save()
-          .then((res) => {
-            console.log('res');
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+      
+        const filter = { question_id: question_id };
+        const update = { status: 'quiz_answer' };
+
+        // `doc` is the document _before_ `updateOne()` was called
+        let doc = await liveQuiz.updateOne(filter, update);
+        // const newData = new liveQuiz({
+        //   status: 'quiz_answer',
+        //   question_id: question_id,
+        // });
+        // await newData
+        //   .save()
+        //   .then((res) => {
+        //     console.log('res');
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //   });
         const room = liveStream.room_id;
 
         const quizQuestions = await questionService.getQuestionWithOption(question_id);
@@ -394,7 +402,7 @@ const initaliseWebSocket = (server) => {
         if (!liveStream) {
           return;
         }
-
+        
         const room = liveStream.room_id;
 
         // check if user participation already exsit
@@ -404,20 +412,20 @@ const initaliseWebSocket = (server) => {
           quiz: new ObjectId(quiz_id),
           user: new ObjectId(user_id),
         });
-        await liveQuiz.deleteMany({});
-        const newData = new liveQuiz({
-          status: 'waitting',
-          question_id: quiz_id,
-        });
+        // await liveQuiz.deleteMany({});
+        // const newData = new liveQuiz({
+        //   status: 'waitting',
+        //   question_id: quiz_id,
+        // });
 
-        await newData
-          .save()
-          .then((res) => {
-            console.log('res');
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        // await newData
+        //   .save()
+        //   .then((res) => {
+        //     console.log('res');
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //   });
 
         if (userParticipation) {
           // update user participation status to ongoing
@@ -461,7 +469,12 @@ const initaliseWebSocket = (server) => {
         }
         console.log('user_leave_live_quiz');
         const { quiz_id, user_id } = data;
-
+        try {
+          await liveQuiz.deleteMany({});
+          console.log('Successful deletion');
+        } catch (err) {
+          console.error(err);
+        }
         // update user participation status to completed
         await UserParticipation.updateOne(
           { quiz: new ObjectId(quiz_id), user: new ObjectId(user_id) },

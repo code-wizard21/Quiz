@@ -7,6 +7,12 @@ const livequizSchema = mongoose.Schema(
     status: {
       type: String,
     },
+    question_index: {
+      type: Number,
+    },
+    total_questions: {
+      type: Number,
+    },
     question_id: {
       type: String,
     },
@@ -18,6 +24,7 @@ const livequizSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+
     viewer_count: {
       type: Number,
       default: 0,
