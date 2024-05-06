@@ -226,8 +226,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       localStorage.setItem('isjoinchanel', 'false');
 
       console.log('user_quiz_live_calculation_end :: ', data);
-      toggleLeaderboardHandler(false);
-      
+      toggleLeaderboardHandler(true);
     });
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION, (data: IQuestionResponse) => {
@@ -742,7 +741,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           }}
         />
       )}
-      {!isVideoSubed && (
+      {isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-4" id="live-stream-header">
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={16} />
@@ -856,6 +855,119 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </p>
           </div>
         )}
+        {isParticipants && isShowpool && (
+          <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
+            <div className="flex flex-col">
+              <div className="mt-6 flex justify-center z-20">
+                <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={70} height={70} />
+              </div>
+            </div>
+
+            <div className="flex flex-col mt-2">
+              <div className="mt-4 flex flex-row justify-center p-4">
+                <img src={frame} width={38.99} height={40} alt="frame" />
+                <div className="text-customYellowBorder text-5xl font-bold text-center studregular">{amount}</div>
+              </div>
+
+              <div className="studregular text-center text-sm text-2xl font-bold  text-white">
+                Estimated Prize Pool, each Ticket adds $1
+              </div>
+            </div>
+
+            <div className="pr-8 pl-8 mt-4">
+              <div className="studregular text-center text-2xl font-bold  text-white p-1">No. of Players:</div>
+            </div>
+            <div className="pr-8 pl-8 mt-4">
+              <div className="studregular text-center text-4xl font-bold  text-white p-1">{numberParticipants}</div>
+            </div>
+            <div className="pr-8 pl-8 mt-8">
+              <div className="studregular text-customYellowBorder text-center text-xl font-bold  p-1">
+                You are now a Contestant
+              </div>
+              <div className="studregular text-customYellowBorder text-center text-xl font-bold   p-1">
+                eligible to win from the
+              </div>
+              <div className="studregular text-customYellowBorder text-center text-xl font-bold  p-1">prize pool</div>
+            </div>
+          </div>
+        )}
+
+        {isShowpool && (
+          <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
+            <div className="flex flex-col">
+              <div className="mt-6 flex justify-center z-20">
+                <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={70} height={70} />
+              </div>
+            </div>
+
+            <div className="flex flex-col mt-2">
+              <div className="mt-4 flex flex-row justify-center p-4">
+                <img src={frame} width={38.99} height={40} alt="frame" />
+                <div className="text-customYellowBorder text-5xl font-bold text-center studregular">{amount}$</div>
+              </div>
+
+              <div className="studregular text-center text-sm text-2xl font-bold  text-white">
+                Estimated Prize Pool, each Ticket adds $1
+              </div>
+            </div>
+
+            <div className="pr-8 pl-8 mt-2">
+              <div className="studregular text-center text-xl font-bold  text-white p-1">
+                Join the Quiz and compete to be the winner by entering with a Ticket
+              </div>
+            </div>
+            {user?.role === 'user' && (
+              <>
+                <div className="mt-2 p-4">
+                  <div className="flex justify-center">
+                    <>
+                      <div className="studregular font-bold text-xl text-white">Your account:</div>
+                      <div className="flex ml-2">
+                        <div className="flex justify-center items-center relative">
+                          <img src={group_yel} alt="user2" className="border-4 rounded-full" />
+                          <img
+                            src={vector1}
+                            alt="user2"
+                            style={{ position: 'absolute', left: '5px', top: '8px' }}
+                            className="border-4 rounded-full"
+                          />
+                          <div className="studregular ml-1 text-white font-bold text-xl">{credit}</div>
+                        </div>
+                        <div className="flex justify-center items-center ml-3">
+                          <img src={group_red} alt="user2" className="border-4  rounded-full" />
+                          <div className="studregular ml-1  text-white font-bold text-xl">{ticket}</div>
+                        </div>
+                      </div>
+                    </>
+                  </div>
+                </div>
+
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={useCredit}
+                    className="bg-customBlue w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
+                  >
+                    <div className="flex items-center justify-center">
+                      <div className="studregular text-center text-xl font-bold text-white mr-2 ">Use 1 Ticket</div>
+                      <img src={group_red} alt="user2" />
+                    </div>
+                  </button>
+                </div>
+                <div className="flex justify-center mt-8 mb-4">
+                  <button
+                    onClick={showDrawer}
+                    className="bg-customYellowBorder w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
+                  >
+                    <div className="flex items-center justify-center">
+                      <div className="studregular text-black text-center text-xl font-bold  mr-2">Buy Tickets</div>
+                      <img src={group_red} alt="user2" />
+                    </div>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
         <div ref={viewQuestionRef} className="relative text-center" id="view-que-video">
           <video
             className={`m-auto block z-10 w-full ${viewQuestions ? 'max-100-100' : 'max-w-430'}`}
@@ -867,120 +979,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           ></video>
         </div>
       </div>
-{/* 
-      {isParticipants && isShowpool && (
-        <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-          <div className="flex flex-col">
-            <div className="mt-6 flex justify-center z-20">
-              <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={70} height={70} />
-            </div>
-          </div>
 
-          <div className="flex flex-col mt-2">
-            <div className="mt-4 flex flex-row justify-center p-4">
-              <img src={frame} width={38.99} height={40} alt="frame" />
-              <div className="text-customYellowBorder text-5xl font-bold text-center studregular">{amount}</div>
-            </div>
-
-            <div className="studregular text-center text-sm text-2xl font-bold  text-white">
-              Estimated Prize Pool, each Ticket adds $1
-            </div>
-          </div>
-
-          <div className="pr-8 pl-8 mt-4">
-            <div className="studregular text-center text-2xl font-bold  text-white p-1">No. of Players:</div>
-          </div>
-          <div className="pr-8 pl-8 mt-4">
-            <div className="studregular text-center text-4xl font-bold  text-white p-1">{numberParticipants}</div>
-          </div>
-          <div className="pr-8 pl-8 mt-8">
-            <div className="studregular text-customYellowBorder text-center text-xl font-bold  p-1">
-              You are now a Contestant
-            </div>
-            <div className="studregular text-customYellowBorder text-center text-xl font-bold   p-1">
-              eligible to win from the
-            </div>
-            <div className="studregular text-customYellowBorder text-center text-xl font-bold  p-1">prize pool</div>
-          </div>
-        </div>
-      )}
-
-      {isShowpool && (
-        <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-          <div className="flex flex-col">
-            <div className="mt-6 flex justify-center z-20">
-              <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={70} height={70} />
-            </div>
-          </div>
-
-          <div className="flex flex-col mt-2">
-            <div className="mt-4 flex flex-row justify-center p-4">
-              <img src={frame} width={38.99} height={40} alt="frame" />
-              <div className="text-customYellowBorder text-5xl font-bold text-center studregular">{amount}$</div>
-            </div>
-
-            <div className="studregular text-center text-sm text-2xl font-bold  text-white">
-              Estimated Prize Pool, each Ticket adds $1
-            </div>
-          </div>
-
-          <div className="pr-8 pl-8 mt-2">
-            <div className="studregular text-center text-xl font-bold  text-white p-1">
-              Join the Quiz and compete to be the winner by entering with a Ticket
-            </div>
-          </div>
-          {user?.role === 'user' && (
-            <>
-              <div className="mt-2 p-4">
-                <div className="flex justify-center">
-                  <>
-                    <div className="studregular font-bold text-xl text-white">Your account:</div>
-                    <div className="flex ml-2">
-                      <div className="flex justify-center items-center relative">
-                        <img src={group_yel} alt="user2" className="border-4 rounded-full" />
-                        <img
-                          src={vector1}
-                          alt="user2"
-                          style={{ position: 'absolute', left: '5px', top: '8px' }}
-                          className="border-4 rounded-full"
-                        />
-                        <div className="studregular ml-1 text-white font-bold text-xl">{credit}</div>
-                      </div>
-                      <div className="flex justify-center items-center ml-3">
-                        <img src={group_red} alt="user2" className="border-4  rounded-full" />
-                        <div className="studregular ml-1  text-white font-bold text-xl">{ticket}</div>
-                      </div>
-                    </div>
-                  </>
-                </div>
-              </div>
-
-              <div className="flex justify-center mt-6">
-                <button
-                  onClick={useCredit}
-                  className="bg-customBlue w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
-                >
-                  <div className="flex items-center justify-center">
-                    <div className="studregular text-center text-xl font-bold text-white mr-2 ">Use 1 Ticket</div>
-                    <img src={group_red} alt="user2" />
-                  </div>
-                </button>
-              </div>
-              <div className="flex justify-center mt-8 mb-4">
-                <button
-                  onClick={showDrawer}
-                  className="bg-customYellowBorder w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
-                >
-                  <div className="flex items-center justify-center">
-                    <div className="studregular text-black text-center text-xl font-bold  mr-2">Buy Tickets</div>
-                    <img src={group_red} alt="user2" />
-                  </div>
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      )} */}
       <Drawer title="Basic Drawer" height={500} onClose={onClose} open={open} placement="bottom">
         <div>
           <div>
