@@ -126,50 +126,84 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     const fetchQuizState = async () => {
       const statejoin = localStorage.getItem('isjoinchanel');
       const res = await getQuizState();
-      console.log('resres', res);
       if (res != undefined) {
         setIsDoing(true);
       }
 
-      // if (statejoin == 'true' && res != undefined) {
-      //   try {
-      //     socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
-      //     switch (res.data.data.status) {
-      //       case 'paused':
-      //         setIsPaused(true);
-      //         setIsShowpool(false);
-      //         break;
-      //       case 'showpool':
-      //         setIsPaused(false);
-      //         setIsShowpool(true);
-      //         setAmount(res.data.data.pool);
-      //         setNumberParticipants(res.data.data.contestants);
-      //         break;
-      //       case 'quiz':
-      //         setIsPaused(false);
-      //         setIsShowpool(false);
-      //         const query_question_start = { question_id: res.data.data.question_id };
-      //         const quizStartQuestions = await getOnlyQuestion(query_question_start);
-      //         if (quizStartQuestions.data.question_index) setQuestionIndex(quizStartQuestions.data.question_index);
-      //         if (quizStartQuestions.data.total_questions)
-      //           setTotalNumberOfQuestions(quizStartQuestions.data.total_questions);
-      //         setCurrentQuestion(quizStartQuestions.data);
-      //         toggleQuestion(true);
-      //         setIsOptionSubmitted(false);
-      //         break;
-      //       case 'quiz_answer':
-      //         setIsPaused(false);
-      //         setIsShowpool(false);
-      //         const query_answer = { question_id: res.data.data.question_id };
-      //         toggleQuestion(true);
-      //         const quizAnswerQuestions = await getQuestionWithOption(query_answer);
-      //         setCurrentQuestion(quizAnswerQuestions.data);
-      //         break;
-      //     }
-      //   } catch (e) {
-      //     console.log(e);
-      //   }
-      // }
+      if (statejoin == 'true' && res != undefined) {
+        try {
+          socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+          const randomUid = Math.floor(Math.random() * 1000);
+
+          const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
+
+          await client
+            .join(appId, channelName, rtcToken.data.data, randomUid)
+            .then((res) => {
+              console.log('resres###########', res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          message.destroy();
+          videoRef.current.hidden = false;
+          // videoRef.current?.style.setProperty('display', 'block');
+          toggleQuestion(false);
+          dispatch(setMiscellaneousData({ topBarVisibility: false }));
+
+          client.on('user-published', onUserPublish);
+
+          client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+            if (mediaType === 'video') {
+              user.videoTrack?.stop();
+            }
+            if (mediaType === 'audio') {
+              user.audioTrack?.stop();
+            }
+            leaveChannel();
+          });
+        } catch (e) {
+          console.log(e);
+        }
+        videoRef.current?.style.setProperty('display', 'none');
+        console.log('res.data.data.status',res.data.data.status);
+        // switch (res.data.data.status) {
+        //   case 'paused':
+        //     setIsPaused(true);
+        //     setIsShowpool(false);
+        //     break;
+        //   case 'showpool':
+        //     setIsPaused(false);
+        //     setIsShowpool(true);
+        //     setAmount(res.data.data.pool);
+        //     setNumberParticipants(res.data.data.contestants);
+        //     break;
+        //   case 'quiz':
+        //     setIsPaused(false);
+        //     setIsShowpool(false);
+        //     const query_question_start = { question_id: res.data.data.question_id };
+        //     const quizStartQuestions = await getOnlyQuestion(query_question_start);
+        //     console.log('quizStartQuestions', quizStartQuestions);
+        //     if (quizStartQuestions.data.question_index) setQuestionIndex(quizStartQuestions.data.question_index);
+        //     if (quizStartQuestions.data.total_questions)
+        //       setTotalNumberOfQuestions(quizStartQuestions.data.total_questions);
+        //     setCurrentQuestion(quizStartQuestions.data);
+        //     toggleQuestion(true);
+        //     setIsOptionSubmitted(false);
+        //     break;
+        //   case 'quiz_answer':
+        //     setIsPaused(false);
+        //     setIsShowpool(false);
+        //     const query_answer = { question_id: res.data.data.question_id };
+        //     toggleQuestion(true);
+        //     const quizAnswerQuestions = await getQuestionWithOption(query_answer);
+        //     setCurrentQuestion(quizAnswerQuestions.data);
+        //     break;
+        //   case 'waitting':
+        //     videoRef.current?.style.setProperty('display', 'block');
+        //     break;
+        // }
+      }
     };
     fetchQuizState();
   }, []);
@@ -239,11 +273,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       setIsOptionSubmitted(false);
     });
     socket?.on(SOCKET_LISTENERS.USER_SHOW_POOL, (data: IQuestionResponse) => {
-      if (data.status == 'hide') {
+      if (data?.status === 'hide') {
+        setIsPaused(false);
         setIsShowpool(false);
+        videoRef.current?.style.setProperty('display', 'block');
       } else {
         setIsPaused(false);
         setIsShowpool(true);
+        videoRef.current?.style.setProperty('display', 'none');
       }
     });
 
@@ -292,6 +329,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LAST_QUESTION, (data: any) => {
       console.log('user_quiz_last_question :: ', data);
     });
+    socket?.on('user_quiz_live_end', (data: any) => {
+      localStorage.setItem('isjoinchanel', 'false');
+      console.log('user_quiz_live_end :: ', data);
+    });
+
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
       setLiveUserCount(data.viewer_count);
@@ -504,7 +546,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     if (isJoined) {
       showMessages('error', 'You are already in the quiz');
-      await leaveChannel();
+      //  await leaveChannel();
     }
     if (!user) {
       // create shadow user and join
@@ -522,7 +564,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     const randomUid = Math.floor(Math.random() * 1000);
 
     const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
-    console.log('appId, channelName, rtcToken.data.data, randomUid', appId, channelName, rtcToken.data.data, randomUid);
+
     await client
       .join(appId, channelName, rtcToken.data.data, randomUid)
       .then((res) => {
@@ -848,19 +890,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         )}
         {showLeaderboard && id && <Leaderboard quizId={id} />}
-        {isPaused && (
-          <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-            <p className="text-center h-full flex justify-center m-auto items-center text-yellow-400 text-4xl font-stud-regular">
-              Quiz Paused
-            </p>
-          </div>
-        )}
+
         {isParticipants && isShowpool && (
           <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
             <div className="flex flex-col">
-              <div className="mt-6 flex justify-center z-20">
-                <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={70} height={70} />
-              </div>
+              <div className="mt-6 flex justify-center z-20"></div>
             </div>
 
             <div className="flex flex-col mt-2">
@@ -891,13 +925,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </div>
           </div>
         )}
-
-        {isShowpool && (
+        {isShowpool && !isParticipants && (
           <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
             <div className="flex flex-col">
-              <div className="mt-6 flex justify-center z-20">
-                <img src={imageUrl} alt="user2" className=" border-4  rounded-full" width={70} height={70} />
-              </div>
+              <div className="mt-6 flex justify-center z-20"></div>
             </div>
 
             <div className="flex flex-col mt-2">
@@ -979,6 +1010,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           ></video>
         </div>
       </div>
+      {isPaused && (
+        <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
+          <p className="text-center h-full flex justify-center m-auto items-center text-yellow-400 text-4xl font-stud-regular">
+            Quiz Paused
+          </p>
+        </div>
+      )}
 
       <Drawer title="Basic Drawer" height={500} onClose={onClose} open={open} placement="bottom">
         <div>

@@ -220,18 +220,20 @@ const initaliseWebSocket = (server) => {
       socket.on('host_live_end', async (data) => {
         try {
           const { quiz_id, host_id } = data;
+          console.log('host_live_end');
           console.log('host_live_quiz_calculation_end');
           // Find the corresponding LiveStream document
           const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
-          quizPoolData.amount = 50;
-          quizPoolData.playCount = 0;
+          amount = 50;
+          playCount = 0;
           await liveQuiz.deleteMany({});
           // Update LiveStream status and end time
           liveStream.status = 'completed';
           liveStream.end_time = new Date();
           await liveStream.save();
           const room = liveStream.room_id;
-          io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
+       //   io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
+       io.emit('user_quiz_live_end', { quiz: quiz_id });
           // emit quiz live emitting quiz_id and room_id
           // TODO: rethink this implementation
           // io.emit('user_quiz_live_start', { quiz_id });
@@ -359,7 +361,7 @@ const initaliseWebSocket = (server) => {
         // const optionWithCorrectAndTotalAnswers = await optionService.getOptionWithCorrectAndTotalAnswers(question_id);
         //     await liveQuiz.deleteMany({});
         const quizQuestions = await questionService.getQuestionWithOptionAndTotalAnswers(question_id);
-        console.log('quizQuestions', quizQuestions);
+
         io.in(room).emit('user_quiz_live_question_end', { question: quizQuestions });
 
         // TODO: another tigger with question result with percentage correct answer
@@ -483,7 +485,7 @@ const initaliseWebSocket = (server) => {
 
         // TODO: fix the channel name implementation as for now it is hardcoded
         const channelViewerCount = await getNumberOfUsersInChannel('test');
-        console.log('user_leave_live_quizchannelViewerCount',channelViewerCount);
+        console.log('user_leave_live_quizchannelViewerCount', channelViewerCount);
         // emit to users
         io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: channelViewerCount });
 
