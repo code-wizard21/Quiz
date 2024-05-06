@@ -205,7 +205,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             setCurrentQuestion(quizAnswerQuestions.data);
             setQuestionIndex(res.data.data.question_index);
             setTotalNumberOfQuestions(res.data.data.total_questions);
-            break;
+            break
         }
       }
     };
@@ -611,39 +611,49 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       }
       leaveChannel();
     });
-    // if (isdoing == true) {
-    //   const res = await getQuizState();
-    //   switch (res.data.data.status) {
-    //     case 'paused': {
-    //       setIsPaused(true);
-    //       break;
-    //     }
-    //     case 'showpool': {
-    //       setIsShowpool(true);
-    //       setAmount(res.data.data.pool);
-    //       setNumberParticipants(res.data.data.contestants);
-    //       break;
-    //     }
-    //     case 'quiz': {
-    //       const query_question_start = { question_id: res.data.data.question_id };
-    //       const quizStartQuestions = await getOnlyQuestion(query_question_start);
-    //       if (quizStartQuestions.data.question_index) setQuestionIndex(quizStartQuestions.data.question_index);
-    //       if (quizStartQuestions.data.total_questions)
-    //         setTotalNumberOfQuestions(quizStartQuestions.data.total_questions);
-    //       setCurrentQuestion(quizStartQuestions.data);
-    //       toggleQuestion(true);
-    //       setIsOptionSubmitted(false);
-    //       break;
-    //     }
-    //     case 'quiz_answer': {
-    //       const query_answer = { question_id: res.data.data.question_id };
-    //       toggleQuestion(true);
-    //       const quizAnswerQuestions = await getQuestionWithOption(query_answer);
-    //       setCurrentQuestion(quizAnswerQuestions.data);
-    //       break;
-    //     }
-    //   }
-    // }
+    const res = await getQuizState();
+    if(isdoing==true){
+      switch (res.data.data.status) {
+        case 'paused':
+          videoRef.current?.style.setProperty('display', 'none');
+          setIsPaused(true);
+          setIsShowpool(false);
+          break;
+        case 'showpool':
+          videoRef.current?.style.setProperty('display', 'none');
+          setIsPaused(false);
+          setIsShowpool(true);
+          setAmount(res.data.data.pool);
+          setNumberParticipants(res.data.data.contestants);
+          break;
+        case 'quiz':
+          videoRef.current?.style.setProperty('display', 'none');
+          setIsPaused(false);
+          setIsShowpool(false);
+          const query_question_start = { question_id: res.data.data.question_id };
+          const quizStartQuestions = await getOnlyQuestion(query_question_start);
+          console.log('quizStartQuestions', quizStartQuestions);
+          setQuestionIndex(res.data.data.question_index);
+            setTotalNumberOfQuestions(res.data.data.total_questions);
+          setCurrentQuestion(quizStartQuestions.data);
+          toggleQuestion(true);
+          setIsOptionSubmitted(false);
+          break;
+        case 'quiz_answer':
+          videoRef.current?.style.setProperty('display', 'none');
+          setIsPaused(false);
+          setIsShowpool(false);
+          const query_answer = { question_id: res.data.data.question_id };
+          toggleQuestion(true);
+          const quizAnswerQuestions = await getQuestionWithOption(query_answer);
+          setCurrentQuestion(quizAnswerQuestions.data);
+          setQuestionIndex(res.data.data.question_index);
+          setTotalNumberOfQuestions(res.data.data.total_questions);
+          break
+      }
+    }
+  
+
   };
 
   const startTimer = useCallback((duration: number) => {

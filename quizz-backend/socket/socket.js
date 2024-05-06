@@ -215,6 +215,7 @@ const initaliseWebSocket = (server) => {
         } catch (err) {
           console.error(err);
         }
+        
         setTimeout(() => {
           io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
 
@@ -362,7 +363,13 @@ const initaliseWebSocket = (server) => {
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
         if (!liveStream) {
           return;
-        }
+        } 
+                
+        const filter = { question_id: question_id };
+        const update = { status: 'quiz_end' };
+
+        // `doc` is the document _before_ `updateOne()` was called
+        let doc = await liveQuiz.updateOne(filter, update);
 
         const room = liveStream.room_id;
 
