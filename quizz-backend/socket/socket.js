@@ -469,12 +469,7 @@ const initaliseWebSocket = (server) => {
         }
         console.log('user_leave_live_quiz');
         const { quiz_id, user_id } = data;
-        try {
-          await liveQuiz.deleteMany({});
-          console.log('Successful deletion');
-        } catch (err) {
-          console.error(err);
-        }
+ 
         // update user participation status to completed
         await UserParticipation.updateOne(
           { quiz: new ObjectId(quiz_id), user: new ObjectId(user_id) },

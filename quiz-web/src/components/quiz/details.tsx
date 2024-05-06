@@ -130,8 +130,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       if (res != undefined) {
         setIsDoing(true);
       }
-
-      if (statejoin == 'true' && res != undefined) {
+      console.log('res.data.data.status', res.data.data);
+      if (statejoin == 'true') {
         try {
           socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
           const randomUid = Math.floor(Math.random() * 1000);
@@ -166,20 +166,24 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         } catch (e) {
           console.log(e);
         }
-        videoRef.current?.style.setProperty('display', 'none');
-        console.log('res.data.data.status', res.data.data);
+        videoRef.current?.style.setProperty('display', 'block');
+       
+        
         switch (res.data.data.status) {
           case 'paused':
+            videoRef.current?.style.setProperty('display', 'none');
             setIsPaused(true);
             setIsShowpool(false);
             break;
           case 'showpool':
+            videoRef.current?.style.setProperty('display', 'none');
             setIsPaused(false);
             setIsShowpool(true);
             setAmount(res.data.data.pool);
             setNumberParticipants(res.data.data.contestants);
             break;
           case 'quiz':
+            videoRef.current?.style.setProperty('display', 'none');
             setIsPaused(false);
             setIsShowpool(false);
             const query_question_start = { question_id: res.data.data.question_id };
@@ -192,6 +196,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             setIsOptionSubmitted(false);
             break;
           case 'quiz_answer':
+            videoRef.current?.style.setProperty('display', 'none');
             setIsPaused(false);
             setIsShowpool(false);
             const query_answer = { question_id: res.data.data.question_id };
@@ -200,9 +205,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             setCurrentQuestion(quizAnswerQuestions.data);
             setQuestionIndex(res.data.data.question_index);
             setTotalNumberOfQuestions(res.data.data.total_questions);
-            break;
-          case 'waitting':
-            videoRef.current?.style.setProperty('display', 'block');
             break;
         }
       }
