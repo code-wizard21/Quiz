@@ -167,8 +167,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           console.log(e);
         }
         videoRef.current?.style.setProperty('display', 'block');
-       
-        
+
         switch (res.data.data.status) {
           case 'paused':
             videoRef.current?.style.setProperty('display', 'none');
@@ -176,7 +175,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             setIsShowpool(false);
             break;
           case 'showpool':
-            videoRef.current?.style.setProperty('display', 'none');
+            showCircle();
             setIsPaused(false);
             setIsShowpool(true);
             setAmount(res.data.data.pool);
@@ -190,7 +189,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             const quizStartQuestions = await getOnlyQuestion(query_question_start);
             console.log('quizStartQuestions', quizStartQuestions);
             setQuestionIndex(res.data.data.question_index);
-              setTotalNumberOfQuestions(res.data.data.total_questions);
+            setTotalNumberOfQuestions(res.data.data.total_questions);
             setCurrentQuestion(quizStartQuestions.data);
             toggleQuestion(true);
             setIsOptionSubmitted(false);
@@ -205,16 +204,30 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             setCurrentQuestion(quizAnswerQuestions.data);
             setQuestionIndex(res.data.data.question_index);
             setTotalNumberOfQuestions(res.data.data.total_questions);
-            break
+            setOptionStartTime(moment());
+            timerRef.current?.style.setProperty('display', 'block');
+            startTimer(15);
+            break;
         }
       }
     };
     fetchQuizState();
   }, []);
+  const showCircle = () => {
+    videoRef.current?.style.setProperty('display', 'block');
+
+    videoRef.current?.style.setProperty('left', '39%');
+    timerRef.current?.style.setProperty('left', '36.6%');
+    videoRef.current?.style.setProperty('top', '8%');
+    timerRef.current?.style.setProperty('top', '6.6%');
+    // add  full radius to video
+    videoRef.current?.style.setProperty('border-radius', '50px');
+    timerRef.current?.style.setProperty('border-radius', '50px');
+    videoRef.current?.style.setProperty('position', 'absolute');
+  };
   useEffect(() => {
     // display to none for video element
     videoRef.current?.style.setProperty('display', 'none');
-    timerRef.current?.style.setProperty('display', 'none');
 
     // Function to log socket connection status
     const logConnectionStatus = () => {
@@ -236,7 +249,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       } else {
         setIsPaused(true);
         setIsShowpool(false);
-        videoRef.current?.style.setProperty('display', 'none');
+
+        timerRef.current?.style.setProperty('display', 'none');
+        setTimerProgress(0);
+        setIsOptionSubmitted(false);
       }
     });
     socket?.on('amount_update_user_broadcast', (data) => {
@@ -278,15 +294,28 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
     socket?.on(SOCKET_LISTENERS.USER_SHOW_POOL, (data: IQuestionResponse) => {
       // Assuming you have a localAudioTrack already
-    
+
       if (data?.status === 'hide') {
         setIsPaused(false);
         setIsShowpool(false);
-        videoRef.current?.style.setProperty('display', 'block');
+
+        videoRef.current?.style.setProperty('border-radius', '0px');
+        videoRef.current?.style.removeProperty('left');
+        videoRef.current?.style.removeProperty('top');
+        videoRef.current?.style.setProperty('position', 'relative');
       } else {
         setIsPaused(false);
         setIsShowpool(true);
-        videoRef.current?.style.setProperty('display', 'none');
+        videoRef.current?.style.setProperty('display', 'block');
+
+        videoRef.current?.style.setProperty('left', '39%');
+        timerRef.current?.style.setProperty('left', '36.6%');
+        videoRef.current?.style.setProperty('top', '8%');
+        timerRef.current?.style.setProperty('top', '6.6%');
+        // add  full radius to video
+        videoRef.current?.style.setProperty('border-radius', '50px');
+        timerRef.current?.style.setProperty('border-radius', '50px');
+        videoRef.current?.style.setProperty('position', 'absolute');
       }
     });
 
@@ -614,7 +643,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       leaveChannel();
     });
     const res = await getQuizState();
-    if(isdoing==true){
+    if (isdoing == true) {
       switch (res.data.data.status) {
         case 'paused':
           videoRef.current?.style.setProperty('display', 'none');
@@ -622,7 +651,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setIsShowpool(false);
           break;
         case 'showpool':
-          videoRef.current?.style.setProperty('display', 'none');
+          showCircle();
           setIsPaused(false);
           setIsShowpool(true);
           setAmount(res.data.data.pool);
@@ -636,7 +665,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           const quizStartQuestions = await getOnlyQuestion(query_question_start);
           console.log('quizStartQuestions', quizStartQuestions);
           setQuestionIndex(res.data.data.question_index);
-            setTotalNumberOfQuestions(res.data.data.total_questions);
+          setTotalNumberOfQuestions(res.data.data.total_questions);
           setCurrentQuestion(quizStartQuestions.data);
           toggleQuestion(true);
           setIsOptionSubmitted(false);
@@ -651,11 +680,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setCurrentQuestion(quizAnswerQuestions.data);
           setQuestionIndex(res.data.data.question_index);
           setTotalNumberOfQuestions(res.data.data.total_questions);
-          break
+          setOptionStartTime(moment());
+          timerRef.current?.style.setProperty('display', 'block');
+          startTimer(15);
+          break;
       }
     }
-  
-
   };
 
   const startTimer = useCallback((duration: number) => {
@@ -922,18 +952,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         {showLeaderboard && id && <Leaderboard quizId={id} />}
 
         {isParticipants && isShowpool && (
-          <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-            <div className="flex flex-col">
-              <div className="mt-6 flex justify-center z-20"></div>
-            </div>
-
-            <div className="flex flex-col mt-2">
-              <div className="mt-4 flex flex-row justify-center p-4">
+          <div className="mt-6 w-96 h-12  z-50 bottom-0" id="view-que">
+            <div className="flex flex-col ">
+              <div className="mt-48 flex flex-row justify-center p-4">
                 <img src={frame} width={38.99} height={40} alt="frame" />
-                <div className="text-customYellowBorder text-5xl font-bold text-center studregular">{amount}</div>
+                <div className="text-customYellowBorder text-5xl  text-center font-bold studregular">{amount}$</div>
               </div>
 
-              <div className="studregular text-center text-sm text-2xl font-bold  text-white">
+              <div className="mt-2 text-white text-center text-sm studregular font-bold  ">
                 Estimated Prize Pool, each Ticket adds $1
               </div>
             </div>
@@ -941,7 +967,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <div className="pr-8 pl-8 mt-4">
               <div className="studregular text-center text-2xl font-bold  text-white p-1">No. of Players:</div>
             </div>
-            <div className="pr-8 pl-8 mt-4">
+            <div className="pr-8 pl-8 mt-8">
               <div className="studregular text-center text-4xl font-bold  text-white p-1">{numberParticipants}</div>
             </div>
             <div className="pr-8 pl-8 mt-8">
@@ -955,31 +981,29 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </div>
           </div>
         )}
-        {isShowpool && !isParticipants && (
-          <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-            <div className="flex flex-col">
-              <div className="mt-6 flex justify-center z-20"></div>
-            </div>
 
-            <div className="flex flex-col mt-2">
-              <div className="mt-4 flex flex-row justify-center p-4">
+        {isShowpool && !isParticipants && (
+          <div className="mt-6 w-96 h-12  z-50 bottom-0" id="view-que">
+            <div className="flex flex-col ">
+              <div className="mt-48 flex flex-row justify-center p-4">
                 <img src={frame} width={38.99} height={40} alt="frame" />
-                <div className="text-customYellowBorder text-5xl font-bold text-center studregular">{amount}$</div>
+                <div className="text-customYellowBorder text-5xl  text-center font-bold studregular">{amount}$</div>
               </div>
 
-              <div className="studregular text-center text-sm text-2xl font-bold  text-white">
+              <div className="mt-2 text-white text-center text-sm studregular font-bold  ">
                 Estimated Prize Pool, each Ticket adds $1
               </div>
             </div>
 
-            <div className="pr-8 pl-8 mt-2">
-              <div className="studregular text-center text-xl font-bold  text-white p-1">
+            <div className="mt-4 pr-8 pl-8 ">
+              <div className="p-1 text-center text-2xl  text-white studregular">
                 Join the Quiz and compete to be the winner by entering with a Ticket
               </div>
             </div>
-            {user?.role === 'user' && (
-              <>
-                <div className="mt-2 p-4">
+
+            <>
+              <div className="p-4">
+                {user?.role === 'user' && (
                   <div className="flex justify-center">
                     <>
                       <div className="studregular font-bold text-xl text-white">Your account:</div>
@@ -1001,37 +1025,53 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                       </div>
                     </>
                   </div>
+                )}
+              </div>
+              {user?.role === 'user' && (
+                <div>
+                  <div className="flex mt-4 justify-center ">
+                    <button
+                      onClick={useCredit}
+                      className="bg-customBlue w-[315px] h-[52px] top-[320px]  rounded-[30px] space-x-[6px]"
+                    >
+                      <div className="flex items-center justify-center">
+                        <div className="mr-2 text-white text-center text-xl font-bold  studregular  ">Use 1 Ticket</div>
+                        <img src={group_red} alt="user2" />
+                      </div>
+                    </button>
+                  </div>
+                  <div className="flex justify-center mt-8 mb-4">
+                    <button
+                      onClick={showDrawer}
+                      className=" w-[315px] h-[52px] top-[320px] bg-customYellowBorder  rounded-[30px] space-x-[6px]"
+                    >
+                      <div className="flex items-center justify-center">
+                        <div className="studregular text-black text-center text-xl font-bold  mr-2">Buy Tickets</div>
+                        <img src={group_red} alt="user2" />
+                      </div>
+                    </button>
+                  </div>
                 </div>
-
-                <div className="flex justify-center mt-6">
-                  <button
-                    onClick={useCredit}
-                    className="bg-customBlue w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
-                  >
-                    <div className="flex items-center justify-center">
-                      <div className="studregular text-center text-xl font-bold text-white mr-2 ">Use 1 Ticket</div>
-                      <img src={group_red} alt="user2" />
-                    </div>
-                  </button>
-                </div>
-                <div className="flex justify-center mt-8 mb-4">
+              )}
+              {user?.role != 'user' && (
+                <div className="flex justify-center mt-4 mb-4">
                   <button
                     onClick={showDrawer}
-                    className="bg-customYellowBorder w-[300px] h-[42px] top-[320px] rounded-[30px] space-x-[6px]"
+                    className="bg-customBlue w-[315px] h-[52px] top-[320px] rounded-[30px] space-x-[6px]"
                   >
                     <div className="flex items-center justify-center">
-                      <div className="studregular text-black text-center text-xl font-bold  mr-2">Buy Tickets</div>
+                      <div className="studregular text-white text-center text-xl font-bold  mr-2">Buy Tickets</div>
                       <img src={group_red} alt="user2" />
                     </div>
                   </button>
                 </div>
-              </>
-            )}
+              )}
+            </>
           </div>
         )}
         <div ref={viewQuestionRef} className="relative text-center" id="view-que-video">
           <video
-            className={`m-auto block z-10 w-full ${viewQuestions ? 'max-100-100' : 'max-w-430'}`}
+            className={`m-auto block z-10 w-full ${isShowpool || viewQuestions ? 'max-100-100' : 'max-w-430'}`}
             // height={liveVideoHeight}
             // width={liveVideoWidth}
             id="remote-video"
