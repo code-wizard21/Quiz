@@ -337,6 +337,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
     socket?.on('user_quiz_live_end', (data: any) => {
       localStorage.setItem('isjoinchanel', 'false');
+      setIsPaused(false);
+      setIsShowpool(false);
       console.log('user_quiz_live_end :: ', data);
       leaveChannel();
     });
