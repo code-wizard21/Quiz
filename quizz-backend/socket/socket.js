@@ -156,6 +156,7 @@ const initaliseWebSocket = (server) => {
       socket.on('host_show_pool', async (data) => {
         console.log('host_show_pool####');
         const { quiz_id, host_id } = data;
+        
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
         // TODO: calculate the leaderboard and emit the result to the host and users
         if (!liveStream) {
@@ -168,21 +169,43 @@ const initaliseWebSocket = (server) => {
         } catch (err) {
           console.error(err);
         }
-        const newData = new liveQuiz({
-          status: 'showpool',
-        });
-
-        await newData
-          .save()
-          .then((res) => {
-            console.log('res');
-          })
-          .catch((err) => {
-            console.log(err);
+        if (data.status === 'hide') {
+          const newData = new liveQuiz({
+            status: 'quiz_end',
           });
+  
+          await newData
+            .save()
+            .then((res) => {
+              console.log('res');
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+        else{
+          const newData = new liveQuiz({
+            status: 'showpool',
+          });
+  
+          await newData
+            .save()
+            .then((res) => {
+              console.log('res');
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+    
         const room = liveStream.room_id;
         data.room_id = room;
         io.in(room).emit('user_show_pool', data);
+      });
+
+      socket.on('host_mute_state', async (data) => {
+        console.log('host_mute_state####');
+       
       });
 
       socket.on('host_live_quiz_calculation_start', async (data) => {
@@ -396,22 +419,7 @@ const initaliseWebSocket = (server) => {
         // TODO: another trigger to send correct answer of the question to the user
         // io.in(room).emit('user_quiz_live_question_answer', {});
       });
-      socket.on('host_mute_state', async (data) => {
-        
-        if (!data || !data.quiz_id || !data.host_id || !data.question_id) {
-          return;
-        }
-        console.log('host_mute_state',data);
-        // get room_id from livestreams collection via quiz_id and host_id
-        const { quiz_id, host_id, question_id, is_last } = data;
-        console.log('question_id, is_last', question_id, is_last);
-      
-
-        const room = liveStream.room_id;
-
-        io.in(room).emit('host_mute_state');
-
-      });
+ 
       
       socket.on('user_join_live_quiz', async (data) => {
         if (!data || !data.quiz_id || !data.user_id) {

@@ -94,6 +94,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [value, setValue] = useState(1);
   const location = useLocation();
   const [isdoing, setIsDoing] = useState(false);
+  // timerRef.current?.style.setProperty('display', 'none');
 
   useEffect(() => {
     socket?.on('amount_update_user_broadcast', (data) => {
@@ -124,111 +125,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    const fetchQuizState = async () => {
-      const statejoin = localStorage.getItem('isjoinchanel');
-      const res = await getQuizState();
-      if (res != undefined) {
-        setIsDoing(true);
-      }
-      console.log('res.data.data.status', res.data.data);
-      if (statejoin == 'true') {
-        try {
-          socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
-          const randomUid = Math.floor(Math.random() * 1000);
-
-          const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
-
-          await client
-            .join(appId, channelName, rtcToken.data.data, randomUid)
-            .then((res) => {
-              console.log('resres###########', res);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-          message.destroy();
-          videoRef.current.hidden = false;
-          // videoRef.current?.style.setProperty('display', 'block');
-          toggleQuestion(false);
-          dispatch(setMiscellaneousData({ topBarVisibility: false }));
-
-          client.on('user-published', onUserPublish);
-
-          client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
-            if (mediaType === 'video') {
-              user.videoTrack?.stop();
-            }
-            if (mediaType === 'audio') {
-              user.audioTrack?.stop();
-            }
-            leaveChannel();
-          });
-        } catch (e) {
-          console.log(e);
-        }
-        videoRef.current?.style.setProperty('display', 'block');
-
-        switch (res.data.data.status) {
-          case 'paused':
-            videoRef.current?.style.setProperty('display', 'none');
-            setIsPaused(true);
-            setIsShowpool(false);
-            break;
-          case 'showpool':
-            showCircle();
-            setIsPaused(false);
-            setIsShowpool(true);
-            setAmount(res.data.data.pool);
-            setNumberParticipants(res.data.data.contestants);
-            break;
-          case 'quiz':
-            videoRef.current?.style.setProperty('display', 'none');
-            setIsPaused(false);
-            setIsShowpool(false);
-            const query_question_start = { question_id: res.data.data.question_id };
-            const quizStartQuestions = await getOnlyQuestion(query_question_start);
-            console.log('quizStartQuestions', quizStartQuestions);
-            setQuestionIndex(res.data.data.question_index);
-            setTotalNumberOfQuestions(res.data.data.total_questions);
-            setCurrentQuestion(quizStartQuestions.data);
-            toggleQuestion(true);
-            setIsOptionSubmitted(false);
-            break;
-          case 'quiz_answer':
-            videoRef.current?.style.setProperty('display', 'none');
-            setIsPaused(false);
-            setIsShowpool(false);
-            const query_answer = { question_id: res.data.data.question_id };
-            toggleQuestion(true);
-            const quizAnswerQuestions = await getQuestionWithOption(query_answer);
-            setCurrentQuestion(quizAnswerQuestions.data);
-            setQuestionIndex(res.data.data.question_index);
-            setTotalNumberOfQuestions(res.data.data.total_questions);
-            setOptionStartTime(moment());
-            timerRef.current?.style.setProperty('display', 'block');
-            startTimer(15);
-            break;
-        }
-      }
-    };
-    fetchQuizState();
-  }, []);
-  const showCircle = () => {
-    videoRef.current?.style.setProperty('display', 'block');
-
-    videoRef.current?.style.setProperty('left', '39%');
-    timerRef.current?.style.setProperty('left', '36.6%');
-    videoRef.current?.style.setProperty('top', '8%');
-    timerRef.current?.style.setProperty('top', '6.6%');
-    // add  full radius to video
-    videoRef.current?.style.setProperty('border-radius', '50px');
-    timerRef.current?.style.setProperty('border-radius', '50px');
-    videoRef.current?.style.setProperty('position', 'absolute');
-  };
-  useEffect(() => {
     // display to none for video element
     videoRef.current?.style.setProperty('display', 'none');
+    timerRef.current?.style.setProperty('display', 'none');
+    const statejoin = localStorage.getItem('isjoinchanel');
 
+    if (statejoin == 'true') {
+      fetchQuizState();
+    }
     // Function to log socket connection status
     const logConnectionStatus = () => {
       // console.log('Socket connected:', socket?.connected);
@@ -249,7 +153,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       } else {
         setIsPaused(true);
         setIsShowpool(false);
-
+        videoRef.current?.style.setProperty('display', 'none');
         timerRef.current?.style.setProperty('display', 'none');
         setTimerProgress(0);
         setIsOptionSubmitted(false);
@@ -305,6 +209,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         videoRef.current?.style.setProperty('position', 'relative');
       } else {
         setIsPaused(false);
+        // toggleStreamAudio();
         setIsShowpool(true);
         videoRef.current?.style.setProperty('display', 'block');
 
@@ -352,7 +257,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         });
         return prevCurrentQuestion;
       });
-
+      killTimerOnButtonClick();
       setTimeout(() => {
         toggleQuestion(false);
       }, 3000);
@@ -471,6 +376,105 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     };
   }, []);
 
+  const fetchQuizState = async () => {
+
+   
+      const res = await getQuizState();
+      if (res != undefined) {
+        setIsDoing(true);
+      }
+      try {
+        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+        const randomUid = Math.floor(Math.random() * 1000);
+
+        const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
+
+        await client
+          .join(appId, channelName, rtcToken.data.data, randomUid)
+          .then((res) => {
+            console.log('resres###########', res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        message.destroy();
+        videoRef.current.hidden = false;
+        // videoRef.current?.style.setProperty('display', 'block');
+        toggleQuestion(false);
+        dispatch(setMiscellaneousData({ topBarVisibility: false }));
+
+        client.on('user-published', onUserPublish);
+
+        client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+          if (mediaType === 'video') {
+            user.videoTrack?.stop();
+          }
+          if (mediaType === 'audio') {
+            user.audioTrack?.stop();
+          }
+          leaveChannel();
+        });
+      } catch (e) {
+        console.log(e);
+      }
+      videoRef.current?.style.setProperty('display', 'block');
+
+      switch (res.data.data.status) {
+        case 'paused':
+          videoRef.current?.style.setProperty('display', 'none');
+          setIsPaused(true);
+          setIsShowpool(false);
+          break;
+        case 'showpool':
+          showCircle();
+          setIsPaused(false);
+          setIsShowpool(true);
+          setAmount(res.data.data.pool);
+          setNumberParticipants(res.data.data.contestants);
+          break;
+        case 'quiz':
+          videoRef.current?.style.setProperty('display', 'none');
+          setIsPaused(false);
+          setIsShowpool(false);
+          const query_question_start = { question_id: res.data.data.question_id };
+          const quizStartQuestions = await getOnlyQuestion(query_question_start);
+          console.log('quizStartQuestions', quizStartQuestions);
+          setQuestionIndex(res.data.data.question_index);
+          setTotalNumberOfQuestions(res.data.data.total_questions);
+          setCurrentQuestion(quizStartQuestions.data);
+          toggleQuestion(true);
+          setIsOptionSubmitted(false);
+          break;
+        case 'quiz_answer':
+          videoRef.current?.style.setProperty('display', 'none');
+          setIsPaused(false);
+          setIsShowpool(false);
+          const query_answer = { question_id: res.data.data.question_id };
+          toggleQuestion(true);
+          const quizAnswerQuestions = await getQuestionWithOption(query_answer);
+          setCurrentQuestion(quizAnswerQuestions.data);
+          setQuestionIndex(res.data.data.question_index);
+          setTotalNumberOfQuestions(res.data.data.total_questions);
+
+          timerRef.current?.style.setProperty('display', 'block');
+          setOptionStartTime(moment());
+          startTimer(15);
+          break;
+      }
+    
+  };
+  const showCircle = () => {
+    videoRef.current?.style.setProperty('display', 'block');
+
+    videoRef.current?.style.setProperty('left', '39%');
+    timerRef.current?.style.setProperty('left', '36.6%');
+    videoRef.current?.style.setProperty('top', '8%');
+    timerRef.current?.style.setProperty('top', '6.6%');
+    // add  full radius to video
+    videoRef.current?.style.setProperty('border-radius', '50px');
+    timerRef.current?.style.setProperty('border-radius', '50px');
+    videoRef.current?.style.setProperty('position', 'absolute');
+  };
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -543,10 +547,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const toggleStreamAudio = useCallback(() => {
     if (remoteAudioTracks?.isPlaying) {
-      remoteAudioTracks.stop();
+      console.log('########');
+      //remoteVideoTracks.stop();
       setIsMuted(true);
     } else {
-      remoteAudioTracks.play();
+      remoteVideoTracks.play();
+      console.log('########mute');
       setIsMuted(false);
     }
   }, [remoteAudioTracks]);
@@ -588,7 +594,15 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setCurrentQuestion(undefined);
     setShowLeaderboard(false);
   }, [id, user, client, remoteAudioTracks, remoteVideoTracks]);
+  const killTimerOnButtonClick = useCallback(() => {
+    // Assuming timerInterval is stored using useState like so:
+    // const [timerInterval, setTimerInterval] = useState<ReturnType<typeof setInterval> | null>(null);
 
+    if (timerInterval !== null) {
+      clearInterval(timerInterval);
+      setTimerInterval(null); // Updates the reference to the current interval to 'null'
+    }
+  }, [timerInterval]);
   const joinChannel = async () => {
     // message.loading("Joining Quiz");
     showMessages('loading', 'Joining Quiz');
@@ -680,8 +694,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setCurrentQuestion(quizAnswerQuestions.data);
           setQuestionIndex(res.data.data.question_index);
           setTotalNumberOfQuestions(res.data.data.total_questions);
-          setOptionStartTime(moment());
+
           timerRef.current?.style.setProperty('display', 'block');
+          setOptionStartTime(moment());
           startTimer(15);
           break;
       }
@@ -912,6 +927,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         <Progress ref={timerRef} type="circle" percent={timerProgress} strokeColor={'#44E500'} className="absolute" />
         {viewQuestions && (
           <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
+            <button onClick={killTimerOnButtonClick}>Stop Timer</button>
             <div className="p-16 pt-44 text-2xl text-white font-stud-regular text-center">
               Question {`${questionIndex}`} of {`${totalNumberOfQuestions}`}
             </div>
@@ -956,7 +972,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <div className="flex flex-col ">
               <div className="mt-48 flex flex-row justify-center p-4">
                 <img src={frame} width={38.99} height={40} alt="frame" />
-                <div className="text-customYellowBorder text-5xl  text-center font-bold studregular">{amount}$</div>
+                <div className="text-customYellowBorder text-5xl  text-center font-bold studregular">${amount}</div>
               </div>
 
               <div className="mt-2 text-white text-center text-sm studregular font-bold  ">
@@ -987,7 +1003,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <div className="flex flex-col ">
               <div className="mt-48 flex flex-row justify-center p-4">
                 <img src={frame} width={38.99} height={40} alt="frame" />
-                <div className="text-customYellowBorder text-5xl  text-center font-bold studregular">{amount}$</div>
+                <div className="text-customYellowBorder text-5xl  text-center font-bold studregular">${amount}</div>
               </div>
 
               <div className="mt-2 text-white text-center text-sm studregular font-bold  ">
