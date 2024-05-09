@@ -47,6 +47,7 @@ import whatsappImg from '../../assets/social/whatsapp.svg';
 import { getTicket } from '../../service/user/user.service';
 import { reduceTicket } from '../../service/user/user.service';
 import { checkOutBuyticketSessionSocket } from '../../service/payment/payment.service';
+import './1.css';
 
 const channelName = 'test';
 const appId = 'b75cc48b972d4ccc92edb71a1c75fb23';
@@ -1087,7 +1088,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         )}
         <div ref={viewQuestionRef} className="relative text-center" id="view-que-video">
           <video
-            className={`m-auto block z-10 w-full ${isShowpool || viewQuestions ? 'max-100-100' : 'max-w-430'}`}
+            className={`m-auto flip-video block z-10 w-full ${isShowpool || viewQuestions ? 'max-100-100' : 'max-w-430'}`}
             // height={liveVideoHeight}
             // width={liveVideoWidth}
             id="remote-video"
