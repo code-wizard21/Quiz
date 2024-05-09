@@ -94,6 +94,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [value, setValue] = useState(1);
   const location = useLocation();
   const [isdoing, setIsDoing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   // timerRef.current?.style.setProperty('display', 'none');
 
   useEffect(() => {
@@ -276,6 +277,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       console.log('user_quiz_live_end :: ', data);
       leaveChannel();
     });
+    socket?.on('user_mute_state', (data: any) => {
+      toggleStreamAudio();
+    });
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
       setLiveUserCount(data.viewer_count);
@@ -318,11 +322,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_ANSWER, (data: any) => {
       console.log('user_quiz_live_question_answer :: ', data);
-    });
-
-    socket?.on('host_live_end', (_: any) => {
-      localStorage.setItem('isjoinchanel', 'false');
-      leaveChannel();
     });
 
     console.log(socket);
@@ -377,91 +376,88 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   }, []);
 
   const fetchQuizState = async () => {
+    const res = await getQuizState();
+    if (res != undefined) {
+      setIsDoing(true);
+    }
+    try {
+      socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+      const randomUid = Math.floor(Math.random() * 1000);
 
-   
-      const res = await getQuizState();
-      if (res != undefined) {
-        setIsDoing(true);
-      }
-      try {
-        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
-        const randomUid = Math.floor(Math.random() * 1000);
+      const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
 
-        const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
-
-        await client
-          .join(appId, channelName, rtcToken.data.data, randomUid)
-          .then((res) => {
-            console.log('resres###########', res);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        message.destroy();
-        videoRef.current.hidden = false;
-        // videoRef.current?.style.setProperty('display', 'block');
-        toggleQuestion(false);
-        dispatch(setMiscellaneousData({ topBarVisibility: false }));
-
-        client.on('user-published', onUserPublish);
-
-        client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
-          if (mediaType === 'video') {
-            user.videoTrack?.stop();
-          }
-          if (mediaType === 'audio') {
-            user.audioTrack?.stop();
-          }
-          leaveChannel();
+      await client
+        .join(appId, channelName, rtcToken.data.data, randomUid)
+        .then((res) => {
+          console.log('resres###########', res);
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      } catch (e) {
-        console.log(e);
-      }
-      videoRef.current?.style.setProperty('display', 'block');
+      message.destroy();
+      videoRef.current.hidden = false;
+      // videoRef.current?.style.setProperty('display', 'block');
+      toggleQuestion(false);
+      dispatch(setMiscellaneousData({ topBarVisibility: false }));
 
-      switch (res.data.data.status) {
-        case 'paused':
-          videoRef.current?.style.setProperty('display', 'none');
-          setIsPaused(true);
-          setIsShowpool(false);
-          break;
-        case 'showpool':
-          showCircle();
-          setIsPaused(false);
-          setIsShowpool(true);
-          setAmount(res.data.data.pool);
-          setNumberParticipants(res.data.data.contestants);
-          break;
-        case 'quiz':
-          videoRef.current?.style.setProperty('display', 'none');
-          setIsPaused(false);
-          setIsShowpool(false);
-          const query_question_start = { question_id: res.data.data.question_id };
-          const quizStartQuestions = await getOnlyQuestion(query_question_start);
-          console.log('quizStartQuestions', quizStartQuestions);
-          setQuestionIndex(res.data.data.question_index);
-          setTotalNumberOfQuestions(res.data.data.total_questions);
-          setCurrentQuestion(quizStartQuestions.data);
-          toggleQuestion(true);
-          setIsOptionSubmitted(false);
-          break;
-        case 'quiz_answer':
-          videoRef.current?.style.setProperty('display', 'none');
-          setIsPaused(false);
-          setIsShowpool(false);
-          const query_answer = { question_id: res.data.data.question_id };
-          toggleQuestion(true);
-          const quizAnswerQuestions = await getQuestionWithOption(query_answer);
-          setCurrentQuestion(quizAnswerQuestions.data);
-          setQuestionIndex(res.data.data.question_index);
-          setTotalNumberOfQuestions(res.data.data.total_questions);
+      client.on('user-published', onUserPublish);
 
-          timerRef.current?.style.setProperty('display', 'block');
-          setOptionStartTime(moment());
-          startTimer(15);
-          break;
-      }
-    
+      client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+        if (mediaType === 'video') {
+          user.videoTrack?.stop();
+        }
+        if (mediaType === 'audio') {
+          user.audioTrack?.stop();
+        }
+        leaveChannel();
+      });
+    } catch (e) {
+      console.log(e);
+    }
+    videoRef.current?.style.setProperty('display', 'block');
+
+    switch (res.data.data.status) {
+      case 'paused':
+        videoRef.current?.style.setProperty('display', 'none');
+        setIsPaused(true);
+        setIsShowpool(false);
+        break;
+      case 'showpool':
+        showCircle();
+        setIsPaused(false);
+        setIsShowpool(true);
+        setAmount(res.data.data.pool);
+        setNumberParticipants(res.data.data.contestants);
+        break;
+      case 'quiz':
+        videoRef.current?.style.setProperty('display', 'none');
+        setIsPaused(false);
+        setIsShowpool(false);
+        const query_question_start = { question_id: res.data.data.question_id };
+        const quizStartQuestions = await getOnlyQuestion(query_question_start);
+        console.log('quizStartQuestions', quizStartQuestions);
+        setQuestionIndex(res.data.data.question_index);
+        setTotalNumberOfQuestions(res.data.data.total_questions);
+        setCurrentQuestion(quizStartQuestions.data);
+        toggleQuestion(true);
+        setIsOptionSubmitted(false);
+        break;
+      case 'quiz_answer':
+        videoRef.current?.style.setProperty('display', 'none');
+        setIsPaused(false);
+        setIsShowpool(false);
+        const query_answer = { question_id: res.data.data.question_id };
+        toggleQuestion(true);
+        const quizAnswerQuestions = await getQuestionWithOption(query_answer);
+        setCurrentQuestion(quizAnswerQuestions.data);
+        setQuestionIndex(res.data.data.question_index);
+        setTotalNumberOfQuestions(res.data.data.total_questions);
+
+        timerRef.current?.style.setProperty('display', 'block');
+        setOptionStartTime(moment());
+        startTimer(15);
+        break;
+    }
   };
   const showCircle = () => {
     videoRef.current?.style.setProperty('display', 'block');
@@ -547,7 +543,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const toggleStreamAudio = useCallback(() => {
     if (remoteAudioTracks?.isPlaying) {
-      console.log('########');
+      console.log('########toggleStreamAudio');
       //remoteVideoTracks.stop();
       setIsMuted(true);
     } else {
@@ -559,6 +555,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const leaveChannel = useCallback(async () => {
     // emitted when user leaves the live quiz
+    // localStorage.setItem('isjoinchanel', 'false');
     socket?.emit(SOCKET_EMITTERS.USER_LEAVE_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
 
     if (remoteAudioTracks) {
@@ -604,11 +601,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }
   }, [timerInterval]);
   const joinChannel = async () => {
+    setIsLoading(true);
     // message.loading("Joining Quiz");
     showMessages('loading', 'Joining Quiz');
 
     if (isJoined) {
       showMessages('error', 'You are already in the quiz');
+      return;
       //  await leaveChannel();
     }
     if (!user) {
@@ -701,6 +700,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           break;
       }
     }
+    setIsLoading(false);
   };
 
   const startTimer = useCallback((duration: number) => {
@@ -887,9 +887,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               type="primary"
               className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full"
               onClick={joinChannel}
-              disabled={isSocketConnected ? false : true}
+              disabled={isLoading || !isSocketConnected}
             >
-              Join Quiz
+              Join Channel
             </Button>
             <div className="flex justify-between pt-8 px-12">
               <p>Share</p>
@@ -927,7 +927,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         <Progress ref={timerRef} type="circle" percent={timerProgress} strokeColor={'#44E500'} className="absolute" />
         {viewQuestions && (
           <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-            <button onClick={killTimerOnButtonClick}>Stop Timer</button>
+  
             <div className="p-16 pt-44 text-2xl text-white font-stud-regular text-center">
               Question {`${questionIndex}`} of {`${totalNumberOfQuestions}`}
             </div>

@@ -14,7 +14,7 @@ const quizticket = require('../models/quizticket.model');
 
 let amount = 50;
 let playCount = 0;
-
+let viewer_count=0;
 const quizPoolData = { amount: 50, playCount: 0 };
 const initaliseWebSocket = (server) => {
   try {
@@ -56,7 +56,8 @@ const initaliseWebSocket = (server) => {
         // TODO: Pending in #APP
         const channelViewerCount = await getNumberOfUsersInChannel('test');
         io.emit('quiz_live_start', { quiz_id, room_id: room });
-        io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: channelViewerCount });
+     //   viewer_count++;
+        io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: viewer_count });
         console.log('quiz_live_start');
         // emit quiz live emitting quiz_id and room_id
         // TODO: rethink this implementation
@@ -204,8 +205,16 @@ const initaliseWebSocket = (server) => {
       });
 
       socket.on('host_mute_state', async (data) => {
-        console.log('host_mute_state####');
-       
+        console.log('host_mute_state####',data);
+        const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
+        // TODO: calculate the leaderboard and emit the result to the host and users
+        if (!liveStream) {
+          console.log('liveStream not found');
+          return;
+        }
+        const room = liveStream.room_id;
+        data.room_id = room;
+        io.in(room).emit('user_mute_state', data);
       });
 
       socket.on('host_live_quiz_calculation_start', async (data) => {
@@ -240,6 +249,7 @@ const initaliseWebSocket = (server) => {
         }
         
         setTimeout(() => {
+          viewer_count=0;
           io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
 
           io.emit('host_quiz_live_calculation_end', { quiz: quiz_id });
@@ -250,7 +260,6 @@ const initaliseWebSocket = (server) => {
         try {
           const { quiz_id, host_id } = data;
           console.log('host_live_end');
-          console.log('host_live_quiz_calculation_end');
           // Find the corresponding LiveStream document
           const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
           amount = 50;
@@ -262,15 +271,14 @@ const initaliseWebSocket = (server) => {
           await liveStream.save();
           const room = liveStream.room_id;
           //   io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
-          io.emit('user_quiz_live_end', { quiz: quiz_id });
-          // emit quiz live emitting quiz_id and room_id
+          io.in(room).emit('user_quiz_live_end', { quiz: quiz_id });
           // TODO: rethink this implementation
           // io.emit('user_quiz_live_start', { quiz_id });
 
           // TODO: to be removed after testing
           // Delete all user answer data for the quiz
           await UserAnswer.deleteMany({ quiz: quiz_id });
-
+          viewer_count=0;
           // Close the room and disconnect all sockets
           // TODO: check if this is the right way to close the room
           // io.of('/')
@@ -425,7 +433,6 @@ const initaliseWebSocket = (server) => {
         if (!data || !data.quiz_id || !data.user_id) {
           return;
         }
-        console.log('user_join_live_quiz');
         const { quiz_id, user_id } = data;
         console.log('quiz_id, user_id ', quiz_id, user_id);
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id) });
@@ -435,28 +442,11 @@ const initaliseWebSocket = (server) => {
         }
         
         const room = liveStream.room_id;
-
-        // check if user participation already exsit
-
-        console.log(`user_join_live_quiz :: quiz_id ${quiz_id} user_id ${user_id}`);
         const userParticipation = await UserParticipation.findOne({
           quiz: new ObjectId(quiz_id),
           user: new ObjectId(user_id),
         });
-        // await liveQuiz.deleteMany({});
-        // const newData = new liveQuiz({
-        //   status: 'waitting',
-        //   question_id: quiz_id,
-        // });
 
-        // await newData
-        //   .save()
-        //   .then((res) => {
-        //     console.log('res');
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //   });
 
         if (userParticipation) {
           // update user participation status to ongoing
@@ -482,15 +472,19 @@ const initaliseWebSocket = (server) => {
         ++liveStream.viewer_count;
 
         await liveStream.save();
-
+        console.log('data',data);
         // join room
         socket.join(room);
-
+        // if(data.state!='refresh'){
+        //   console.log('rejoin');
+        //   viewer_count++;
+        // }
+        
         // TODO: fix the channel name implementation as for now it is hardcoded
         const channelViewerCount = await getNumberOfUsersInChannel('test');
-        console.log('channelViewerCountuser_join_live_quiz', channelViewerCount);
+        console.log('user_join_live_quiz', viewer_count);
         setTimeout(() => {
-          io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: channelViewerCount });
+          io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: viewer_count });
         }, 1500);
       });
 
@@ -498,7 +492,6 @@ const initaliseWebSocket = (server) => {
         if (!data || !data.quiz_id || !data.user_id) {
           return;
         }
-        console.log('user_leave_live_quiz');
         const { quiz_id, user_id } = data;
  
         // update user participation status to completed
@@ -521,12 +514,17 @@ const initaliseWebSocket = (server) => {
         --liveStream.viewer_count;
 
         await liveStream.save();
-
+        console.log('viewer_count',viewer_count);
+        if(viewer_count>0){
+          viewer_count--;
+        }
         // TODO: fix the channel name implementation as for now it is hardcoded
         const channelViewerCount = await getNumberOfUsersInChannel('test');
-        console.log('user_leave_live_quizchannelViewerCount', channelViewerCount);
+
+        console.log('user_leave_live_quiz', viewer_count);
         // emit to users
-        io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: channelViewerCount });
+        
+       io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: viewer_count });
 
         // remove user from room
 
