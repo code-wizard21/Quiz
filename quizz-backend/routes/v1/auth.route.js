@@ -11,7 +11,7 @@ router.post('/shadow/register', validate(authValidation.shadowRegister), authCon
 
 router.post('/register', validate(authValidation.register), authController.register);
 router.post('/user/login', validate(authValidation.login), authController.userLogin);
-router.post('/host/login', validate(authValidation.login), authController.hostLogin);
+router.post('/host/login', authController.hostLogin);
 router.post('/admin/login', validate(authValidation.login), authController.adminLogin);
 router.post('/admin/register', authController.adminRegister);
 router.post('/logout', validate(authValidation.logout), authController.logout);
