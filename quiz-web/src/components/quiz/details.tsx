@@ -278,9 +278,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       setIsShowpool(false);
       leaveChannel();
     });
-    socket?.on('user_mute_state', (data: any) => {
-      toggleStreamAudio();
-    });
+
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
       setLiveUserCount(data.viewer_count);
@@ -499,10 +497,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   });
 
   const useTicket = async () => {
-    const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
-    // To mute
-    localAudioTrack.setEnabled(false);
     if (ticket < 1) {
       showMessages('error', 'Please buy the ticket');
       return;
@@ -868,7 +863,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           }}
         />
       )}
-      {!isVideoSubed && (
+      {isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-4" id="live-stream-header">
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={16} />

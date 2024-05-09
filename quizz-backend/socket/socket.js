@@ -96,7 +96,7 @@ const initaliseWebSocket = (server) => {
           status: 'showpool',
           pool: amount,
           contestants: playCount,
-          viewer_count: channelViewerCount,
+          viewer_count: viewer_count-playCount,
         });
 
         await newData1
@@ -204,19 +204,6 @@ const initaliseWebSocket = (server) => {
         io.in(room).emit('user_show_pool', data);
       });
 
-      socket.on('host_mute_state', async (data) => {
-        console.log('host_mute_state####',data);
-        const { quiz_id, host_id } = data;
-        const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
-        // TODO: calculate the leaderboard and emit the result to the host and users
-        if (!liveStream) {
-          console.log('liveStream not found');
-          return;
-        }
-        const room = liveStream.room_id;
-        data.room_id = room;
-        io.in(room).emit('user_mute_state', data);
-      });
 
       socket.on('host_live_quiz_calculation_start', async (data) => {
         // get room_id from livestreams collection via quiz_id and host_id
