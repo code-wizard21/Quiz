@@ -84,7 +84,7 @@ const initaliseWebSocket = (server) => {
         playCount++;
 
         const channelViewerCount = await getNumberOfUsersInChannel('test');
-        const quizPoolData = { amount: amount, playCount: playCount, channelViewerCount: channelViewerCount };
+        const quizPoolData = { amount: amount, playCount: playCount, channelViewerCount: viewer_count-playCount };
         try {
           await liveQuiz.deleteMany({});
           console.log('Successful deletion');
