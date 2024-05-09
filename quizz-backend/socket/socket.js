@@ -206,6 +206,7 @@ const initaliseWebSocket = (server) => {
 
       socket.on('host_mute_state', async (data) => {
         console.log('host_mute_state####',data);
+        const { quiz_id, host_id } = data;
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
         // TODO: calculate the leaderboard and emit the result to the host and users
         if (!liveStream) {
