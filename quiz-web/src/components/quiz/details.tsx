@@ -184,7 +184,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END, (data: any) => {
       localStorage.setItem('isjoinchanel', 'false');
-
+    //  localStorage.setItem('iscounted', 'false');
       console.log('user_quiz_live_calculation_end :: ', data);
       toggleLeaderboardHandler(true);
     });
@@ -273,9 +273,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
     socket?.on('user_quiz_live_end', (data: any) => {
       localStorage.setItem('isjoinchanel', 'false');
+  //    localStorage.setItem('iscounted', 'false');
       setIsPaused(false);
       setIsShowpool(false);
-      console.log('user_quiz_live_end :: ', data);
       leaveChannel();
     });
     socket?.on('user_mute_state', (data: any) => {
@@ -382,7 +382,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       setIsDoing(true);
     }
     try {
-      socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+      const iscounted = localStorage.getItem('iscounted');
+      if(iscounted=='true'){
+        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id ,state:'refresh'});
+      }else{
+        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+      }
+      localStorage.setItem('iscounted','true');
       const randomUid = Math.floor(Math.random() * 1000);
 
       const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
@@ -557,6 +563,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const leaveChannel = useCallback(async () => {
     // emitted when user leaves the live quiz
     // localStorage.setItem('isjoinchanel', 'false');
+    localStorage.setItem('iscounted', 'false');
+
     socket?.emit(SOCKET_EMITTERS.USER_LEAVE_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
 
     if (remoteAudioTracks) {
@@ -638,7 +646,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       });
 
     setIsJoined(true);
-    localStorage.setItem('isjoinchanel', 'true');
+    localStorage.setItem('isjoinchanel','true');
+    localStorage.setItem('iscounted','true');
     message.destroy();
     videoRef.current.hidden = false;
     videoRef.current?.style.setProperty('display', 'block');
@@ -859,7 +868,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           }}
         />
       )}
-      {isVideoSubed && (
+      {!isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-4" id="live-stream-header">
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={16} />

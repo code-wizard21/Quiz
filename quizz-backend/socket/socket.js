@@ -56,9 +56,9 @@ const initaliseWebSocket = (server) => {
         // TODO: Pending in #APP
         const channelViewerCount = await getNumberOfUsersInChannel('test');
         io.emit('quiz_live_start', { quiz_id, room_id: room });
-     //   viewer_count++;
+      
         io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: viewer_count });
-        console.log('quiz_live_start');
+        console.log('quiz_live_start',viewer_count);
         // emit quiz live emitting quiz_id and room_id
         // TODO: rethink this implementation
         // io.emit('user_quiz_live_start', { quiz_id });
@@ -272,6 +272,7 @@ const initaliseWebSocket = (server) => {
           await liveStream.save();
           const room = liveStream.room_id;
           //   io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
+          viewer_count=0;
           io.in(room).emit('user_quiz_live_end', { quiz: quiz_id });
           // TODO: rethink this implementation
           // io.emit('user_quiz_live_start', { quiz_id });
@@ -279,7 +280,7 @@ const initaliseWebSocket = (server) => {
           // TODO: to be removed after testing
           // Delete all user answer data for the quiz
           await UserAnswer.deleteMany({ quiz: quiz_id });
-          viewer_count=0;
+          
           // Close the room and disconnect all sockets
           // TODO: check if this is the right way to close the room
           // io.of('/')
@@ -435,7 +436,7 @@ const initaliseWebSocket = (server) => {
           return;
         }
         const { quiz_id, user_id } = data;
-        console.log('quiz_id, user_id ', quiz_id, user_id);
+
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id) });
 
         if (!liveStream) {
@@ -471,15 +472,15 @@ const initaliseWebSocket = (server) => {
 
         // update viewer count in live stream and emit to users
         ++liveStream.viewer_count;
-
+        
         await liveStream.save();
         console.log('data',data);
         // join room
         socket.join(room);
-        // if(data.state!='refresh'){
-        //   console.log('rejoin');
-        //   viewer_count++;
-        // }
+        if(data.state!='refresh'){
+          console.log('rejoin');
+          viewer_count++;
+        }
         
         // TODO: fix the channel name implementation as for now it is hardcoded
         const channelViewerCount = await getNumberOfUsersInChannel('test');
@@ -515,7 +516,7 @@ const initaliseWebSocket = (server) => {
         --liveStream.viewer_count;
 
         await liveStream.save();
-        console.log('viewer_count',viewer_count);
+        
         if(viewer_count>0){
           viewer_count--;
         }
