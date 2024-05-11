@@ -16,6 +16,10 @@ export interface IQuiz {
   is_paid: boolean;
   description: string;
   is_live: boolean;
+  pool: number;
+  question_index:number;
+  contestants:number;
+  total_questions:number;
   image: string;
   category: TQuizCategory;
   total_votes: number;
@@ -75,6 +79,7 @@ export interface IQuestionResponse {
   question: IQuestion;
   question_index?: number;
   total_questions?: number;
+  status:string
 }
 
 export interface IQuestionStats {

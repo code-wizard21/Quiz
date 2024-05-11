@@ -9,6 +9,8 @@ import vector1 from '../../assets/figma/Vector1.svg';
 import { checkOutBuyticketSession } from '../../service/payment/payment.service';
 import { checkOutBuyCreditSession } from '../../service/payment/payment.service';
 
+
+
 const QuizLayout: React.FC = (): React.ReactElement => {
   const [open, setOpen] = useState(false);
   const [open1, setOpen1] = useState(false);
@@ -26,9 +28,8 @@ const QuizLayout: React.FC = (): React.ReactElement => {
     setOpen1(false);
   };
   const handleBuyTicketClick = () => {
-    let amount,
-      ticket,
-      credit = 0;
+    let amount, ticket;
+    const credit = 0;
     switch (value) {
       case 1:
         amount = 300;
@@ -50,10 +51,15 @@ const QuizLayout: React.FC = (): React.ReactElement => {
         amount = 0;
         ticket = 0;
     }
+    let userName, userEmail;
 
-    const data = {
-      user: JSON.parse(localStorage.getItem('user')).user.name,
-      email: JSON.parse(localStorage.getItem('user')).user.email,
+    if (localStorage.getItem('user')) {
+      userName = JSON.parse(localStorage.getItem('user')!).user.name;
+      userEmail = JSON.parse(localStorage.getItem('user')!).user.email;
+    }
+    const data:any = {
+      user: userName,
+      email: userEmail,
       amount: amount,
       ticket: ticket,
       credit: credit,
@@ -71,9 +77,9 @@ const QuizLayout: React.FC = (): React.ReactElement => {
   };
 
   const handlebuyCreditClick = () => {
-    let amount,
-      credit,
-      ticket = 0;
+    let amount = 0,
+      credit = 0;
+    const ticket = 0;
     switch (value) {
       case 1:
         amount = 1000;
@@ -95,10 +101,14 @@ const QuizLayout: React.FC = (): React.ReactElement => {
         amount = 0;
         credit = 0;
     }
-
-    const data = {
-      user: JSON.parse(localStorage.getItem('user')).user.name,
-      email: JSON.parse(localStorage.getItem('user')).user.email,
+    let userName, userEmail;
+    if (localStorage.getItem('user')) {
+      userName = JSON.parse(localStorage.getItem('user')!).user.name;
+      userEmail = JSON.parse(localStorage.getItem('user')!).user.email;
+    }
+    const data:any = {
+      user: userName,
+      email:userEmail,
       amount: amount,
       ticket: ticket,
       credit: credit,
@@ -194,8 +204,7 @@ const QuizLayout: React.FC = (): React.ReactElement => {
                 </div>
               </div>
             </div>
-          
-            
+
             <div className="flex justify-center mt-2 mb-4">
               <button
                 onClick={handleBuyTicketClick}

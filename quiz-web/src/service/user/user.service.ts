@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { ILoginResponse, TCreateUser } from '../../types/user.type';
-import { post ,get} from '../../wrappers/request';
+import { post } from '../../wrappers/request';
 
 /**
  * registers user

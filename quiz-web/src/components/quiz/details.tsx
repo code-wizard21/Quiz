@@ -84,7 +84,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [amount, setAmount] = useState(50);
   const [credit, setCredit] = useState(0);
   const [isParticipants, setIsParticipants] = useState(false);
-  const [imageUrl, setImageUrl] = useState(sideMenuSvg);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
@@ -111,13 +110,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   useEffect(() => {
     if (user != null) {
       if (user.role == 'user') {
-        const data = { id: user.id };
+        const data: any = { id: user?.id };
 
         getTicket(data)
           .then((res) => {
-            setImageUrl(res.data.data.avatar);
-            setTicket(res.data.data.ticket);
-            setCredit(res.data.data.credit);
+            setTicket(res.data?.data?.ticket);
+            setCredit(res.data?.data?.credit);
           })
           .catch((e) => console.log(e));
 
@@ -174,7 +172,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
     socket?.on(SOCKET_LISTENERS.QUIZ_LIVE_START, (data: QuizLiveStart) => {
       console.log('quiz_live_start ::######### ', data);
-
+      setIsPaused(false);
+      setIsShowpool(false);
       // check if quiz id is same as current quiz id and then update quiz status
     });
 
@@ -184,7 +183,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END, (data: any) => {
       localStorage.setItem('isjoinchanel', 'false');
-    //  localStorage.setItem('iscounted', 'false');
+      //  localStorage.setItem('iscounted', 'false');
       console.log('user_quiz_live_calculation_end :: ', data);
       toggleLeaderboardHandler(true);
     });
@@ -211,7 +210,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         videoRef.current?.style.setProperty('position', 'relative');
       } else {
         setIsPaused(false);
-        // toggleStreamAudio();
+
         setIsShowpool(true);
         videoRef.current?.style.setProperty('display', 'block');
 
@@ -273,12 +272,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
     socket?.on('user_quiz_live_end', (data: any) => {
       localStorage.setItem('isjoinchanel', 'false');
-  //    localStorage.setItem('iscounted', 'false');
+      //    localStorage.setItem('iscounted', 'false');
       setIsPaused(false);
       setIsShowpool(false);
       leaveChannel();
     });
-
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
       setLiveUserCount(data.viewer_count);
@@ -381,12 +379,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }
     try {
       const iscounted = localStorage.getItem('iscounted');
-      if(iscounted=='true'){
-        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id ,state:'refresh'});
-      }else{
+      if (iscounted == 'true') {
+        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id, state: 'refresh' });
+      } else {
         socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
       }
-      localStorage.setItem('iscounted','true');
+      localStorage.setItem('iscounted', 'true');
       const randomUid = Math.floor(Math.random() * 1000);
 
       const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
@@ -431,23 +429,23 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         showCircle();
         setIsPaused(false);
         setIsShowpool(true);
-        setAmount(res.data.data.pool);
-        setNumberParticipants(res.data.data.contestants);
+        setAmount(res.data?.data?.pool);
+        setNumberParticipants(res.data?.data?.contestants);
         break;
-      case 'quiz':
+      case 'quiz': {
         videoRef.current?.style.setProperty('display', 'none');
         setIsPaused(false);
         setIsShowpool(false);
         const query_question_start = { question_id: res.data.data.question_id };
         const quizStartQuestions = await getOnlyQuestion(query_question_start);
-        console.log('quizStartQuestions', quizStartQuestions);
         setQuestionIndex(res.data.data.question_index);
         setTotalNumberOfQuestions(res.data.data.total_questions);
         setCurrentQuestion(quizStartQuestions.data);
         toggleQuestion(true);
         setIsOptionSubmitted(false);
         break;
-      case 'quiz_answer':
+      }
+      case 'quiz_answer': {
         videoRef.current?.style.setProperty('display', 'none');
         setIsPaused(false);
         setIsShowpool(false);
@@ -457,11 +455,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         setCurrentQuestion(quizAnswerQuestions.data);
         setQuestionIndex(res.data.data.question_index);
         setTotalNumberOfQuestions(res.data.data.total_questions);
-
         timerRef.current?.style.setProperty('display', 'block');
         setOptionStartTime(moment());
         startTimer(15);
         break;
+      }
     }
   };
   const showCircle = () => {
@@ -497,12 +495,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   });
 
   const useTicket = async () => {
-
     if (ticket < 1) {
       showMessages('error', 'Please buy the ticket');
       return;
     } else {
-      const data = { id: user.id };
+      const data: any = { id: user?.id };
       socket?.emit('increase_pool_amount_user', { email: user?.email, quiz_id: id, ticket: 1 });
       setTicket((prevAmount) => prevAmount - 1);
       await reduceTicket(data);
@@ -544,16 +541,28 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
 
   const toggleStreamAudio = useCallback(() => {
+    console.log('playing', remoteAudioTracks?.isPlaying);
     if (remoteAudioTracks?.isPlaying) {
-      console.log('########toggleStreamAudio');
-      //remoteVideoTracks.stop();
+      
+      remoteAudioTracks.stop();
+      console.log('stop', remoteAudioTracks?.isPlaying);
       setIsMuted(true);
     } else {
-      remoteVideoTracks.play();
-      console.log('########mute');
+      remoteAudioTracks.play();
       setIsMuted(false);
+      console.log('play', remoteAudioTracks?.isPlaying);
     }
   }, [remoteAudioTracks]);
+
+  // const toggleStreamAudio = useCallback(() => {
+  //   if (remoteAudioTracks?.isPlaying) {
+  //     remoteAudioTracks.stop();
+  //     setIsMuted(true);
+  //   } else {
+  //     remoteAudioTracks.play();
+  //     setIsMuted(false);
+  //   }
+  // }, [remoteAudioTracks]);
 
   const leaveChannel = useCallback(async () => {
     // emitted when user leaves the live quiz
@@ -641,8 +650,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       });
 
     setIsJoined(true);
-    localStorage.setItem('isjoinchanel','true');
-    localStorage.setItem('iscounted','true');
+    localStorage.setItem('isjoinchanel', 'true');
+    localStorage.setItem('iscounted', 'true');
     message.destroy();
     videoRef.current.hidden = false;
     videoRef.current?.style.setProperty('display', 'block');
@@ -675,7 +684,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setAmount(res.data.data.pool);
           setNumberParticipants(res.data.data.contestants);
           break;
-        case 'quiz':
+        case 'quiz': {
           videoRef.current?.style.setProperty('display', 'none');
           setIsPaused(false);
           setIsShowpool(false);
@@ -688,7 +697,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           toggleQuestion(true);
           setIsOptionSubmitted(false);
           break;
-        case 'quiz_answer':
+        }
+        case 'quiz_answer': {
           videoRef.current?.style.setProperty('display', 'none');
           setIsPaused(false);
           setIsShowpool(false);
@@ -703,6 +713,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setOptionStartTime(moment());
           startTimer(15);
           break;
+        }
       }
     }
     setIsLoading(false);
@@ -747,9 +758,15 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }
 
     console.log('location.pathname', location.pathname);
+    let userName, userEmail;
+
+    if (localStorage.getItem('user')) {
+      userName = JSON.parse(localStorage.getItem('user')!).user.name;
+      userEmail = JSON.parse(localStorage.getItem('user')!).user.email;
+    }
     const data: any = {
-      user: JSON.parse(localStorage.getItem('user')).user.name,
-      email: JSON.parse(localStorage.getItem('user')).user.email,
+      user: userName,
+      email: userEmail,
       amount: amount,
       ticket: ticket,
       credit: credit,
@@ -932,7 +949,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         <Progress ref={timerRef} type="circle" percent={timerProgress} strokeColor={'#44E500'} className="absolute" />
         {viewQuestions && (
           <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-  
             <div className="p-16 pt-44 text-2xl text-white font-stud-regular text-center">
               Question {`${questionIndex}`} of {`${totalNumberOfQuestions}`}
             </div>
@@ -1092,7 +1108,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         )}
         <div ref={viewQuestionRef} className="relative text-center" id="view-que-video">
           <video
-            className={`m-auto flip-video block z-10 w-full ${isShowpool || viewQuestions ? 'max-100-100' : 'max-w-430'}`}
+            className={`m-auto flip-video block z-10 w-full ${
+              isShowpool || viewQuestions ? 'max-100-100' : 'max-w-430'
+            }`}
             // height={liveVideoHeight}
             // width={liveVideoWidth}
             id="remote-video"

@@ -14,6 +14,7 @@ export interface IUser extends IBaseUser {
 
 export interface ILoginResponse {
   user: IUser;
+
   tokens: {
     access: IToken;
     refresh: IToken;
