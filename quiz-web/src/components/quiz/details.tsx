@@ -541,7 +541,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
 
   const toggleStreamAudio = useCallback(() => {
-    console.log('playing', remoteAudioTracks?.isPlaying);
+    console.log('playing_state', remoteAudioTracks?.isPlaying);
     if (remoteAudioTracks?.isPlaying) {
       
       remoteAudioTracks.stop();
