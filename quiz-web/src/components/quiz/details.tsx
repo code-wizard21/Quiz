@@ -280,6 +280,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       console.log(data);
       if(data.status=='paused'){
         remoteAudioTracks.stop();
+        
       }else{
         remoteAudioTracks.play();
       }
@@ -556,13 +557,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       
         remoteAudioTracks.play(); // If so, stop it
         console.log('Audio track stopped');
-        setIsMuted(true);
+        setIsMuted(false);
       }
       else{
        // remoteAudioTracks.play(); // If so, stop it
        remoteAudioTracks.stop();
         console.log('Audio track play');
-        setIsMuted(false);
+        setIsMuted(true);
       }
    
   }, [remoteAudioTracks]);

@@ -374,8 +374,8 @@ const initaliseWebSocket = (server) => {
       
 
       socket.on('host_mute_state', async (data) => {
-
-          io.in(room).emit('user_mute',data);
+        console.log('data',data);
+          io.emit('user_mute',data);
         
         console.log('host_mute_state',data);
    
