@@ -3,11 +3,9 @@ import { IAgoraRTCClient, IAgoraRTCRemoteUser, createClient } from 'agora-rtc-sd
 import { Button, Progress, message } from 'antd';
 import { AxiosResponse } from 'axios';
 import { Drawer } from 'antd';
-import AgoraRTC from 'agora-rtc-sdk-ng';
 import frame from '../../assets/figma/Frame.svg';
 import vector from '../../assets/figma/Vector.svg';
 import vector1 from '../../assets/figma/Vector1.svg';
-import sideMenuSvg from '../../assets/side-menu.svg';
 import moment, { Duration } from 'moment';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -271,13 +269,23 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       console.log('user_quiz_last_question :: ', data);
     });
     socket?.on('user_quiz_live_end', (data: any) => {
+      console.log(data);
       localStorage.setItem('isjoinchanel', 'false');
       //    localStorage.setItem('iscounted', 'false');
       setIsPaused(false);
       setIsShowpool(false);
       leaveChannel();
     });
+    socket?.on('user_mute', (data: any) => {
+      console.log(data);
+      if(data.status=='paused'){
+        remoteAudioTracks.stop();
+      }else{
+        remoteAudioTracks.play();
+      }
 
+   
+    });
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
       setLiveUserCount(data.viewer_count);
       console.log('user_quiz_live_viewer_count :: ', data);
@@ -437,7 +445,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         setIsPaused(false);
         setIsShowpool(false);
         const query_question_start = { question_id: res.data.data.question_id };
-        const quizStartQuestions = await getOnlyQuestion(query_question_start);
+        const quizStartQuestions :any= await getOnlyQuestion(query_question_start);
         setQuestionIndex(res.data.data.question_index);
         setTotalNumberOfQuestions(res.data.data.total_questions);
         setCurrentQuestion(quizStartQuestions.data);
@@ -451,7 +459,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         setIsShowpool(false);
         const query_answer = { question_id: res.data.data.question_id };
         toggleQuestion(true);
-        const quizAnswerQuestions = await getQuestionWithOption(query_answer);
+        const quizAnswerQuestions :any= await getQuestionWithOption(query_answer);
         setCurrentQuestion(quizAnswerQuestions.data);
         setQuestionIndex(res.data.data.question_index);
         setTotalNumberOfQuestions(res.data.data.total_questions);
@@ -528,10 +536,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const onUserPublish = async (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
     console.log(`User with ID: ${user.uid} has joined the channel with ${mediaType}`);
     if (mediaType === 'video') {
-      const remoteVideoTrack = await client.subscribe(user, mediaType);
+     const remoteVideoTrack = await client.subscribe(user, mediaType);
       remoteVideoTrack.play('remote-video');
+     
       setRemoteVideoTracks(remoteVideoTrack);
       setIsVideoSubed(true);
+      
     }
     if (mediaType === 'audio') {
       const remoteAudioTrack = await client.subscribe(user, mediaType);
@@ -541,19 +551,25 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
 
   const toggleStreamAudio = useCallback(() => {
-    console.log('playing_state', remoteAudioTracks?.isPlaying);
-    if (remoteAudioTracks?.isPlaying) {
+  
+    if (!remoteAudioTracks.isPlaying==true) { // Check if the track is playing
       
-      remoteAudioTracks.stop();
-      console.log('stop', remoteAudioTracks?.isPlaying);
-      setIsMuted(true);
-    } else {
-      remoteAudioTracks.play();
-      setIsMuted(false);
-      console.log('play', remoteAudioTracks?.isPlaying);
-    }
+        remoteAudioTracks.play(); // If so, stop it
+        console.log('Audio track stopped');
+        setIsMuted(true);
+      }
+      else{
+       // remoteAudioTracks.play(); // If so, stop it
+       remoteAudioTracks.stop();
+        console.log('Audio track play');
+        setIsMuted(false);
+      }
+   
   }, [remoteAudioTracks]);
 
+  const mute=()=>{
+    console.log('playing_state', remoteAudioTracks?.isPlaying);
+  }
   // const toggleStreamAudio = useCallback(() => {
   //   if (remoteAudioTracks?.isPlaying) {
   //     remoteAudioTracks.stop();
@@ -669,8 +685,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       }
       leaveChannel();
     });
-    const res = await getQuizState();
+
     if (isdoing == true) {
+      const res = await getQuizState();
       switch (res.data.data.status) {
         case 'paused':
           videoRef.current?.style.setProperty('display', 'none');
@@ -689,8 +706,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setIsPaused(false);
           setIsShowpool(false);
           const query_question_start = { question_id: res.data.data.question_id };
-          const quizStartQuestions = await getOnlyQuestion(query_question_start);
-          console.log('quizStartQuestions', quizStartQuestions);
+          const quizStartQuestions:any = await getOnlyQuestion(query_question_start);
           setQuestionIndex(res.data.data.question_index);
           setTotalNumberOfQuestions(res.data.data.total_questions);
           setCurrentQuestion(quizStartQuestions.data);
@@ -783,6 +799,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         console.error(err.message);
       });
   };
+
   const toggleQuestion = (toDisplay: boolean = false) => {
     setViewQuestions(toDisplay);
 
@@ -870,6 +887,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
+      <button onClick={mute}>mute</button>
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}
@@ -880,7 +898,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           }}
         />
       )}
-      {isVideoSubed && (
+      { isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-4" id="live-stream-header">
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={16} />

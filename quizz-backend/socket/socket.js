@@ -371,6 +371,16 @@ const initaliseWebSocket = (server) => {
         io.in(room).emit('user_quiz_live_question_options', { question: quizQuestions });
       });
 
+      
+
+      socket.on('host_mute_state', async (data) => {
+
+          io.in(room).emit('user_mute',data);
+        
+        console.log('host_mute_state',data);
+   
+
+      });
       // display question end
       socket.on('host_live_quiz_question_end', async (data) => {
         if (!data || !data.quiz_id || !data.host_id || !data.question_id) {
