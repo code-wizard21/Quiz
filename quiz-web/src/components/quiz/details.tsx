@@ -56,7 +56,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const stateRef = useRef();
   const socket = useContext(SocketContext)?.socket;
   const [open, setOpen] = useState(false);
   const [quizData, setQuizData] = useState<IQuiz>();
@@ -93,6 +93,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const location = useLocation();
   const [isdoing, setIsDoing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  // Define your ref in your component
+  const trackRef = useRef<any>(null);
   // timerRef.current?.style.setProperty('display', 'none');
 
   useEffect(() => {
@@ -123,7 +125,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    // display to none for video element
+    stateRef.current = remoteAudioTracks;
+  }, [remoteAudioTracks]);
+  useEffect(() => {
     videoRef.current?.style.setProperty('display', 'none');
     timerRef.current?.style.setProperty('display', 'none');
     const statejoin = localStorage.getItem('isjoinchanel');
@@ -277,15 +281,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       leaveChannel();
     });
     socket?.on('user_mute', (data: any) => {
-      console.log(data);
-      if(data.status=='paused'){
-        remoteAudioTracks.stop();
-        
-      }else{
-        remoteAudioTracks.play();
-      }
-
-   
+      const remoteAudioTracks = stateRef.current;
+      console.log('remoteAudioTrack', remoteAudioTracks?.isPlaying);
+      muteAudio(data);
     });
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
       setLiveUserCount(data.viewer_count);
@@ -359,7 +357,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       socket?.off(SOCKET_LISTENERS.USER_QUIZ_LIVE_CHANGE);
       socket?.off('host_live_change');
       socket?.off(SOCKET_LISTENERS.QUIZ_LIVE_START);
-
+      socket?.off('user_mute');
       socket?.off(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_START);
       socket?.off(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END);
       socket?.off(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION);
@@ -401,7 +399,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       await client
         .join(appId, channelName, rtcToken.data.data, randomUid)
         .then((res) => {
-          console.log('resres###########', res);
+          console.log(res);
         })
         .catch((err) => {
           console.log(err);
@@ -446,7 +444,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         setIsPaused(false);
         setIsShowpool(false);
         const query_question_start = { question_id: res.data.data.question_id };
-        const quizStartQuestions :any= await getOnlyQuestion(query_question_start);
+        const quizStartQuestions: any = await getOnlyQuestion(query_question_start);
         setQuestionIndex(res.data.data.question_index);
         setTotalNumberOfQuestions(res.data.data.total_questions);
         setCurrentQuestion(quizStartQuestions.data);
@@ -460,7 +458,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         setIsShowpool(false);
         const query_answer = { question_id: res.data.data.question_id };
         toggleQuestion(true);
-        const quizAnswerQuestions :any= await getQuestionWithOption(query_answer);
+        const quizAnswerQuestions: any = await getQuestionWithOption(query_answer);
         setCurrentQuestion(quizAnswerQuestions.data);
         setQuestionIndex(res.data.data.question_index);
         setTotalNumberOfQuestions(res.data.data.total_questions);
@@ -537,49 +535,44 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const onUserPublish = async (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
     console.log(`User with ID: ${user.uid} has joined the channel with ${mediaType}`);
     if (mediaType === 'video') {
-     const remoteVideoTrack = await client.subscribe(user, mediaType);
+      const remoteVideoTrack = await client.subscribe(user, mediaType);
       remoteVideoTrack.play('remote-video');
-     
+
       setRemoteVideoTracks(remoteVideoTrack);
       setIsVideoSubed(true);
-      
     }
     if (mediaType === 'audio') {
       const remoteAudioTrack = await client.subscribe(user, mediaType);
       remoteAudioTrack.play();
+      trackRef.current = remoteAudioTrack;
       setRemoteAudioTracks(remoteAudioTrack);
     }
   };
 
   const toggleStreamAudio = useCallback(() => {
-  
-    if (!remoteAudioTracks.isPlaying==true) { // Check if the track is playing
-      
-        remoteAudioTracks.play(); // If so, stop it
-        console.log('Audio track stopped');
-        setIsMuted(false);
-      }
-      else{
-       // remoteAudioTracks.play(); // If so, stop it
-       remoteAudioTracks.stop();
-        console.log('Audio track play');
-        setIsMuted(true);
-      }
-   
+    console.log(remoteAudioTracks.isPlaying);
+    if (!remoteAudioTracks.isPlaying == true) {
+      // Check if the track is playing
+
+      remoteAudioTracks.play(); // If so, stop it
+      console.log('Audio track stopped');
+      setIsMuted(false);
+    } else {
+      // remoteAudioTracks.play(); // If so, stop it
+      remoteAudioTracks.stop();
+      console.log('Audio track play');
+      setIsMuted(true);
+    }
   }, [remoteAudioTracks]);
 
-  const mute=()=>{
-    console.log('playing_state', remoteAudioTracks?.isPlaying);
-  }
-  // const toggleStreamAudio = useCallback(() => {
-  //   if (remoteAudioTracks?.isPlaying) {
-  //     remoteAudioTracks.stop();
-  //     setIsMuted(true);
-  //   } else {
-  //     remoteAudioTracks.play();
-  //     setIsMuted(false);
-  //   }
-  // }, [remoteAudioTracks]);
+  const muteAudio = (data: any) => {
+    if (data.status == 'paused') {
+      trackRef.current.stop();
+    } else {
+      trackRef.current.play();
+    }
+    console.log('remoteAudioTrack', trackRef.current);
+  };
 
   const leaveChannel = useCallback(async () => {
     // emitted when user leaves the live quiz
@@ -686,9 +679,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       }
       leaveChannel();
     });
-
-    if (isdoing == true) {
-      const res = await getQuizState();
+    const res = await getQuizState();
+  
+     if (res.data.data.status != undefined) {
+      console.log('resres',res.data);
       switch (res.data.data.status) {
         case 'paused':
           videoRef.current?.style.setProperty('display', 'none');
@@ -707,7 +701,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setIsPaused(false);
           setIsShowpool(false);
           const query_question_start = { question_id: res.data.data.question_id };
-          const quizStartQuestions:any = await getOnlyQuestion(query_question_start);
+          const quizStartQuestions: any = await getOnlyQuestion(query_question_start);
           setQuestionIndex(res.data.data.question_index);
           setTotalNumberOfQuestions(res.data.data.total_questions);
           setCurrentQuestion(quizStartQuestions.data);
@@ -888,7 +882,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
-      <button onClick={mute}>mute</button>
+
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}
@@ -899,8 +893,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           }}
         />
       )}
-      { isVideoSubed && (
-        <div className="absolute z-20 flex flex-row-reverse mt-4" id="live-stream-header">
+      {isVideoSubed && (
+        <div className="absolute z-20 flex flex-row-reverse mt-6" id="live-stream-header">
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={16} />
           </div>
