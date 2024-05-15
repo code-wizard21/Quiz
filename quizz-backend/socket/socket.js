@@ -541,11 +541,11 @@ const initaliseWebSocket = (server) => {
         if (!data || !data.quiz_id || !data.user_id || !data.question_id || !data.option_id) {
           return;
         }
-        console.log('user_submit_live_quiz_answer');
+        console.log('user_submit_live_quiz_answer',data);
         const { quiz_id, user_id, question_id, option_id, duration } = data;
-
+        
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id) });
-
+        io.emit('user_submit_live_quiz_answer',data);
         if (!liveStream) {
           return;
         }
