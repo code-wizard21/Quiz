@@ -1,12 +1,12 @@
 import { Button, Row } from 'antd';
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { logoutUserData } from '../../redux/actions/auth.action';
 import { logout } from '../../service/auth/auth.service';
 import { ILoginResponse } from '../../types/user.type';
 const Dashboard: React.FC = (): React.ReactElement => {
-  const navigate = useNavigate();
+ 
   const dispatch = useDispatch();
 
   const logoutUser = useCallback(async () => {

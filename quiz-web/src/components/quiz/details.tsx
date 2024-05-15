@@ -45,6 +45,7 @@ import whatsappImg from '../../assets/social/whatsapp.svg';
 import { getTicket } from '../../service/user/user.service';
 import { reduceTicket } from '../../service/user/user.service';
 import { checkOutBuyticketSessionSocket } from '../../service/payment/payment.service';
+import soundFile from '../../assets/coundown_timer_mixdown.mp3';
 import './1.css';
 
 const channelName = 'test';
@@ -91,11 +92,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const viewQuestionRef = useRef<any>(null);
   const [value, setValue] = useState(1);
   const location = useLocation();
-  const [isdoing, setIsDoing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // Define your ref in your component
   const trackRef = useRef<any>(null);
-  // timerRef.current?.style.setProperty('display', 'none');
+  const [audio] = useState(new Audio(soundFile));
 
   useEffect(() => {
     socket?.on('amount_update_user_broadcast', (data) => {
@@ -128,6 +127,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     stateRef.current = remoteAudioTracks;
   }, [remoteAudioTracks]);
   useEffect(() => {
+
     videoRef.current?.style.setProperty('display', 'none');
     timerRef.current?.style.setProperty('display', 'none');
     const statejoin = localStorage.getItem('isjoinchanel');
@@ -228,7 +228,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_OPTIONS, (data: IQuestionResponse) => {
+    
       setOptionStartTime(moment());
+      playSound();
       timerRef.current?.style.setProperty('display', 'block');
       startTimer(15);
       setCurrentQuestion(data);
@@ -282,7 +284,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
     socket?.on('user_mute', (data: any) => {
       const remoteAudioTracks = stateRef.current;
-      console.log('remoteAudioTrack', remoteAudioTracks?.isPlaying);
+      
       muteAudio(data);
     });
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
@@ -378,12 +380,17 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       socket?.disconnect();
     };
   }, []);
-
+  const playSound = () => {
+    audio.play();
+  
+    // Play the sound for 15 seconds
+    setTimeout(() => {
+       audio.pause();
+       audio.currentTime = 0;
+    }, 15000); // Stop the sound after 15 seconds
+  };
   const fetchQuizState = async () => {
     const res = await getQuizState();
-    if (res != undefined) {
-      setIsDoing(true);
-    }
     try {
       const iscounted = localStorage.getItem('iscounted');
       if (iscounted == 'true') {
@@ -568,8 +575,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const muteAudio = (data: any) => {
     if (data.status == 'paused') {
       trackRef.current.stop();
+      audio.volume = 0;
     } else {
       trackRef.current.play();
+      audio.volume = 1;
     }
     console.log('remoteAudioTrack', trackRef.current);
   };

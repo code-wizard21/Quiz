@@ -21,12 +21,11 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
   const navigate = useNavigate();
   const socket = useContext(SocketContext)?.socket;
   const [liveQuiz, setLiveQuiz] = useState('');
-  const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     const logConnectionStatus = () => {
       // console.log('Socket connected:', socket?.connected);
-      setIsSocketConnected(socket?.connected);
+   
       showMessages('success', 'Socket connected: ' + socket?.connected);
     };
 
@@ -62,7 +61,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
       socket?.connect();
       
     } else {
-      setIsSocketConnected(socket?.connected);
+    
       showMessages('success', 'Socket connected: ' + socket?.connected);
     }
   }, [quiz.category]);

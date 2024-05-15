@@ -10,6 +10,10 @@
   import { USER_ROLE } from '../../constants/enum';
   import { getTicket } from '../../service/user/user.service';
 
+  interface DataType {
+    id: string;
+  }
+
   const TopBar: React.FC<{ showDrawer: () => void; showDrawer1: () => void }> = ({ showDrawer, showDrawer1 }) => {
     const navigate = useNavigate();
     const [ticket, setTicket] = useState(0);
@@ -21,7 +25,7 @@
       console.log('user',user);
       if(user!=null){
         if (user.role == 'user') {
-          const data = { id: user.id };
+          const data:DataType = { id: user.id };
     
           getTicket(data)
             .then((res) => {
