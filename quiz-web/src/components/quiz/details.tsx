@@ -572,10 +572,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const muteAudio = (data: any) => {
     if (data.status == 'ongoing') {
-      trackRef.current.stop();
+      trackRef.current.play();
      
     } else {
-      trackRef.current.play();
+      trackRef.current.stop();
 
     }
     console.log('remoteAudioTrack', trackRef.current);
@@ -701,7 +701,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setIsPaused(false);
           setIsShowpool(true);
           setAmount(res.data.data.pool);
-          setNumberParticipants(res.data.data.contestants);
+          setNumberParticipants(res.data.data.contestants); 
           break;
         case 'quiz': {
           videoRef.current?.style.setProperty('display', 'none');
