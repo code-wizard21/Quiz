@@ -285,7 +285,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     socket?.on('user_mute', (data: any) => {
       const remoteAudioTracks = stateRef.current;
       
-      muteAudio(data);
+    //  muteAudio(data);
     });
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
       setLiveUserCount(data.viewer_count);
