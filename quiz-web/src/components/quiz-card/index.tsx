@@ -102,13 +102,22 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
             </div>
           }
           description={
-            <div className="flex  justify-between">
-              {liveQuiz === 'ongoing' && (
-                <div className="flex gap-1">
-                  <img src={ellipse} alt="share" />
-                  <div className="mt-1 text-base text-[#E62728] font-bold">Live</div>
-                </div>
-              )}
+            <div className="flex justify-between">
+              {
+                liveQuiz !== 'ongoing' && (
+                  <div className="font-stud-regular text-base">
+                    { `Starts in ${moment(quiz.start_date).diff(currentTimestamp, 'days')} days` }
+                  </div>
+                )
+              }
+              {
+                liveQuiz === 'ongoing' && (
+                  <div className="flex gap-1">
+                    <img src={ellipse} alt="share" />
+                    <div className="mt-1 text-base text-[#E62728] font-bold">Live</div>
+                  </div>
+                )
+              }
             </div>
           }
         />
