@@ -557,28 +557,26 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
 
   const toggleStreamAudio = useCallback(() => {
-    console.log(remoteAudioTracks.isPlaying);
-    if (!remoteAudioTracks.isPlaying == true) {
+   
+    if (audio.volume== 1) {
       // Check if the track is playing
 
-      remoteAudioTracks.play(); // If so, stop it
-      console.log('Audio track stopped');
-      setIsMuted(false);
+      audio.volume = 0;
+      setIsMuted(true);
     } else {
       // remoteAudioTracks.play(); // If so, stop it
-      remoteAudioTracks.stop();
-      console.log('Audio track play');
-      setIsMuted(true);
+      audio.volume = 1;
+      setIsMuted(false);
     }
-  }, [remoteAudioTracks]);
+  }, [audio.volume]);
 
   const muteAudio = (data: any) => {
-    if (data.status == 'paused') {
+    if (data.status == 'ongoing') {
       trackRef.current.stop();
-      audio.volume = 0;
+     
     } else {
       trackRef.current.play();
-      audio.volume = 1;
+
     }
     console.log('remoteAudioTrack', trackRef.current);
   };

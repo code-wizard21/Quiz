@@ -1,5 +1,5 @@
-const socketio = require('socket.io');
-const { ObjectId } = require('mongodb');
+  const socketio = require('socket.io');
+   const { ObjectId } = require('mongodb');
 const LiveStream = require('../models/live-stream.model');
 const QuizQuestion = require('../models/question.model');
 const UserParticipation = require('../models/participation.model');
@@ -22,7 +22,7 @@ const initaliseWebSocket = (server) => {
       cors: {
         origin: '*',
         methods: ['GET', 'POST'],
-      },
+      }, 
     });
 
     io.on('connection', (socket) => {
@@ -573,7 +573,7 @@ const initaliseWebSocket = (server) => {
         });
 
         await userAnswer.save();
-
+         
         // make the user as a viewer. // TODO: rethink this implementation
 
         // TODO: check this #IMP #Looks waste
