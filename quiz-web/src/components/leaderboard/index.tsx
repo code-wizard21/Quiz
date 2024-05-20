@@ -1,5 +1,6 @@
 import { Button, Col, Divider, List, Row, Skeleton, Spin } from 'antd';
 import { useEffect, useState } from 'react';
+import {  useSelector } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import user2 from '../../assets/user/user1.svg';
 import user1 from '../../assets/user/user2.svg';
@@ -15,101 +16,7 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
   const [viewLeaderboard, setViewLeaderboard] = useState(true);
   const [viewSummary, setViewSummary] = useState(false);
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
-
-  // let tempUserData = [
-  //   {
-  //     rank: 1,
-  //     img: user1,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 2,
-  //     img: user2,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 3,
-  //     img: user3,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 4,
-  //     img: user1,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 5,
-  //     img: user2,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 6,
-  //     img: user3,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 7,
-  //     img: user1,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 7,
-  //     img: user1,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 7,
-  //     img: user1,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 7,
-  //     img: user1,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 7,
-  //     img: user1,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 7,
-  //     img: user1,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  //   {
-  //     rank: 7,
-  //     img: user1,
-  //     name: 'Sam.P',
-  //     time: '15.2s',
-  //     correct_answers: '9/10',
-  //   },
-  // ]
-
+  const { user } = useSelector((state: RootState) => state.auth);
   const handleViewSummary = () => {
     setIsSummaryLoading(true);
     setTimeout(() => {
@@ -124,6 +31,7 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
     getUserLeaderboard(quizId)
       .then((res) => {
         setLeaderboardResults(res.data.data);
+        console.log('leaderboard', res.data.data);
       })
       .catch((err) => {
         console.log(err);
@@ -165,21 +73,21 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
   return (
     <>
       <Spin spinning={isLeaderboardLoading} size="large">
-        {viewLeaderboard && (
+        {/* {viewLeaderboard && (
           <div id="leaderboard-container" className="rounded-2xl">
             <Row>
-              <Col span={24} className="mt-24 flex justify-center">
+              <Col span={24} className="mt-16 flex justify-center">
                 <div>
                   <img
-                    src={user1}
+                    src={leaderboardResults?.[1]?.avatar}
                     className="-mr-3 border-orange-400 border-4 border-solid rounded-full"
                     alt="user1"
-                    width={100}
-                    height={100}
+                    width={80}
+                    height={80}
                   />
-                  {leaderboardResults && leaderboardResults?.leaderboard?.results?.[1]?.user.name ? (
+                  {leaderboardResults && leaderboardResults?.[1]?.username ? (
                     <div className="text-white text-center">
-                      {leaderboardResults?.leaderboard?.results?.[1].user.name}
+                      {leaderboardResults[0]?.username}
                     </div>
                   ) : (
                     <>
@@ -190,15 +98,15 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                 </div>
                 <div className="z-20">
                   <img
-                    src={user2}
+                    src={leaderboardResults[0]?.avatar}
                     alt="user2"
                     className="border-yellow-300 border-4 border-solid rounded-full"
-                    width={124}
-                    height={124}
+                    width={100}
+                    height={100}
                   />
-                  {leaderboardResults && leaderboardResults?.leaderboard?.results?.length ? (
+                  {leaderboardResults && leaderboardResults?.length ? (
                     <div className="text-white text-center">
-                      {leaderboardResults?.leaderboard?.results?.[0]?.user.name}
+                      {leaderboardResults[0]?.username}
                     </div>
                   ) : (
                     <>
@@ -209,15 +117,15 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                 </div>
                 <div>
                   <img
-                    src={user3}
+                   src={leaderboardResults?.[2]?.avatar}
                     className="-ml-3 border-green-400 border-4 border-solid rounded-full"
                     alt="user3"
-                    width={100}
-                    height={100}
+                    width={80}
+                    height={80}
                   />
-                  {leaderboardResults && leaderboardResults?.leaderboard?.results?.[2]?.user.name ? (
+                  {leaderboardResults && leaderboardResults?.[2]?.username ? (
                     <div className="text-white text-center">
-                      {leaderboardResults?.leaderboard?.results?.[2]?.user.name}
+                      {leaderboardResults?.[2]?.username}
                     </div>
                   ) : (
                     <>
@@ -227,7 +135,7 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                   <div className="text-white text-center">$450.90</div>
                 </div>
               </Col>
-              <Col span={24} className="mt-5 text-center text-white text-2xl font-bold">
+              <Col span={24} className="mt-2 text-center text-white text-xl font-bold">
                 <div>Congratulations!</div>
                 <div>Here are the winners</div>
               </Col>
@@ -235,9 +143,9 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                 <Divider className="border-white" />
               </Col>
               <Col id="scrollableDiv" className="w-full h-56 overflow-auto px-6">
-                {leaderboardResults && leaderboardResults?.leaderboard?.results?.length && (
+                {leaderboardResults && leaderboardResults?.length && (
                   <InfiniteScroll
-                    dataLength={leaderboardResults?.leaderboard?.results?.length}
+                    dataLength={leaderboardResults?.length}
                     next={loadMoreLeaderboardData}
                     hasMore={false}
                     loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
@@ -250,23 +158,36 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                     className="w-full"
                   >
                     <List
-                      dataSource={leaderboardResults?.leaderboard?.results}
+                      dataSource={leaderboardResults}
                       renderItem={(item, index) => (
-                        <List.Item key={index} className="flex justify-between">
-                          <div className="flex flex-row items-center">
-                            <div className="text-white text-center">{item.rank}</div>
-                            <img
-                              src={index % 2 === 0 ? user1 : user2}
-                              className="mx-3"
-                              alt="user1"
-                              width={25}
-                              height={25}
-                            />
-                            <div className="text-white">{item.user.name}</div>
-                          </div>
-                          <div className="text-white">{item.total_duration.toFixed(2)}s</div>
-                          <div className="text-white">
-                            {item.correct_answers}/{leaderboardResults.total_questions}
+                       
+                        <List.Item key={index} className={`${user?.username==item.username?'bg-quiz_back':''} flex justify-between items-center`}>
+                          <div className="flex">
+                            <div class="w-1/4">
+                              <div className='flex'>
+                              <div className="text-white text-center">{index + 1}</div>
+                              <img
+                                src={item.avatar}
+                                className="mx-3"
+                                alt="user1"
+                                width={25}
+                                height={25}
+                              />
+                              </div>
+                           
+                            </div>
+                            <div class="w-1/4">
+                              <div className="text-white">{item.username}</div>
+                            </div>
+                            <div class="w-1/4">
+                             
+                              <div className="text-white">{item.time}s</div>
+                            </div>
+                            <div class="w-1/4">
+                              <div className="text-white">
+                                {item.correct}/{item.totalquestion}
+                              </div>
+                            </div>
                           </div>
                         </List.Item>
                       )}
@@ -274,15 +195,15 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                   </InfiniteScroll>
                 )}
               </Col>
-              <Col className="m-auto pt-5">
+              <Col className="m-auto pt-2">
                 <Button className="bg-yellow-500" loading={isSummaryLoading} onClick={handleViewSummary}>
                   View Summary
                 </Button>
               </Col>
             </Row>
           </div>
-        )}
-        {viewSummary && <GameSummary quizId={quizId} />}
+        )} */}
+        {<GameSummary quizId={quizId} />}
       </Spin>
     </>
   );

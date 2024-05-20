@@ -10,6 +10,8 @@ const livequiz = require('../models/live-quiz.model');
 const { Question, UserAnswer } = require('../models');
 const UserParticipation = require('../models/participation.model');
 const { questionService } = require('../services');
+const UserActivity = require('../models/user-activity.model');
+
 const createQuiz = catchAsync(async (req, res) => {
   const mongooseSession = await mongoose.startSession();
 
@@ -74,7 +76,6 @@ const getQuizeState = catchAsync(async (req, res) => {
   let docs;
   try {
     docs = await livequiz.find({});
-   
   } catch (err) {
     console.error(err);
   }
@@ -88,19 +89,14 @@ const getQuizeState = catchAsync(async (req, res) => {
   }
 });
 const getQuestion = catchAsync(async (req, res) => {
-
-
   const quizQuestion = await questionService.getQuestionWithOption(req.body.question_id);
 
-
-  res.status(200).json({question:quizQuestion})
+  res.status(200).json({ question: quizQuestion });
 });
 const getOnlyQuestion = catchAsync(async (req, res) => {
-
-  
-    const quizQuestion = await questionService.getQuestionById(req.body.question_id);
-    res.status(200).json({question:quizQuestion})
-  });
+  const quizQuestion = await questionService.getQuestionById(req.body.question_id);
+  res.status(200).json({ question: quizQuestion });
+});
 const getAllQuizesWithDetails = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['host', 'category', 'is_paid', 'upcoming', '_id']);
 
@@ -196,29 +192,50 @@ const getTopThreeRankerInQuiz = catchAsync(async (req, res) => {
 const getQuizLeaderboard = catchAsync(async (req, res) => {
   try {
     const userId = req.user.id;
-    let topThreeRanker;
-
-    const { leaderboard, page } = await quizService.getQuizLeaderboard(
-      req.params.quiz_id,
-      userId,
-      req.query.page,
-      req.query.limit,
-      req.query.user_rank
-    );
-    if (!leaderboard) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Quiz not found');
+    let userList=[];
+    // let topThreeRanker;
+    try {
+      let docs = await UserActivity.find({});
+      console.log(docs.length);
+      console.log('UserActivity', docs);
+      for (let i = 0; i < docs.length; i++) {
+        let info = await UserAnswer.find({ username: docs[i].username });
+        let time = 0;
+        let correct = 0;
+        for (let i = 0; i < info.length; i++) {
+          time += info[i].duration;
+          if (info[i].state == 'true') {
+            correct++;
+          }
+        }
+        console.log(' docs[i].username', docs[i].username);
+        try {
+          const result = await UserActivity.updateOne(
+            { username: docs[i].username },
+            { $set: { time: time, correct: correct } }
+          );
+           userList = await UserActivity.find().sort({ correct: -1 });  //
+        } catch (err) {
+          console.error('Error occurred: ', err);
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
+    // const { leaderboard, page } = await quizService.getQuizLeaderboard(
+    //   req.params.quiz_id,
+    //   userId,
+    //   req.query.page,
+    //   req.query.limit,
+    //   req.query.user_rank
+    // );
+    // if (!leaderboard) {
+    //   throw new ApiError(httpStatus.NOT_FOUND, 'Quiz not found');
+    // }
 
-    const totalQuestionsInQuiz = await Question.countDocuments({ quiz: req.params.quiz_id });
+    // const totalQuestionsInQuiz = await Question.countDocuments({ quiz: req.params.quiz_id });
 
-    return res.json(
-      success(httpStatus.OK, 'Quiz leaderboard retrieved successfully', {
-        leaderboard,
-        total_questions: totalQuestionsInQuiz,
-        page,
-        topThreeRanker,
-      })
-    );
+    res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList));
   } catch (error) {
     console.log('error in getQuizLeaderboard', error);
   }

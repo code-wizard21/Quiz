@@ -394,9 +394,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     try {
       const iscounted = localStorage.getItem('iscounted');
       if (iscounted == 'true') {
-        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id, state: 'refresh' });
+        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id,avatar:user?.avatar, username:user?.username, quiz_id: id, state: 'refresh' });
       } else {
-        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id,avatar:user?.avatar,username:user?.username });
       }
       localStorage.setItem('iscounted', 'true');
       const randomUid = Math.floor(Math.random() * 1000);
@@ -651,7 +651,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       socket?.connect();
       showMessages('error', 'Please wait while we connect you to the quiz');
     }
-    socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+    socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id,avatar:user?.avatar, quiz_id: id,username:user?.username });
 
     const randomUid = Math.floor(Math.random() * 1000);
 
@@ -844,7 +844,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   // add type for onclick
   const onOptionClick = useCallback(
-    (option: string) => {
+    (option: string,optionInfo:any) => {
       if (isOptionSubmitted) {
         showMessages('error', 'You have already submitted your answer');
         return;
@@ -855,8 +855,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       setTimeTakenToAnswer(momentDuration);
 
       const postAnswer = {
+        username:user?.username,
         user_id: user?.id,
         quiz_id: id,
+        optionInfo:optionInfo,
         question_id: currentQuestion?.question._id,
         option_id: option,
         duration: Number(momentDuration.asSeconds().toFixed(2)),
@@ -978,7 +980,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                 return (
                   <div
                     className="relative cursor-pointer h-12 my-2"
-                    onClick={() => onOptionClick(option._id)}
+                    onClick={() => onOptionClick(option._id,option)}
                     key={index}
                   >
                     <div className="absolute z-40 flex justify-between w-full font-stud-regular h-12">
@@ -1006,7 +1008,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             )}
           </div>
         )}
-        {showLeaderboard && id && <Leaderboard quizId={id} />}
+      {showLeaderboard && id && <Leaderboard quizId={id} />}
 
         {isParticipants && isShowpool && (
           <div className="mt-6 w-96 h-12  z-50 bottom-0" id="view-que">

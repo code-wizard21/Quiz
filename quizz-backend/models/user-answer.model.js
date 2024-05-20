@@ -13,6 +13,18 @@ const userAnswerSchema = mongoose.Schema(
             ref: 'User',
             required: true,
         },
+        state: {
+			type: String,
+			required: true,
+		},
+        answer: {
+			type: String,
+			required: true,
+		},
+        username: {
+			type: String,
+			required: true,
+		},
         question: {
             type: mongoose.SchemaTypes.ObjectId,
             ref: 'Question',
