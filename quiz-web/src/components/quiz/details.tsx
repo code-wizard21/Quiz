@@ -3,10 +3,15 @@ import { IAgoraRTCClient, IAgoraRTCRemoteUser, createClient } from 'agora-rtc-sd
 import { Button, Progress, message } from 'antd';
 import { AxiosResponse } from 'axios';
 import { Drawer } from 'antd';
+import {Avatar}  from 'antd';
 import frame from '../../assets/figma/Frame.svg';
 import vector from '../../assets/figma/Vector.svg';
 import vector1 from '../../assets/figma/Vector1.svg';
 import moment, { Duration } from 'moment';
+import coinImg from '../../assets/coin.svg';
+import sideMenuSvg from '../../assets/side-menu.svg';
+import tipHost from '../../assets/tiphost.svg';
+import ticketImg from '../../assets/ticket.svg';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -44,9 +49,13 @@ import twitterImg from '../../assets/social/twitter.svg';
 import whatsappImg from '../../assets/social/whatsapp.svg';
 import { getTicket } from '../../service/user/user.service';
 import { reduceTicket } from '../../service/user/user.service';
+import { liveCalculationStart, getModalData } from '../../service/quiz/quiz.service';
 import { checkOutBuyticketSessionSocket } from '../../service/payment/payment.service';
 import soundFile from '../../assets/coundown_timer_mixdown.mp3';
 import './1.css';
+import GameSummary from '../game-summary';
+import backEclipse from '../../assets/backelipse.svg';
+import smallEclipse from '../../assets/return.svg';
 
 const channelName = 'test';
 const appId = 'b75cc48b972d4ccc92edb71a1c75fb23';
@@ -58,6 +67,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const stateRef = useRef();
+  const [openModal, setOpenModal] = useState(true);
   const socket = useContext(SocketContext)?.socket;
   const [open, setOpen] = useState(false);
   const [quizData, setQuizData] = useState<IQuiz>();
@@ -74,6 +84,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [timerProgress, setTimerProgress] = useState<number>(0);
   const [timerInterval, setTimerInterval] = useState<any>(null);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showCalcuation, setShowCalcuation] = useState(false);
   const [liveUserCount, setLiveUserCount] = useState(0);
   const [remoteVideoTracks, setRemoteVideoTracks] = useState<any>(null);
   const [remoteAudioTracks, setRemoteAudioTracks] = useState<any>(null);
@@ -82,9 +93,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [ticket, setTicket] = useState(0);
   const [amount, setAmount] = useState(50);
   const [credit, setCredit] = useState(0);
+  const [currentQuizContent, setCurrentQuizContent] = useState({correct: 0, totalQuestion: 0,rank:0});
   const [isParticipants, setIsParticipants] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen1, setIsModalOpen1] = useState(false);
+  const [isModalOpen2, setIsModalOpen2] = useState(false);
+  const [viewSummary, setViewSummary] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
   const [isPaused, setIsPaused] = useState(false);
   const videoRef = useRef<any>(null);
@@ -127,7 +142,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     stateRef.current = remoteAudioTracks;
   }, [remoteAudioTracks]);
   useEffect(() => {
-
     videoRef.current?.style.setProperty('display', 'none');
     timerRef.current?.style.setProperty('display', 'none');
     const statejoin = localStorage.getItem('isjoinchanel');
@@ -181,13 +195,15 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_START, (data: any) => {
       console.log('user_quiz_live_calculation_start :: ', data);
+      liveCalculationStart(id);
+      videoRef.current?.style.setProperty('display', 'none');
+      timerRef.current?.style.setProperty('display', 'none');
+
+      setShowCalcuation(true);
     });
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END, (data: any) => {
-      localStorage.setItem('isjoinchanel', 'false');
-      //  localStorage.setItem('iscounted', 'false');
-      console.log('user_quiz_live_calculation_end :: ', data);
-      toggleLeaderboardHandler(true);
+      calculationEnd();
     });
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION, (data: IQuestionResponse) => {
@@ -228,7 +244,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     });
 
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_QUESTION_OPTIONS, (data: IQuestionResponse) => {
-    
       setOptionStartTime(moment());
       playSound();
       timerRef.current?.style.setProperty('display', 'block');
@@ -240,6 +255,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       const totalNumberOfAllOptionsAnswered = data?.question?.options?.reduce((acc: number, curr: IOption) => {
         return acc + (curr.total_answers || 0);
       }, 0);
+      socket?.emit('user_useranswer_save', {
+        user_id: user?.id,
+        quiz_id: data.quiz_id,
+        username: user?.username,
+        question_id: data.question,
+      });
 
       setCurrentQuestion((prevCurrentQuestion) => {
         if (!prevCurrentQuestion) return prevCurrentQuestion;
@@ -279,13 +300,15 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       localStorage.setItem('isjoinchanel', 'false');
       //    localStorage.setItem('iscounted', 'false');
       setIsPaused(false);
+      setViewSummary(false);
+      setShowLeaderboard(false);
       setIsShowpool(false);
       leaveChannel();
     });
     socket?.on('user_mute', (data: any) => {
       const remoteAudioTracks = stateRef.current;
-      
-    //  muteAudio(data);
+
+      //  muteAudio(data);
     });
     socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_VIEWER_COUNT, (data: any) => {
       setLiveUserCount(data.viewer_count);
@@ -380,13 +403,32 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       socket?.disconnect();
     };
   }, []);
+  const calculationEnd = async() => {
+    setShowCalcuation(false);
+    const data=await getModalData(user.id);
+    console.log("datadata",data);
+    localStorage.setItem('isjoinchanel', 'false');
+    //  localStorage.setItem('iscounted', 'fals e');
+   
+    setCurrentQuizContent(prevState => ({
+      ...prevState, 
+      correct: data.data.data.correct,
+      totalQuestion: data.data.data.totalquestion,
+      rank:data.data.data.time
+    }));
+    if (user.role == 'user') {
+      setIsModalOpen1(true);
+    } else {
+      setIsModalOpen2(true);
+    }
+  };
   const playSound = () => {
     audio.play();
-  
+
     // Play the sound for 15 seconds
     setTimeout(() => {
-       audio.pause();
-       audio.currentTime = 0;
+      audio.pause();
+      audio.currentTime = 0;
     }, 15000); // Stop the sound after 15 seconds
   };
   const fetchQuizState = async () => {
@@ -394,9 +436,22 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     try {
       const iscounted = localStorage.getItem('iscounted');
       if (iscounted == 'true') {
-        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id,avatar:user?.avatar, username:user?.username, quiz_id: id, state: 'refresh' });
+        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
+          user_id: user?.id,
+          avatar: user?.avatar,
+          role: user?.role,
+          username: user?.username,
+          quiz_id: id,
+          state: 'refresh',
+        });
       } else {
-        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id, quiz_id: id,avatar:user?.avatar,username:user?.username });
+        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
+          user_id: user?.id,
+          quiz_id: id,
+          role: user?.role,
+          avatar: user?.avatar,
+          username: user?.username,
+        });
       }
       localStorage.setItem('iscounted', 'true');
       const randomUid = Math.floor(Math.random() * 1000);
@@ -492,8 +547,15 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setIsModalOpen(true);
   };
 
-  const handleCancel = () => {
+  const handleCancel1 = () => {
     setIsModalOpen(false);
+  };
+  const handleCancel2 = () => {
+    setIsModalOpen1(false);
+  };
+
+  const handleCancel3 = () => {
+    setIsModalOpen2(false);
   };
 
   const showDrawer = () => {
@@ -527,7 +589,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
 
   const toggleLeaderboardHandler = useCallback((status: boolean) => {
-    console.log('toggleLeaderboardHandler', toggleLeaderboardHandler);
+    setShowLeaderboard(status);
+    setIsVideoSubed(status);
+  }, []);
+  const toggleSummaryHandler = useCallback((status: boolean) => {
+    console.log('toggleSummaryHandler', toggleSummaryHandler);
     if (status) {
       videoRef.current?.style.setProperty('display', 'none');
       timerRef.current?.style.setProperty('display', 'none');
@@ -535,7 +601,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       videoRef.current?.style.setProperty('display', 'block');
       // timerRef.current?.style.setProperty("display", "block");
     }
-    setShowLeaderboard(status);
+    setViewSummary(status);
     setIsVideoSubed(status);
   }, []);
 
@@ -557,8 +623,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
 
   const toggleStreamAudio = useCallback(() => {
-   
-    if (audio.volume== 1) {
+    if (audio.volume == 1) {
       // Check if the track is playing
 
       audio.volume = 0;
@@ -573,10 +638,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const muteAudio = (data: any) => {
     if (data.status == 'ongoing') {
       trackRef.current.play();
-     
     } else {
       trackRef.current.stop();
-
     }
     console.log('remoteAudioTrack', trackRef.current);
   };
@@ -651,7 +714,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       socket?.connect();
       showMessages('error', 'Please wait while we connect you to the quiz');
     }
-    socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, { user_id: user?.id,avatar:user?.avatar, quiz_id: id,username:user?.username });
+    socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
+      user_id: user?.id,
+      avatar: user?.avatar,
+      quiz_id: id,
+      role: user?.role,
+      username: user?.username,
+    });
 
     const randomUid = Math.floor(Math.random() * 1000);
 
@@ -687,9 +756,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       leaveChannel();
     });
     const res = await getQuizState();
-  
-     if (res.data.data.status != undefined) {
-      console.log('resres',res.data);
+
+    if (res.data.data.status != undefined) {
+      console.log('resres', res.data);
       switch (res.data.data.status) {
         case 'paused':
           videoRef.current?.style.setProperty('display', 'none');
@@ -701,7 +770,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setIsPaused(false);
           setIsShowpool(true);
           setAmount(res.data.data.pool);
-          setNumberParticipants(res.data.data.contestants); 
+          setNumberParticipants(res.data.data.contestants);
           break;
         case 'quiz': {
           videoRef.current?.style.setProperty('display', 'none');
@@ -844,7 +913,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   // add type for onclick
   const onOptionClick = useCallback(
-    (option: string,optionInfo:any) => {
+    (option: string) => {
       if (isOptionSubmitted) {
         showMessages('error', 'You have already submitted your answer');
         return;
@@ -855,10 +924,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       setTimeTakenToAnswer(momentDuration);
 
       const postAnswer = {
-        username:user?.username,
+        username: user?.username,
         user_id: user?.id,
         quiz_id: id,
-        optionInfo:optionInfo,
         question_id: currentQuestion?.question._id,
         option_id: option,
         duration: Number(momentDuration.asSeconds().toFixed(2)),
@@ -891,7 +959,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
-
+      <button onClick={calculationEnd}>sdddddd</button>
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}
@@ -953,6 +1021,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         </div>
       )}
+
       <div>
         {quizData && user?.role === 'shadow' && isVideoSubed && (
           <div className="absolute flex h-screen">
@@ -980,7 +1049,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                 return (
                   <div
                     className="relative cursor-pointer h-12 my-2"
-                    onClick={() => onOptionClick(option._id,option)}
+                    onClick={() => onOptionClick(option._id, option)}
                     key={index}
                   >
                     <div className="absolute z-40 flex justify-between w-full font-stud-regular h-12">
@@ -1008,8 +1077,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             )}
           </div>
         )}
-      {showLeaderboard && id && <Leaderboard quizId={id} />}
-
+        {id && <Leaderboard quizId={id} viewSummary={viewSummary} setViewSummary={setViewSummary} />}
+        {id && viewSummary && <GameSummary quizId={user?.id} />}
         {isParticipants && isShowpool && (
           <div className="mt-6 w-96 h-12  z-50 bottom-0" id="view-que">
             <div className="flex flex-col ">
@@ -1128,6 +1197,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </>
           </div>
         )}
+
         <div ref={viewQuestionRef} className="relative text-center" id="view-que-video">
           <video
             className={`m-auto flip-video block z-10 w-full ${
@@ -1141,6 +1211,18 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           ></video>
         </div>
       </div>
+      {showCalcuation && (
+        <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
+          <div className="flex items-center justify-center relative">
+            <img src={smallEclipse} className="absolute w-[400px] h-[800px]" />
+            <img
+              src={backEclipse}
+              className="absolute w-[70px] top-[10px] h-[80px] left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            />
+          </div>
+        </div>
+      )}
+
       {isPaused && (
         <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
           <p className="text-center h-full flex justify-center m-auto items-center text-yellow-400 text-4xl font-stud-regular">
@@ -1238,7 +1320,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         </div>
       </Drawer>
-      <Modal title="" open={isModalOpen} footer={null} width={'300px'} onCancel={handleCancel}>
+      <Modal title="" open={isModalOpen} footer={null} width={'300px'} onCancel={handleCancel1}>
         <div className="modal-box">
           <div className="flex justify-center mt-4 text-2xl font-bold text-center studregular mb-6">
             Confirm Ticket Use?
@@ -1258,7 +1340,117 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               </button>
             </div>
             <div className="justify-center flex ">
-              <Link to="#" className=" mt-8 space-x-[6px] border-white" onClick={handleCancel}>
+              <Link to="#" className=" mt-8 space-x-[6px] border-white" onClick={handleCancel1}>
+                <div className="flex text-customBlue justify-center text-base font-bold text-center underline">
+                  Close
+                </div>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </Modal>
+      <Modal title="" open={isModalOpen1} footer={null} width={'300px'} onCancel={handleCancel2}>
+        <div className="modal-box">
+          <div className="flex items-center justify-center">
+            <Avatar src={user?.avatar} sx={{
+            height: 124,
+            width: 124,
+          }}  />
+          </div>
+
+          <div className="flex justify-center text-[#1A3EEC] mt-4 text-base font-bold text-center studregular mb-6">
+            Ranked {currentQuizContent.rank} /{liveUserCount} - 10% of Prize Pool
+          </div>
+          <div className="flex  mt-4 mb-2 text-black text-2xl font-bold text-center studregular  justify-center">
+            You are a Winner!
+          </div>
+          <div className="flex justify-center text-black  text-2xl font-bold text-center studregular mb-2">You won</div>
+          <div className="flex justify-center text-[#2F0861]  text-4xl font-bold text-center studregular mb-2">
+            $400
+          </div>
+          <div className="py-1 flex text-base  justify-center">Your account: </div>
+          <div className="flex justify-center">
+            <div className="flex items-center px-2 rounded-full border-white">
+              <img src={coinImg} alt="coin" />
+              <div className="text-xl font-bold  text-black font-stud-regular">{credit}</div>
+            </div>
+            <div className="flex items-center ml-2  px-2 rounded-full border-white">
+              <img src={ticketImg} alt="ticket" />
+              <div className="text-xl font-bold  text-black font-stud-regular">{ticket}</div>
+            </div>
+            <div className="flex justify-center text-black text-xl font-bold text-center studregular">$400</div>
+          </div>
+          <div className="modal-action">
+            <div className="justify-center flex">
+              <button
+                className="bg-customBlue   mt-8 w-[285px] h-[52px] top-[320px]  rounded-[30px] space-x-[6px] border-white"
+                onClick={() => {
+                  toggleLeaderboardHandler(true);
+                  setIsModalOpen1(false);
+                }}
+              >
+                <div className="flex justify-between px-4">
+                  <div className="flex">
+                    <img src={tipHost} alt="user2" className="border-4  rounded-full" />
+                    <div className="flex text-white  text-base font-bold text-center studregular">Tip Host</div>
+                  </div>
+
+                  <div className="flex text-white justify-center text-base font-bold text-center studregular">$3</div>
+                </div>
+              </button>
+            </div>
+
+            <div className="justify-center flex ">
+              <Link to="#" className=" mt-8 space-x-[6px] border-white" onClick={handleCancel2}>
+                <div className="flex text-customBlue justify-center text-base font-bold text-center underline">
+                  Close
+                </div>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </Modal>
+      <Modal title="" open={isModalOpen2} footer={null} width={'300px'} onCancel={handleCancel3}>
+        <div className="modal-box">
+          <div className="flex justify-center text-[#1A3EEC] mt-4 text-base font-bold text-center studregular mb-6">
+            Unranked - Guest
+          </div>
+          <div className="flex  mt-4 mb-2 text-black text-2xl font-bold text-center studregular  justify-center">
+            Wow pretty cool!
+          </div>
+          <div className="flex justify-center text-black  text-2xl font-bold text-center studregular mb-2">
+            {' '}
+            you got {currentQuizContent.correct} out of {currentQuizContent.totalQuestion}
+          </div>
+          <div className="flex justify-center text-black  text-2xl font-bold text-center studregular mb-2">
+            {' '}
+            Questions Right!
+          </div>
+
+          <div className="py-1 flex text-base  justify-center">Register for an account </div>
+          <div className="py-1 flex text-base  justify-center">today to keep your score </div>
+          <div className="py-1 flex text-base  justify-center">and get free credits! </div>
+
+          <div className="modal-action">
+            <div className="justify-center flex">
+              <button
+                className="bg-customBlue   mt-8 w-[285px] h-[52px] top-[320px]  rounded-[30px] space-x-[6px] border-white"
+                onClick={() => {
+                  toggleSummaryHandler(true);
+                  setIsModalOpen2(false);
+                }}
+              >
+                <div className="flex justify-between px-2">
+                  <div className="flex text-white justify-center text-sm font-bold text-center studregular">
+                    Join Community, get Free 10
+                  </div>
+                  <img src={coinImg} width="24" height="24" alt="coin" />
+                </div>
+              </button>
+            </div>
+
+            <div className="justify-center flex ">
+              <Link to="#" className=" mt-8 space-x-[6px] border-white" onClick={handleCancel3}>
                 <div className="flex text-customBlue justify-center text-base font-bold text-center underline">
                   Close
                 </div>

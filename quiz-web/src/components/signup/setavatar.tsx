@@ -6,7 +6,7 @@ import sideMenuSvg from '../../assets/side-menu.svg';
 import { useSelector } from 'react-redux';
 import type { UploadProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import {UploadURL} from '../../../env.config';
+import { UploadURL } from '../../../env.config';
 import { getTicket } from '../../service/user/user.service';
 interface User {
   agora: {
@@ -24,7 +24,7 @@ interface User {
   updatedAt: string;
   username: string;
 }
-type SetAvatarData  = {
+type SetAvatarData = {
   email: string;
   avatar: string;
 };
@@ -47,7 +47,7 @@ const SingUp: React.FC = () => {
           .then((res) => {
             setImageUrl(res.data.data.avatar);
           })
-          .catch((e) => console.log(e)); 
+          .catch((e) => console.log(e));
       } else {
         navigate('/login');
         toast.error('Please login as User', {
@@ -63,12 +63,18 @@ const SingUp: React.FC = () => {
   }, []);
   const savaAvatar = () => {
     console.log('usere', user.email);
-    const data: SetAvatarData  = { email: user.email, avatar: imageUrl };
+    const data: SetAvatarData = { email: user.email, avatar: imageUrl };
     setAvatar(data)
       .then((res) => {
         console.log(res);
         if (res.status == 200) {
           navigate('/dashboard');
+          
+          let  user = JSON.parse(localStorage.getItem('user'));
+          if (user && user.user && user.user.avatar) {
+            user.user.avatar = imageUrl; // Set to whatever default value you want
+            localStorage.setItem('user', JSON.stringify(user));
+          }
           toast.success('Your avatar has been successfully stored.', {
             autoClose: false,
           });

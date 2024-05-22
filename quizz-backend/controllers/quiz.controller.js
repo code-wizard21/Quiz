@@ -189,51 +189,78 @@ const getTopThreeRankerInQuiz = catchAsync(async (req, res) => {
   return res.json(success(httpStatus.OK, 'Top three ranker retrieved successfully', topThreeRanker));
 });
 
-const getQuizLeaderboard = catchAsync(async (req, res) => {
+const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
   try {
-    const userId = req.user.id;
-    let userList=[];
-    // let topThreeRanker;
-    try {
-      let docs = await UserActivity.find({});
-      console.log(docs.length);
-      console.log('UserActivity', docs);
-      for (let i = 0; i < docs.length; i++) {
-        let info = await UserAnswer.find({ username: docs[i].username });
-        let time = 0;
-        let correct = 0;
-        for (let i = 0; i < info.length; i++) {
-          time += info[i].duration;
-          if (info[i].state == 'true') {
-            correct++;
-          }
+    console.log('getModalQuizLeaderboard', req.params);
+  
+    // Fetching and sorting the user list
+    let  userList = await UserActivity.find().sort({ correct: -1 });
+    // Calculate user rank and retrieve the specific user
+    let rank = 0;
+    let indexOfUser = userList.findIndex((user, index) => {
+      if (user.user.toString() === req.params.quiz_id) {
+        rank = index;
+        return true;
+      }
+      rank++;
+      return false;
+    });
+
+    // If specific user not found, send an appropriate response
+    if (indexOfUser === -1) {
+      return res.json(success(httpStatus.NOT_FOUND, 'User not found in the leaderboard', {}));
+    }
+
+    // Add rank to user detail
+    userList[indexOfUser].time = rank;
+
+    // Sending success response
+    res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList[indexOfUser]));
+  } catch (error) {
+    console.log('error in getQuizLeaderboard', error);
+
+    // Sending error response
+    return next(new AppError('Failed to fetch leaderboard', httpStatus.INTERNAL_SERVER_ERROR));
+  }
+});
+
+const calculateQuizLeaderboard = catchAsync(async (req, res) => {
+  try {
+    let docs = await UserActivity.find({ role: { $ne: 'shadow' } });
+    console.log(docs.length);
+    console.log('UserActivity', docs);
+    for (let i = 0; i < docs.length; i++) {
+      let info = await UserAnswer.find({
+        username: docs[i].username,
+      });
+
+      let time = 0;
+      let correct = 0;
+
+      for (let i = 0; i < info.length; i++) {
+        if (info[i].duration != undefined) {
+          time += parseFloat(info[i].duration);
         }
-        console.log(' docs[i].username', docs[i].username);
-        try {
-          const result = await UserActivity.updateOne(
-            { username: docs[i].username },
-            { $set: { time: time, correct: correct } }
-          );
-           userList = await UserActivity.find().sort({ correct: -1 });  //
-        } catch (err) {
-          console.error('Error occurred: ', err);
+
+        if (info[i].state == 'true') {
+          correct++;
         }
       }
-    } catch (error) {
-      console.error(error);
-    }
-    // const { leaderboard, page } = await quizService.getQuizLeaderboard(
-    //   req.params.quiz_id,
-    //   userId,
-    //   req.query.page,
-    //   req.query.limit,
-    //   req.query.user_rank
-    // );
-    // if (!leaderboard) {
-    //   throw new ApiError(httpStatus.NOT_FOUND, 'Quiz not found');
-    // }
 
-    // const totalQuestionsInQuiz = await Question.countDocuments({ quiz: req.params.quiz_id });
+      const result = await UserActivity.updateOne(
+        { username: docs[i].username },
+        { $set: { time: time, correct: correct } }
+      );
+    }
+
+    res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', 'userList'));
+  } catch (error) {
+    console.log('error in getQuizLeaderboard', error);
+  }
+});
+const getQuizLeaderboard = catchAsync(async (req, res) => {
+  try {
+    const userList = await UserActivity.find().sort({ correct: -1 }); //
 
     res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList));
   } catch (error) {
@@ -256,13 +283,12 @@ const getLiveQuiz = catchAsync(async (req, res) => {
 });
 
 const getQuizUserSummary = catchAsync(async (req, res) => {
-  const userId = req.user.id;
-  const quizSummary = await quizService.getQuizUserSummary(req.params.quiz_id, userId);
-  if (!quizSummary) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User did not participate in this quiz');
-  }
+  const { quizId } = req.params;
 
-  res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', quizSummary));
+  const result = await UserAnswer.find({ user: quizId });
+  console.log('result', result);
+
+  res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', result));
 });
 
 const deleteAllUserAnswerAndParticipation = catchAsync(async (req, res) => {
@@ -283,12 +309,14 @@ module.exports = {
   voteQuizCategory,
   getQuizVotes,
   getQuizQuestions,
+  getModalQuizLeaderboard,
   createQuizLiveStream,
   getQuizLeaderboard,
   getQuizUserSummary,
   getOnlyQuestion,
   getTopThreeRankerInQuiz,
   getQuizeState,
+  calculateQuizLeaderboard,
   // patchQuizLive,
   deleteAllUserAnswerAndParticipation,
   getAllQuizesWithDetails,

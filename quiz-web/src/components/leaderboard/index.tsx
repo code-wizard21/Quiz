@@ -1,22 +1,24 @@
 import { Button, Col, Divider, List, Row, Skeleton, Spin } from 'antd';
 import { useEffect, useState } from 'react';
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import user2 from '../../assets/user/user1.svg';
-import user1 from '../../assets/user/user2.svg';
-import user3 from '../../assets/user/user3.svg';
+
 import { getUserLeaderboard } from '../../service/quiz/quiz.service';
 import { IQuizLeaderboardOverview } from '../../types/quiz.types';
-import GameSummary from '../game-summary';
+import { Avatar } from 'antd';
 import './style.css';
 
-const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactElement => {
+const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) => void }> = ({
+  quizId,
+  setViewSummary,
+}) => {
   const [leaderboardResults, setLeaderboardResults] = useState<IQuizLeaderboardOverview>();
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
   const [viewLeaderboard, setViewLeaderboard] = useState(true);
-  const [viewSummary, setViewSummary] = useState(false);
+
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
+
   const handleViewSummary = () => {
     setIsSummaryLoading(true);
     setTimeout(() => {
@@ -73,67 +75,50 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
   return (
     <>
       <Spin spinning={isLeaderboardLoading} size="large">
-        {/* {viewLeaderboard && (
+        {viewLeaderboard && (
           <div id="leaderboard-container" className="rounded-2xl">
             <Row>
               <Col span={24} className="mt-16 flex justify-center">
-                <div>
-                  <img
-                    src={leaderboardResults?.[1]?.avatar}
-                    className="-mr-3 border-orange-400 border-4 border-solid rounded-full"
-                    alt="user1"
-                    width={80}
-                    height={80}
-                  />
-                  {leaderboardResults && leaderboardResults?.[1]?.username ? (
-                    <div className="text-white text-center">
-                      {leaderboardResults[0]?.username}
-                    </div>
-                  ) : (
-                    <>
-                      <div className="text-white text-center">Sam.P</div>
-                    </>
-                  )}
-                  <div className="text-white text-center">$450.90</div>
-                </div>
+                {leaderboardResults?.[1]?.avatar && (
+                  <div>
+                    <img
+                      src={leaderboardResults[1].avatar}
+                      className="-mr-3 border-orange-400 border-4 border-solid rounded-full"
+                      alt="user1"
+                      width={80}
+                      height={80}
+                    />
+                    <div className="text-white text-center">{leaderboardResults[1]?.username}</div>
+                    <div className="text-white text-center">$450.90</div>
+                  </div>
+                )}
+
                 <div className="z-20">
                   <img
-                    src={leaderboardResults[0]?.avatar}
+                    src={leaderboardResults?.[0]?.avatar}
                     alt="user2"
                     className="border-yellow-300 border-4 border-solid rounded-full"
                     width={100}
                     height={100}
                   />
-                  {leaderboardResults && leaderboardResults?.length ? (
-                    <div className="text-white text-center">
-                      {leaderboardResults[0]?.username}
-                    </div>
-                  ) : (
-                    <>
-                      <div className="text-white text-center">Sam.P</div>
-                    </>
+                  {leaderboardResults && leaderboardResults.length && (
+                    <div className="text-white text-center">{leaderboardResults[0]?.username || 'Sam.P'}</div>
                   )}
                   <div className="text-white text-center">$450.90</div>
                 </div>
-                <div>
-                  <img
-                   src={leaderboardResults?.[2]?.avatar}
-                    className="-ml-3 border-green-400 border-4 border-solid rounded-full"
-                    alt="user3"
-                    width={80}
-                    height={80}
-                  />
-                  {leaderboardResults && leaderboardResults?.[2]?.username ? (
-                    <div className="text-white text-center">
-                      {leaderboardResults?.[2]?.username}
-                    </div>
-                  ) : (
-                    <>
-                      <div className="text-white text-center">Sam.P</div>
-                    </>
-                  )}
-                  <div className="text-white text-center">$450.90</div>
-                </div>
+                {leaderboardResults?.[2]?.avatar && (
+                  <div>
+                    <img
+                      src={leaderboardResults?.[2]?.avatar}
+                      className="-ml-3 border-green-400 border-4 border-solid rounded-full"
+                      alt="user3"
+                      width={80}
+                      height={80}
+                    />
+                    <div className="text-white text-center">{leaderboardResults?.[2]?.username || 'Sam.P'}</div>
+                    <div className="text-white text-center">$450.90</div>
+                  </div>
+                )}
               </Col>
               <Col span={24} className="mt-2 text-center text-white text-xl font-bold">
                 <div>Congratulations!</div>
@@ -147,8 +132,7 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                   <InfiniteScroll
                     dataLength={leaderboardResults?.length}
                     next={loadMoreLeaderboardData}
-                    hasMore={false}
-                    loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+                    hasMore={true}
                     endMessage={
                       <Divider plain>
                         <span className="text-white">End of Leaderboard</span>
@@ -160,35 +144,45 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                     <List
                       dataSource={leaderboardResults}
                       renderItem={(item, index) => (
-                       
-                        <List.Item key={index} className={`${user?.username==item.username?'bg-quiz_back':''} flex justify-between items-center`}>
-                          <div className="flex">
-                            <div class="w-1/4">
-                              <div className='flex'>
-                              <div className="text-white text-center">{index + 1}</div>
-                              <img
-                                src={item.avatar}
-                                className="mx-3"
-                                alt="user1"
-                                width={25}
-                                height={25}
-                              />
-                              </div>
-                           
-                            </div>
-                            <div class="w-1/4">
-                              <div className="text-white">{item.username}</div>
-                            </div>
-                            <div class="w-1/4">
-                             
-                              <div className="text-white">{item.time}s</div>
-                            </div>
-                            <div class="w-1/4">
-                              <div className="text-white">
-                                {item.correct}/{item.totalquestion}
-                              </div>
-                            </div>
+                        <List.Item
+                          key={index}
+                          className={`${
+                            user?.username == item.username ? 'bg-white rounded-3xl text-[#662FBF]' : ' text-white '
+                          } flex px-4 py-2 `}
+                        >
+                          <div
+                            className={`${
+                              user?.username == item.username ? 'text-[#662FBF]' : 'text-white'
+                            } cursor-default text-center ml-4`}
+                          >
+                            {index + 1}
                           </div>
+                          <Avatar src={item.avatar} className="mx-3" alt="user1" width={35} height={35} />
+
+                          <div
+                            className={`${
+                              user?.username == item.username ? 'text-[#662FBF]' : 'text-white'
+                            } cursor-default text-center `}
+                          >
+                            {item.username}
+                          </div>
+                          <div
+                            className={`${
+                              user?.username == item.username ? 'text-[#662FBF]' : 'text-white'
+                            } cursor-default text-center `}
+                          >
+                            {item.time}s
+                          </div>
+                          <div
+                            className={`${
+                              user?.username == item.username ? 'text-[#662FBF]' : 'text-white'
+                            } cursor-default text-center `}
+                          >
+                            {' '}
+                            {item.correct}/{item.totalquestion}
+                          </div>
+
+                          <div></div>
                         </List.Item>
                       )}
                     />
@@ -202,8 +196,7 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
               </Col>
             </Row>
           </div>
-        )} */}
-        {<GameSummary quizId={quizId} />}
+        )}
       </Spin>
     </>
   );

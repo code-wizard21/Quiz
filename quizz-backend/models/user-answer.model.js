@@ -15,15 +15,19 @@ const userAnswerSchema = mongoose.Schema(
         },
         state: {
 			type: String,
-			required: true,
+			required: false,
 		},
         answer: {
 			type: String,
-			required: true,
+			required: false,
 		},
         username: {
 			type: String,
 			required: true,
+		},
+        question_text: {
+			type: String,
+			required: false,
 		},
         question: {
             type: mongoose.SchemaTypes.ObjectId,
@@ -33,11 +37,11 @@ const userAnswerSchema = mongoose.Schema(
         option: {
             type: mongoose.SchemaTypes.ObjectId,
             ref: 'Option',
-            required: true,
+            required: false,
         },
         duration: {
             type: Number,
-            required: true,
+            required: false,
             validate(value) {
                 if (value < 0) {
                     throw new Error('Duration must be a positive number');

@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const { userService } = require('../services');
 const { success } = require('../utils/ApiResponse');
 const { User } = require('../models');
-
+const UserActivity = require('../models/user-activity.model');
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   res.status(httpStatus.CREATED).send(user);
@@ -63,6 +63,15 @@ const setAvatar = async (req, res) => {
 const reduceTicket = async (req, res) => {
   try {
     let user = await User.findOne({ _id: req.body.id }); 
+    
+    let updatedActivity = await UserActivity.updateOne(
+      { user: req.body.id },
+      {
+        $set: {
+          usedticket: true, // Reduce the ticket count by 1
+        },
+      }
+    );
     let updatedDoc = await User.updateOne(
       { _id: req.body.id },
       {

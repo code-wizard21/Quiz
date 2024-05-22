@@ -42,7 +42,8 @@ router.post(
 router.patch('/:quiz_id', auth('createQuizRight'), validate(quizValidation.updateQuiz), quizController.updateQuiz);
 
 router.get('/:quiz_id/leaderboard', auth(), validate(quizValidation.quizLeaderboard), quizController.getQuizLeaderboard);
-
+router.get('/:quiz_id/calculation', auth(), validate(quizValidation.quizLeaderboard), quizController.calculateQuizLeaderboard);
+router.get('/:quiz_id/getmodaldata', auth(), validate(quizValidation.quizLeaderboard), quizController.getModalQuizLeaderboard);
 router.get(
   '/:quiz_id/leaderboard/toppers',
   auth(),
@@ -52,8 +53,7 @@ router.get(
 
 router.get('/:quiz_id/livequiz',  validate(quizValidation.quizIdParams), quizController.getLiveQuiz);
 
-router.get('/:quiz_id/user/summary', auth(), validate(quizValidation.quizIdParams), quizController.getQuizUserSummary);
-
+router.get('/:quizId/user/summary', quizController.getQuizUserSummary);
 
 router.delete('/temp', quizController.deleteAllUserAnswerAndParticipation);
 

@@ -5,6 +5,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { getUserQuizGameSummary } from '../../service/quiz/quiz.service';
 import { IQuestion, IUserQuizGameSummaryResponse } from '../../types/quiz.types';
 import { AxiosResponse } from 'axios';
+import { BiCheck } from 'react-icons/bi';
+import { BiSolidXCircle } from 'react-icons/bi';
+import { BiX } from 'react-icons/bi';
 const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactElement => {
   const [userGameSummary, setUserGameSummary] = useState<IQuestion[]>([]);
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
@@ -15,8 +18,10 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
 
   const getUserQuizSummary = useCallback(async () => {
     setIsSummaryLoading(true);
+    console.log('quizIdquizId',quizId);
     getUserQuizGameSummary(quizId)
       .then((res: AxiosResponse<IUserQuizGameSummaryResponse>) => {
+        console.log('res.data', res.data.data);
         setUserGameSummary(res.data.data);
       })
       .catch((err) => {
@@ -49,8 +54,8 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
             <InfiniteScroll
               dataLength={userGameSummary.length}
               next={loadMoreSummaryData}
-              hasMore={false}
-              loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+              hasMore={true}
+            
               scrollableTarget="scrollableDiv"
               endMessage={
                 <Divider plain>
@@ -66,18 +71,29 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                     <Col span={24} className="mt-5 flex justify-center flex-col px-6" key={index}>
                       <div className="text-sum-que text-white text-center text-xl rounded-t-2xl pt-2 w-full">
                         <div className="text-base text-left pl-4">Q.{index + 1}</div>
-                        <div className="text-left pl-4 text-base">{item.text}</div>
+                        <div className="text-left pl-4 text-base">{item.question_text}</div>
                       </div>
-                      <div className="text-sum-ans flex text-sm justify-between text-white text-left font-bold rounded-b-2xl px-4 py-2 ">
-                        <div className={`${item.user_answer?.is_correct ? 'text-green-500' : 'text-red-500'}`}>
-                          {item.user_answer?.text}
-                        </div>
-                        {item.user_answer?.is_correct ? (
-                          <div className="text-green-500">{item.user_answer.duration}s</div>
-                        ) : (
-                          <div className="text-red-500">
-                            {typeof item?.user_answer?.duration === 'number' ? item.user_answer.duration + 's' : 'X'}
+                      <div className="text-sum-ans flex text-sm  text-white  font-bold rounded-b-2xl px-4 justify-between py-2 ">
+                        <div className={` text-white `}>{item.answer}</div>
+                        {item.state == 'true' && (
+                          <div className="justify-between flex">
+                            <div className=" text-green-500 ">{item.duration} s</div>
+                            <BiCheck size={24} color="#48BB78" className="mb-1" />
                           </div>
+                        )}
+                        {item.state == 'false' && (
+                          <>
+                       
+                            <div className="justify-between flex">
+                              {(item.duration) + ' s'}
+                              <BiX size={24} color="red" className="mb-1" />
+                            </div>
+                          </>
+                        )}
+                        {item.state == 'No Answer' && (
+                          <>
+                            <div className="text-blue-500">No Answer</div>
+                          </>
                         )}
                       </div>
                     </Col>

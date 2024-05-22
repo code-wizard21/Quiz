@@ -6,6 +6,19 @@ import { IAgoraRtcTokenResponse, IQuizLeaderboardResponse, IQuizResponse, IQuize
 export const getQuizList = async (): Promise<AxiosResponse<IQuizesResponse>> => {
   return get('quizes');
 };
+
+
+export const liveCalculationStart = async (
+  quizId: string,
+): Promise<AxiosResponse<IQuizLeaderboardResponse>> => {
+  return get(`quizes/${quizId}/calculation`);
+}
+export const getModalData = async (
+  user_ID: string,
+): Promise<AxiosResponse<IQuizLeaderboardResponse>> => {
+  return get(`quizes/${user_ID}/getmodaldata`);
+}
+
 export const getQuestionWithOption = async (userData): Promise<AxiosResponse<IQuizesResponse>> => {
   return post('quizes/getquestion',userData);
 };

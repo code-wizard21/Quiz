@@ -23,6 +23,10 @@ const userActivitySchema = mongoose.Schema(
       type: String,
       required: false,
     },
+    usedticket: {
+      type: Boolean,
+      required: false,
+    },
     correct: {
       type: Number,
       required: false,
@@ -35,9 +39,9 @@ const userActivitySchema = mongoose.Schema(
       type: Number,
       required: false,
     },
-    user_type: {
+    role: {
       type: String,
-      enum: ['shadow', 'registered'],
+      
       required: false,
     },
   },
