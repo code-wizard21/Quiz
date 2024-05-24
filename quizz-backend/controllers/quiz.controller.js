@@ -81,8 +81,6 @@ const getQuizeState = catchAsync(async (req, res) => {
     console.error(err);
   }
 
-  console.log('##########getQuizeStategetQuizeStategetQuizeState');
-
   if (docs) {
     res.json(success(httpStatus.OK, 'successfully', docs[0]));
   } else {
@@ -192,52 +190,76 @@ const getTopThreeRankerInQuiz = catchAsync(async (req, res) => {
 
 const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
   try {
-    console.log('getModalQuizLeaderboard', req.params);
-
-    // Fetching and sorting the user list
+    let updatedUserActivityTable = await UserActivity.find({ role: { $ne: 'shadow' } });
+    let total = 0;
+    let spliteCredit = 0;
+    let rewardAmount = 0,
+      rewardCredit = 0;
+    for (let i = 0; i < updatedUserActivityTable.length; i++) {
+      if (updatedUserActivityTable[i].allQuestionCorrect == true) {
+        total++;
+      }
+    }
     let result = await UserActivity.findOne({ user: req.params.quiz_id });
     // Calculate user rank and retrieve the specific user
-    let countCredit = Math.floor((result.pool / 2) * 3);
-    let reward, credit;
+   console.log('result',result);
+    spliteCredit = Math.floor((result.pool / 2) * 3);
 
-    switch (result.rank) {
-      case 1:
-        reward = Math.floor(result.pool / 2);
-        credit = 0;
-        break;
-      case 2:
-        reward = Math.floor(result.pool / 4);
-        credit = 0;
-        break;
-      case 3:
-        reward = Math.floor(result.pool / 10);
-        credit = 0;
-        break;
-      default:
-        credit = countCredit;
-        reward = 0;
-    }
-    let userAmount = await User.findOne({ _id: req.params.quiz_id });
-    console.log('userAmount', userAmount);
-
-    let updatedDoc = await User.updateOne(
-      { _id: req.params.quiz_id }, // Make sure req.params.quiz_id is defined and valid
-      {
-        $inc: {
-          amount: reward, // Ensure 'reward' is defined and a numeric value
-          credit: credit,
-        },
+    if (result.usedticket == true) {
+      switch (result.rank) {
+        case 1:
+          rewardAmount = Math.floor(result.pool / 2);
+          rewardCredit = 0;
+          break;
+        case 2:
+          rewardAmount = Math.floor(result.pool / 4);
+          rewardCredit = 0;
+          break;
+        case 3:
+          rewardAmount = Math.floor(result.pool / 10);
+          rewardCredit = 0;
+          break;
       }
-    );
 
-    const userList = { result: result, reward: reward, credit: credit, userAmount: userAmount.amount };
+      if (result.allNumberCorrect === true && result.rank > 3) {
+        if (total === 4) {
+          rewardAmount = 0;
+          rewardCredit = result.pool;
+        } else {
+          rewardAmount = 0;
+          if (spliteCredit > result.pool) {
+            rewardCredit = result.pool;
+          } else {
+            rewardCredit = spliteCredit;
+          }
+        }
+      }
+      if (result.rank < 4) {
+        await UserActivity.updateOne(
+          { user: req.params.quiz_id },
+          { rewardCredit: rewardCredit, rewardAmount: rewardAmount }
+        );
+      }
+      await User.updateOne(
+        { _id: req.params.quiz_id }, // Make sure req.params.quiz_id is defined and valid
+        {
+          $inc: {
+            amount: rewardAmount, // Ensure 'reward' is defined and a numeric value
+            credit: rewardCredit,
+          },
+        }
+      );
+      console.log('rewardAmount',rewardAmount,'rewardCredit',rewardCredit);
+    }
+    let userInfo=await User.findOne({_id: req.params.quiz_id});
+
+    const userList = { result: result,amount: userInfo.amount, credit: userInfo.amount.credit };
     // Sending success response
     res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList));
   } catch (error) {
     console.log('error in getQuizLeaderboard', error);
 
-    // Sending error response
-    return next(new AppError('Failed to fetch leaderboard', httpStatus.INTERNAL_SERVER_ERROR));
+   
   }
 });
 
@@ -251,20 +273,22 @@ const calculateQuizLeaderboard = catchAsync(async (req, res) => {
 
       let time = 0;
       let correct = 0;
-
+      let allQuestionCorrect = false;
       for (let i = 0; i < info.length; i++) {
-        if (info[i].duration != undefined) {
-          time += parseFloat(info[i].duration);
+        if (typeof info[i].duration === 'number') {
+          time += parseFloat(info[i].duration.toFixed(2));
         }
 
         if (info[i].state == 'true') {
           correct++;
         }
       }
-
+      if (correct == info.length) {
+        allQuestionCorrect = true;
+      }
       const result = await UserActivity.updateOne(
         { username: updatedUserActivityTable[i].username },
-        { $set: { time: time, correct: correct } }
+        { $set: { time: time, correct: correct, allQuestionCorrect: allQuestionCorrect } }
       );
     }
     const docs = await UserActivity.find({ role: 'user' }).sort({ correct: -1, time: 1 });
@@ -307,7 +331,7 @@ const getQuizLeaderboard = catchAsync(async (req, res) => {
     }
 
     const updatedUserList = await UserActivity.find({ role: 'user' }).sort({ rank: 1 });
-    console.log('updatedUserList',updatedUserList);
+
     return res.status(httpStatus.OK).json({
       status: 'success',
       message: 'Quiz summary retrieved successfully',
@@ -340,7 +364,6 @@ const getQuizUserSummary = catchAsync(async (req, res) => {
   const { quizId } = req.params;
 
   const result = await UserAnswer.find({ user: quizId });
-  console.log('result', result);
 
   res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', result));
 });

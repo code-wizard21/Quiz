@@ -40,19 +40,20 @@ const getTicket = async (req, res) => {
 };
 
 const handleTip = async (req, res) => {
-  const { id, rank } = req.body;
-
+  const { id, rank,state } = req.body;
+  console.log('req.body',req.body);
   try {
     const user = await User.findById(id);
-
+    console.log('user',user);
     if (!user) {
       return res.status(httpStatus.NOT_FOUND).json({ message: `User not found with id: ${id}` });
     }
 
-    if (rank > 3) {
+    if (rank < 4 && state==true) {
+      await User.updateOne({ _id: user._id }, { amount:user.amount + 3 });
+    } 
+    if (state==false ||rank > 4) { 
       await User.updateOne({ _id: user._id }, { credit: user.credit + 10 });
-    } else {
-      await User.updateOne({ _id: user._id }, { credit: user.amount + 3 });
     }
 
     const updatedUser = await User.findById(id);
@@ -74,7 +75,7 @@ const handleTip = async (req, res) => {
 const setAvatar = async (req, res) => {
   try {
     let user = await User.findOne({ email: req.body.email }); // First find the user to get the current ticket count
-    console.log('req.body.avatar',req.body.avatar);
+  
     let updatedDoc = await User.updateOne(
       { email: req.body.email },
       {
@@ -92,23 +93,16 @@ const setAvatar = async (req, res) => {
 
 const useTicketQuiz = async (req, res) => {
   try {
+    console.log('req.body',req.body);
     let user = await User.findOne({ _id: req.body.id });
-    UserActivity.updateMany({}, { $inc: { pool: 1 } })
+    await UserActivity.updateMany({}, { $inc: { pool: 1 } })
       .then((result) => {
-        console.log(result);
+        console.log('result');
       })
       .catch((err) => {
         console.log('Something went wrong when updating data!', err);
       });
     let docc = await UserActivity.updateOne(
-      { user: req.body.id },
-      {
-        $set: {
-          usedticket: true,
-        },
-      }
-    );
-    let updatedActivity = await UserActivity.updateOne(
       { user: req.body.id },
       {
         $set: {
@@ -124,7 +118,7 @@ const useTicketQuiz = async (req, res) => {
         },
       }
     );
-    res.json(success(httpStatus.OK, 'Ticket reduced successfully', updatedDoc));
+    res.json(success(httpStatus.OK, 'Ticket reduced successfully', 'docc'));
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'An error occurred while updating the ticket count.' });

@@ -71,7 +71,6 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
       }
     );
 
-    console.log('updatedDoc', updatedDoc);
 
     response.send(200);
   }

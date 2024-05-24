@@ -9,7 +9,6 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@ant-design/pro-layout": "^7.16.9",
@@ -25,6 +24,7 @@
     "i18next": "^23.4.5",
     "moment": "^2.29.4",
     "react": "^18.2.0",
+    "react-countup": "^6.5.3",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.2.0",
     "react-icons": "^4.10.1",

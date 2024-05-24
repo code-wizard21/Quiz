@@ -33,7 +33,7 @@ const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) =
     getUserLeaderboard(quizId)
       .then((res) => {
         setLeaderboardResults(res.data.data);
-        console.log('leaderboard', res.data.data);
+        console.log('leaderboardleaderboardleaderboard', res.data.data);
       })
       .catch((err) => {
         console.log(err);
@@ -89,7 +89,7 @@ const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) =
                       height={80}
                     />
                     <div className="text-white text-center">{leaderboardResults[1]?.username}</div>
-                    <div className="text-white text-center">$450.90</div>
+                    <div className="text-white text-center">${leaderboardResults?.[1]?.rewardAmount}</div>
                   </div>
                 )}
 
@@ -104,7 +104,7 @@ const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) =
                   {leaderboardResults && leaderboardResults.length && (
                     <div className="text-white text-center">{leaderboardResults[0]?.username || 'Sam.P'}</div>
                   )}
-                  <div className="text-white text-center">$450.90</div>
+                   <div className="text-white text-center">${leaderboardResults?.[0]?.rewardAmount}</div>
                 </div>
                 {leaderboardResults?.[2]?.avatar && (
                   <div>
@@ -116,7 +116,7 @@ const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) =
                       height={80}
                     />
                     <div className="text-white text-center">{leaderboardResults?.[2]?.username || 'Sam.P'}</div>
-                    <div className="text-white text-center">$450.90</div>
+                    <div className="text-white text-center">${leaderboardResults?.[2]?.rewardAmount}</div>
                   </div>
                 )}
               </Col>
@@ -155,7 +155,7 @@ const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) =
                               <Avatar src={item.avatar} alt="user1" width={35} height={35} />
                             </div>
                             <span className="w-1/3 cursor-default  truncate">{item.username}</span>
-                            <span className="w-1/6 cursor-default">{item.time}s</span>
+                            <span className="w-1/6 cursor-default">{(parseFloat(item.time).toFixed(2))}s</span>
                             <span className="w-1/4 cursor-default">
                               {item.correct}/{item.totalquestion}
                             </span>

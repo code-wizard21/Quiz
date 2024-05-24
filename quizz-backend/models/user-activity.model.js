@@ -15,6 +15,14 @@ const userActivitySchema = mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    rewardCredit: {
+      type: Number,
+      required: false,
+    },
+    rewardAmount: {
+      type: Number,
+      required: false,
+    },
     username: {
       type: String,
       required: false,
@@ -24,6 +32,10 @@ const userActivitySchema = mongoose.Schema(
       required: false,
     },
     usedticket: {
+      type: Boolean,
+      required: false,
+    },
+    allQuestionCorrect: {
       type: Boolean,
       required: false,
     },

@@ -110,10 +110,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const navigate = useNavigate();
   const [isParticipants, setIsParticipants] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isticket, setIsticket] = useState(true);
+
+  const [isticket, setIsticket] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
+  const [isModalOpen3, setIsModalOpen3] = useState(false);
   const [viewSummary, setViewSummary] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
   const [isPaused, setIsPaused] = useState(false);
@@ -150,8 +151,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           .then((res) => {
             console.log('resresres', res);
             setTicket(res.data?.data?.ticket);
-            setCredit(res.data?.data?.credit);
             setUserAmount(res.data?.data?.amount);
+            setCredit(res.data?.data?.credit);
+            setAnimateUserAmount(res.data?.data?.amount);
+            setAnimateUserCreidt(res.data?.data?.credit);
+            
           })
           .catch((e) => console.log(e));
       }
@@ -400,7 +404,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   useEffect(() => {
     // Check if 'showWelcomeModal' item exists in local storage
     if (localStorage.getItem('showWelcomeModal')) {
-      setIsModalOpen1(true);
+      setIsModalOpen2(true);
       localStorage.removeItem('showWelcomeModal'); // remove the item
     }
   }, []);
@@ -424,13 +428,15 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       correct: data?.data?.data?.result?.correct,
       totalQuestion: data?.data?.data?.result?.totalquestion,
       rank: data?.data?.data?.result?.rank,
-      rewardAmount: data?.data?.data?.reward,
-      rewardCredit: data?.data?.data?.credit,
+      rewardAmount: data?.data?.data?.result?.rewardAmount,
+      rewardCredit: data?.data?.data?.result?.rewardCredit,
     }));
+    // setAmount(data?.data?.data?.amount);
+    // setCredit(data?.data?.data?.credit);
     if (user?.role == 'user') {
-      setIsModalOpen1(true);
-    } else {
       setIsModalOpen2(true);
+    } else {
+      setIsModalOpen3(true);
     }
   };
 
@@ -554,18 +560,23 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     videoRef.current?.style.setProperty('position', 'absolute');
   };
   const showModal = () => {
-    setIsModalOpen(true);
+    setIsModalOpen1(true);
   };
 
   const handleCancel1 = () => {
-    setIsModalOpen(false);
+    setIsModalOpen1(false);
+   
+  
   };
   const handleCancel2 = () => {
-    setIsModalOpen1(false);
+    toggleLeaderboardHandler(true);
+   
+    setIsModalOpen2(false);
   };
 
   const handleCancel3 = () => {
-    setIsModalOpen2(false);
+    setIsModalOpen3(false);
+    toggleSummaryHandler(true);
   };
 
   const showDrawer = () => {
@@ -587,13 +598,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setIsSpinning(false);
   };
   const handleTip = async () => {
-    const data = { rank: currentQuizContent.rank, id: user?.id };
+    const data = { rank: currentQuizContent.rank, id: user?.id, state:isticket };
     await getHandleTip(data).then((res) => {
       console.log('handleto', res);
       if (res.status == 200) {
         setIsTip(true);
-        setAnimateUserAmount(res.data.data.amount);
-        setAnimateUserCreidt(res.data.data.credit);
+        
+        setAnimateUserAmount(amount+3);
+        setAnimateUserCreidt(credit+10);
         console.log('33333333333');
       }
     });
@@ -604,12 +616,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       return;
     } else {
       const data: TCreateUser = { id: user?.id || `defaultId` };
-      socket?.emit('increase_pool_amount_user', { email: user?.email, quiz_id: id, ticket: 1 });
+     socket?.emit('increase_pool_amount_user', { email: user?.email, quiz_id: id, ticket: 1 });
       setTicket((prevAmount) => prevAmount - 1);
       const result = await reduceTicket(data);
       if (result.status == 200) {
         setIsParticipants(true);
-        setIsModalOpen(false);
+        setIsModalOpen1(false);
+      
         setIsticket(true);
       }
       console.log('reduceTicketresult', result);
@@ -985,7 +998,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
-      <button onClick={() => setIsModalOpen1(true)}>sssss</button>
+      <button onClick={() => calculationEnd()}>sssss</button>
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}
@@ -1347,7 +1360,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         </div>
       </Drawer>
-      <Modal title="" open={isModalOpen} footer={null} width={'300px'} onCancel={handleCancel1}>
+      <Modal title="" open={isModalOpen1} footer={null} width={'300px'} onCancel={handleCancel1}>
         <div className="modal-box">
           <div className="flex justify-center mt-4 text-2xl font-bold text-center studregular mb-6">
             Confirm Ticket Use?
@@ -1376,7 +1389,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         </div>
       </Modal>
-      <Modal title="" open={isModalOpen1} footer={null} width={'350px'} onCancel={handleCancel2}>
+      <Modal title="" open={isModalOpen2} footer={null} width={'350px'} onCancel={handleCancel2}>
         <div className="modal-box">
           <div className="flex mt-6 items-center justify-center">
             <Avatar size={128} src={localData?.user?.avatar} />
@@ -1452,7 +1465,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <div className="flex items-center rounded-full border-white gap-1">
               <img src={coinImg} alt="coin" />
               <div className="text-xl font-bold  text-black font-stud-regular">
-                $<CountUp start={credit} end={credit} duration={1} />
+                <CountUp start={credit} end={credit} duration={1} />
               </div>
             </div>
             <div className="flex items-center   rounded-full border-white gap-2">
@@ -1511,7 +1524,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                 className=" mt-8 space-x-[6px] border-white"
                 onClick={() => {
                   toggleLeaderboardHandler(true);
-                  setIsModalOpen1(false);
+                  setIsModalOpen2(false);
                 }}
               >
                 <div className="flex text-customBlue justify-center text-base font-bold text-center underline">
@@ -1522,7 +1535,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         </div>
       </Modal>
-      <Modal title="" open={isModalOpen2} footer={null} width={'350px'} onCancel={handleCancel3}>
+      <Modal title="" open={isModalOpen3} footer={null} width={'350px'} onCancel={handleCancel3}>
         <div className="modal-box">
           {currentQuizContent.correct === currentQuestion?.total_questions ? (
             <div>
@@ -1584,7 +1597,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                 className=" mt-8 space-x-[6px] border-white"
                 onClick={() => {
                   toggleSummaryHandler(true);
-                  setIsModalOpen2(false);
+                  setIsModalOpen3(false);
                 }}
               >
                 <div className="flex text-customBlue justify-center text-base font-bold text-center underline">

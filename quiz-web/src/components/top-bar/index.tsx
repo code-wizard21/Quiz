@@ -39,7 +39,7 @@
           console.log('###############'); 
         }
       }
-    console.log('user',user);
+   
     }, []);
 
     const buyTicket = () => {

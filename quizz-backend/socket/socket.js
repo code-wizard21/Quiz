@@ -68,19 +68,20 @@ const initaliseWebSocket = (server) => {
       socket.emit('amount_update_user_broadcast', quizPoolData); // Send the initial amount
 
       socket.on('increase_pool_amount_user', async (data) => {
+      console.log('data',data);
         const newData = new quizticket({
           email: data.email,
           ticket: data.ticket,
           quiz: data.quiz_id,
         });
-        await newData
-          .save()
-          .then((res) => {
-            console.log('res');
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        // await newData
+        //   .save()
+        //   .then((res) => {
+        //     console.log('res');
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //   });
         amount++;
         playCount++;
 
@@ -451,11 +452,12 @@ const initaliseWebSocket = (server) => {
       socket.on('user_useranswer_save', async (data) => {
         console.log('user_useranswer_save');
         const { quiz_id,  question_id,username,user_id } = data;
-        let questionExit = await UserAnswer.find({ question: question_id });
+        let questionExit = await UserAnswer.find({ question: question_id ,user:user_id});
        console.log('questionExit',questionExit);
         const question_text=await QuizQuestion.findOne({_id:question_id});
 
        if (questionExit.length === 0) { 
+        console.log('No answer');
           const userAnswer = new UserAnswer({
             state: 'No Answer',
             username: username,
