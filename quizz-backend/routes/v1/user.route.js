@@ -7,9 +7,9 @@ const userController = require('../../controllers/user.controller');
 const router = express.Router();
 router.get('/shadow-users', userController.getShadowUsers);
 router.post('/ticket/getall', userController.getTicket);
-router.post('/ticket/reduceticket', userController.reduceTicket);
+router.post('/ticket/useticketquiz', userController.useTicketQuiz);
 router.post('/setavatar', userController.setAvatar);
-
+router.post('/handletip', userController.handleTip);
 
 
 router

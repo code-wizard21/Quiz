@@ -10,11 +10,9 @@ const stripe = require('stripe')(
 //const YOUR_DOMAIN = 'https://quizmobb.com';
 const YOUR_DOMAIN = 'http://localhost:4002';
 
-
-
 const buyCredit = catchAsync(async (req, res) => {
   try {
-    const { amount, credit, user, email ,ticket} = req.body;
+    const { amount, credit, user, email, ticket } = req.body;
 
     const session = await stripe.checkout.sessions.create({
       line_items: [
@@ -36,12 +34,11 @@ const buyCredit = catchAsync(async (req, res) => {
         email: email, // Replace with your customer's email
         user: user,
         credit: credit, // Replace with your customer's username
-        ticket:ticket
+        ticket: ticket,
       },
     });
 
-
-    res.status(200).send(session.url);
+    res.status(200).send({ redirectUrl: session.url });
   } catch (error) {
     console.error('Error confirming payment intent', error);
     res.status(500).send({ success: false });
@@ -49,7 +46,7 @@ const buyCredit = catchAsync(async (req, res) => {
 });
 const buyCreditSocket = catchAsync(async (req, res) => {
   try {
-    const { amount, credit, user, email ,successful_url,ticket} = req.body;
+    const { amount, credit, user, email, successful_url, ticket } = req.body;
 
     const session = await stripe.checkout.sessions.create({
       line_items: [
@@ -71,12 +68,11 @@ const buyCreditSocket = catchAsync(async (req, res) => {
         email: email, // Replace with your customer's email
         user: user,
         credit: credit, // Replace with your customer's username
-        ticket:ticket
+        ticket: ticket,
       },
     });
 
-
-    res.status(200).send(session.url);
+    res.status(200).send({ redirectUrl: session.url });
   } catch (error) {
     console.error('Error confirming payment intent', error);
     res.status(500).send({ success: false });
@@ -84,7 +80,7 @@ const buyCreditSocket = catchAsync(async (req, res) => {
 });
 const buyticket = catchAsync(async (req, res) => {
   try {
-    const { amount, ticket, user, email,credit } = req.body;
+    const { amount, ticket, user, email, credit } = req.body;
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -104,14 +100,14 @@ const buyticket = catchAsync(async (req, res) => {
       metadata: {
         email: email, // Replace with your customer's email
         user: user,
-        credit:credit,
+        credit: credit,
         ticket: ticket, // Replace with your customer's username
       },
     });
 
     //   console.log("session",session.url);
     // // res.redirect(303, session.url);
-    res.status(200).send(session.url);
+    res.status(200).send({ redirectUrl: session.url });
   } catch (error) {
     console.error('Error confirming payment intent', error);
     res.status(500).send({ success: false });
@@ -142,11 +138,9 @@ const getTransactionID = (req, res) => {
   const { params } = req;
   Payment.findOne(params)
     .then((result) => {
-
       Payment.find({ email: result.email })
-      .sort({ trx_date: -1 })
+        .sort({ trx_date: -1 })
         .then((result) => {
-  
           res.status(200).json(result);
         })
         .catch((err) => {
@@ -162,7 +156,7 @@ const getID = (req, res) => {
   User.findOne(params)
     .then((result) => {
       Payment.find({ email: result.email })
-      .sort({ trx_date: -1 })
+        .sort({ trx_date: -1 })
         .then((result) => {
           res.status(200).json(result);
         })
@@ -183,5 +177,4 @@ module.exports = {
   getAll,
   buyCredit,
   getID,
-  
 };

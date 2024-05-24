@@ -6,6 +6,7 @@ const { userService } = require('../services');
 const { success } = require('../utils/ApiResponse');
 const { User } = require('../models');
 const UserActivity = require('../models/user-activity.model');
+
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   res.status(httpStatus.CREATED).send(user);
@@ -15,7 +16,8 @@ const getUsers = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
   const options = pick(req.query, ['sort_by', 'limit', 'page']);
   const users = await User.paginate(filter, options);
-  User.find({ role: 'user' }).sort({ createdAt: -1 })
+  User.find({ role: 'user' })
+    .sort({ createdAt: -1 })
     .then((result) => {
       res.json(success(httpStatus.OK, 'Users retrieved successfully', result));
     })
@@ -27,10 +29,9 @@ const getUsers = catchAsync(async (req, res) => {
 });
 
 const getTicket = async (req, res) => {
-
   try {
     const result = await User.findById(req.body.id);
-  
+
     res.json(success(httpStatus.OK, 'Shadow users retrieved successfully', result));
   } catch (error) {
     console.error(error);
@@ -38,13 +39,42 @@ const getTicket = async (req, res) => {
   }
 };
 
-
-
-const setAvatar = async (req, res) => {
+const handleTip = async (req, res) => {
+  const { id, rank } = req.body;
 
   try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(httpStatus.NOT_FOUND).json({ message: `User not found with id: ${id}` });
+    }
+
+    if (rank > 3) {
+      await User.updateOne({ _id: user._id }, { credit: user.credit + 10 });
+    } else {
+      await User.updateOne({ _id: user._id }, { credit: user.amount + 3 });
+    }
+
+    const updatedUser = await User.findById(id);
+
+    res.status(httpStatus.OK).json({
+      status: 'success',
+      message: 'User Tip successfully stored',
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: 'An error occurred while querying users.',
+    });
+  }
+};
+
+const setAvatar = async (req, res) => {
+  try {
     let user = await User.findOne({ email: req.body.email }); // First find the user to get the current ticket count
-   
+    console.log('req.body.avatar',req.body.avatar);
     let updatedDoc = await User.updateOne(
       { email: req.body.email },
       {
@@ -60,15 +90,29 @@ const setAvatar = async (req, res) => {
   }
 };
 
-const reduceTicket = async (req, res) => {
+const useTicketQuiz = async (req, res) => {
   try {
-    let user = await User.findOne({ _id: req.body.id }); 
-    
+    let user = await User.findOne({ _id: req.body.id });
+    UserActivity.updateMany({}, { $inc: { pool: 1 } })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log('Something went wrong when updating data!', err);
+      });
+    let docc = await UserActivity.updateOne(
+      { user: req.body.id },
+      {
+        $set: {
+          usedticket: true,
+        },
+      }
+    );
     let updatedActivity = await UserActivity.updateOne(
       { user: req.body.id },
       {
         $set: {
-          usedticket: true, // Reduce the ticket count by 1
+          usedticket: true,
         },
       }
     );
@@ -122,7 +166,8 @@ module.exports = {
   getTicket,
   getShadowUsers,
   getUsers,
-  reduceTicket,
+  useTicketQuiz,
+  handleTip,
   getUser,
   updateUser,
   deleteUser,

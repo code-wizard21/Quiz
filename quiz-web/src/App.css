@@ -48,13 +48,20 @@ body {
 #view-que {
   background-image: url("assets/question-back.svg");
   background-repeat: no-repeat;
-  /* width: 430px; */
+  background-size: cover;
+  background-position: center;
   width: 100%;
   max-width: 430px;
-  height: 700px;
+  height: 900px;
   margin: auto;
 }
+#view-back{
+  background-image: url("assets/question-back.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 
+}
 .option-btn {
   color: #31302B;
   background: #FFF;

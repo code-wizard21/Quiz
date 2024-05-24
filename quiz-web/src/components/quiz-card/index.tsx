@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import shareImg from '../../assets/share.svg';
 import ellipse from '../../assets/Ellipse_709.svg';
 import { IQuiz } from '../../types/quiz.types';
+import { USER_QUIZ_LIVE_CALCULATION_END } from '../../types/socket.types';
 import { SOCKET_LISTENERS } from '../../constants/enum';
 import { SocketContext } from '../../context/socket.context';
 import { convertDate, getQuizBackgroundImage, showMessages } from '../../helpers/utils';
@@ -40,12 +41,12 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
         setLiveQuiz('ongoing');
       }
     });
-    socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END, (data: any) => {
+    socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END, (data: USER_QUIZ_LIVE_CALCULATION_END) => {
       if (quiz._id == data.quiz) {
         setLiveQuiz('complete');
       }
     });
-    const { bgImage, textImage } = getQuizBackgroundImage(quiz.category as any);
+    const { bgImage, textImage } = getQuizBackgroundImage(quiz.category );
     setQuizBgImage(bgImage);
     setQuizTextImage(textImage);
     getLiveQuiz(quiz._id)

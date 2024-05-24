@@ -33,3 +33,19 @@
 .top-25-percent {
     top: 25% !important;
 }
+
+
+.App-logo {
+  pointer-events: none;
+}
+.spinning {
+  animation: App-logo-spin infinite 0.3s linear;
+}
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

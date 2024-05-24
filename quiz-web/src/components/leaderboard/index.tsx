@@ -144,46 +144,23 @@ const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) =
                     <List
                       dataSource={leaderboardResults}
                       renderItem={(item, index) => (
-                        <List.Item
+                        <div
                           key={index}
-                          className={`${
+                          className={`px-4 flex items-center   py-2 gap-6 ${
                             user?.username == item.username ? 'bg-white rounded-3xl text-[#662FBF]' : ' text-white '
-                          } flex px-4 py-2 `}
+                          }`}
                         >
-                          <div
-                            className={`${
-                              user?.username == item.username ? 'text-[#662FBF]' : 'text-white'
-                            } cursor-default text-center ml-4`}
-                          >
-                            {index + 1}
+                            <div className="w-1/8 cursor-default">{index + 1}</div>
+                            <div className='w-1/8'>
+                              <Avatar src={item.avatar} alt="user1" width={35} height={35} />
+                            </div>
+                            <span className="w-1/3 cursor-default  truncate">{item.username}</span>
+                            <span className="w-1/6 cursor-default">{item.time}s</span>
+                            <span className="w-1/4 cursor-default">
+                              {item.correct}/{item.totalquestion}
+                            </span>
                           </div>
-                          <Avatar src={item.avatar} className="mx-3" alt="user1" width={35} height={35} />
-
-                          <div
-                            className={`${
-                              user?.username == item.username ? 'text-[#662FBF]' : 'text-white'
-                            } cursor-default text-center `}
-                          >
-                            {item.username}
-                          </div>
-                          <div
-                            className={`${
-                              user?.username == item.username ? 'text-[#662FBF]' : 'text-white'
-                            } cursor-default text-center `}
-                          >
-                            {item.time}s
-                          </div>
-                          <div
-                            className={`${
-                              user?.username == item.username ? 'text-[#662FBF]' : 'text-white'
-                            } cursor-default text-center `}
-                          >
-                            {' '}
-                            {item.correct}/{item.totalquestion}
-                          </div>
-
-                          <div></div>
-                        </List.Item>
+                      
                       )}
                     />
                   </InfiniteScroll>

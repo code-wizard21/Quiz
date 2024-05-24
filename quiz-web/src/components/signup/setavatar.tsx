@@ -68,7 +68,7 @@ const SingUp: React.FC = () => {
       .then((res) => {
         console.log(res);
         if (res.status == 200) {
-          navigate('/dashboard');
+         
           
           let  user = JSON.parse(localStorage.getItem('user'));
           if (user && user.user && user.user.avatar) {
@@ -78,6 +78,9 @@ const SingUp: React.FC = () => {
           toast.success('Your avatar has been successfully stored.', {
             autoClose: false,
           });
+           localStorage.setItem('showWelcomeModal', 'true');
+          const prevPath = localStorage.getItem('prevPath') || '/dashboard'; 
+          navigate(prevPath);
         }
       })
       .catch((e) => {

@@ -1,24 +1,27 @@
-import { Col, Divider, List, Row, Skeleton, Spin } from 'antd';
+import { Col, Divider, List, Row, Spin } from 'antd';
 import './style.css';
+import coinImg from '../../assets/coin.svg';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useCallback, useEffect, useState } from 'react';
+import {  useSelector } from 'react-redux';
 import { getUserQuizGameSummary } from '../../service/quiz/quiz.service';
 import { IQuestion, IUserQuizGameSummaryResponse } from '../../types/quiz.types';
 import { AxiosResponse } from 'axios';
 import { BiCheck } from 'react-icons/bi';
-import { BiSolidXCircle } from 'react-icons/bi';
 import { BiX } from 'react-icons/bi';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '../../redux/reducers';
 const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactElement => {
   const [userGameSummary, setUserGameSummary] = useState<IQuestion[]>([]);
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
-
+  const { user } = useSelector((state: RootState) => state.auth);
   const loadMoreSummaryData = () => {
     console.log('loadMoreSummaryData');
   };
-
+  const navigate = useNavigate();
   const getUserQuizSummary = useCallback(async () => {
     setIsSummaryLoading(true);
-    console.log('quizIdquizId',quizId);
+    console.log('quizIdquizId', quizId);
     getUserQuizGameSummary(quizId)
       .then((res: AxiosResponse<IUserQuizGameSummaryResponse>) => {
         console.log('res.data', res.data.data);
@@ -52,10 +55,10 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
           </Col>
           <Col id="scrollableDiv" className="w-full overflow-auto mt-3 game-summary-list">
             <InfiniteScroll
+            loader={<></>}
               dataLength={userGameSummary.length}
               next={loadMoreSummaryData}
               hasMore={true}
-            
               scrollableTarget="scrollableDiv"
               endMessage={
                 <Divider plain>
@@ -83,9 +86,8 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                         )}
                         {item.state == 'false' && (
                           <>
-                       
                             <div className="justify-between flex">
-                              {(item.duration) + ' s'}
+                              {item.duration + ' s'}
                               <BiX size={24} color="red" className="mb-1" />
                             </div>
                           </>
@@ -101,6 +103,23 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                 )}
               />
             </InfiniteScroll>
+          </Col>
+          <Col span={24}>
+            {user?.role == 'shadow' && (
+              <div className="justify-center items-center flex">
+                <button
+                  className="bg-customYellowBorder mt-8 w-[285px] h-[52px] top-[320px]  rounded-[30px] space-x-[6px]"
+                  onClick={() => navigate('/login')}
+                >
+                  <div className="flex justify-between px-4">
+                    <div className="flex text-black justify-center text-base font-bold text-center ">
+                      Join Community, get Free 10
+                    </div>
+                    <img src={coinImg} width="24" height="24" alt="coin" />
+                  </div>
+                </button>
+              </div>
+            )}
           </Col>
         </Row>
       </div>

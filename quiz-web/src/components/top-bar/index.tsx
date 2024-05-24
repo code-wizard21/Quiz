@@ -30,6 +30,7 @@
           getTicket(data)
             .then((res) => {
               setImageUrl(res.data.data.avatar);
+              console.log('res.data.data.avatar',res.data.data.avatar);
               setTicket(res.data.data.ticket); 
               setCredit(res.data.data.credit);
             })

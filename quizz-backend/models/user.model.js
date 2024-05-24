@@ -80,6 +80,11 @@ const userSchema = mongoose.Schema(
       type: Number,
       trim: true,
     },
+    amount: {
+      type: Number,
+      trim: true,
+      default:0,
+    },
     credit: {
       type: Number,
       trim: true,

@@ -8,7 +8,7 @@ import vector from '../../assets/figma/Vector.svg';
 import vector1 from '../../assets/figma/Vector1.svg';
 import { checkOutBuyticketSession } from '../../service/payment/payment.service';
 import { checkOutBuyCreditSession } from '../../service/payment/payment.service';
-
+import {TCreateUser} from '../../types/user.type'
 
 
 const QuizLayout: React.FC = (): React.ReactElement => {
@@ -57,7 +57,9 @@ const QuizLayout: React.FC = (): React.ReactElement => {
       userName = JSON.parse(localStorage.getItem('user')!).user.name;
       userEmail = JSON.parse(localStorage.getItem('user')!).user.email;
     }
-    const data:any = {
+ 
+
+    const data:TCreateUser = {
       user: userName,
       email: userEmail,
       amount: amount,
@@ -68,7 +70,7 @@ const QuizLayout: React.FC = (): React.ReactElement => {
       .then((res) => {
         console.log(res);
         if (res.status == 200) {
-          window.location.href = res.data;
+          window.location.href = res.data.redirectUrl;
         }
       })
       .catch((err) => {
@@ -106,7 +108,7 @@ const QuizLayout: React.FC = (): React.ReactElement => {
       userName = JSON.parse(localStorage.getItem('user')!).user.name;
       userEmail = JSON.parse(localStorage.getItem('user')!).user.email;
     }
-    const data:any = {
+    const data:TCreateUser = {
       user: userName,
       email:userEmail,
       amount: amount,
@@ -115,9 +117,9 @@ const QuizLayout: React.FC = (): React.ReactElement => {
     };
     checkOutBuyCreditSession(data)
       .then((res) => {
-        console.log(res);
+        console.log('resresres',res);
         if (res.status == 200) {
-          window.location.href = res.data;
+          window.location.href = res.data.redirectUrl;
         }
       })
       .catch((err) => {
@@ -127,8 +129,8 @@ const QuizLayout: React.FC = (): React.ReactElement => {
 
   const [value, setValue] = useState(1);
   return (
-    <div className="w-full bg-gray-100 h-screen overflow-auto">
-      <div className="max-w-430 m-auto shadow-xl bg-white min-h-screen">
+    <div  className="w-full  bg-gray-100 h-screen overflow-auto">
+      <div  className="max-w-430 m-auto shadow-xl bg-white min-h-screen">
         <TopBar showDrawer={showDrawer} showDrawer1={showDrawer1} />
         <Outlet />
         <Drawer title="Basic Drawer" height={500} onClose={onClose} open={open} placement="bottom">

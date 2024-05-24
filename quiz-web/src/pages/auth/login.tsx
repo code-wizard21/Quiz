@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Row, Col } from 'antd';
+import { Button, Checkbox, Form, Input } from 'antd';
 import { AxiosError, AxiosResponse } from 'axios';
 import React, { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,9 +8,7 @@ import { setUserData } from '../../redux/actions/auth.action';
 import { login } from '../../service/auth/auth.service';
 import { ILoginResponse, IUser } from '../../types/user.type';
 import { toast } from 'react-toastify';
-import { Divider } from 'antd';
-import facebook from '../../assets/social/facebook.svg';
-import google from '../../assets/social/Google.svg';
+
 import evaarrow from '../../assets/eva_arrow-back-fill_white.svg';
 
 const Login: React.FC = () => {
@@ -34,10 +32,13 @@ const Login: React.FC = () => {
             autoClose: false,
           });
           setIsCorrect(true);
+          dispatch(setUserData(res.data.user));
           localStorage.setItem('user', JSON.stringify(res.data));
           localStorage.setItem('hasRegistered', 'true');
-          dispatch(setUserData(res.data.user));
-          navigate('/dashboard');
+          
+          localStorage.setItem('showWelcomeModal', 'true');
+          const prevPath = localStorage.getItem('prevPath') || '/dashboard'; 
+          navigate(prevPath);
         })
         .catch((err: AxiosError) => {
   
@@ -128,39 +129,7 @@ const Login: React.FC = () => {
           </div>
         </Form.Item>
       </Form>
-      <Divider className="mt-6" style={{ borderColor: 'white', color: 'white' }}>Or Log in with</Divider>
-      <Row className="mt-16">
-        <Col span={12}>
-          <Button
-            className="quiz-action-btn h-12  shadow-none font-bold rounded-3xl w-full"
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: '#FFFFFF',
-              borderColor: 'rgba(255, 255, 255, 0.2)',
-            }}
-          >
-            <div className="flex items-center justify-center">
-              <img src={facebook} alt="user2" />
-              <div className="ml-2 studregular text-center text-base font-bold text-white mr-2 ">Facebook</div>
-            </div>
-          </Button>
-        </Col>
-        <Col span={12}>
-          <Button
-            className="quiz-action-btn h-12 shadow-none font-bold ml-4 rounded-3xl w-full"
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: '#FFFFFF',
-              borderColor: 'rgba(255, 255, 255, 0.2)',
-            }}
-          >
-            <div className="flex items-center justify-center">
-              <img src={google} alt="user2" />
-              <div className="ml-2 studregular text-center text-base font-bold text-white mr-2 ">Google</div>
-            </div>
-          </Button>
-        </Col>
-      </Row>
+   
     </div>
   );
 };

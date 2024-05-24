@@ -23,5 +23,5 @@ export default {
   corePlugins: {
     preflight: false,
   },
-  plugins: [require('flowbite/plugin')],
+  plugins: [import('flowbite/plugin')],
 };

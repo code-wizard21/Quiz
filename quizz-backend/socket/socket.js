@@ -36,7 +36,7 @@ const initaliseWebSocket = (server) => {
           console.log('live stream not found');
           return;
         }
-        await UserActivity.deleteMany({});
+      
         await UserAnswer.deleteMany({});
         await UserParticipation.deleteMany({});
 
@@ -452,6 +452,7 @@ const initaliseWebSocket = (server) => {
         console.log('user_useranswer_save');
         const { quiz_id,  question_id,username,user_id } = data;
         let questionExit = await UserAnswer.find({ question: question_id });
+       console.log('questionExit',questionExit);
         const question_text=await QuizQuestion.findOne({_id:question_id});
 
        if (questionExit.length === 0) { 
@@ -473,7 +474,7 @@ const initaliseWebSocket = (server) => {
         if (!data || !data.quiz_id || !data.user_id) {
           return;
         }
-        const { quiz_id, user_id, avatar, username ,role} = data;
+        const { quiz_id, user_id, username ,role} = data;
 
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id) });
 
@@ -508,13 +509,14 @@ const initaliseWebSocket = (server) => {
         }
 
         const userActivity_exist = await UserActivity.findOne({ user: new ObjectId(user_id) });
+        console.log('userActivity_exist',userActivity_exist);
         let quiz_question = await QuizQuestion.find({ quiz: quiz_id });
        
         if (!userActivity_exist) {
+          console.log('create new User');
           const userActivity = new UserActivity({
             quiz: quiz_id,
             user: user_id,
-            avatar: avatar,
             role:role,
             username: username,
             totalquestion: quiz_question.length,

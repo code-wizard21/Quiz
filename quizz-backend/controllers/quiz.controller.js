@@ -7,6 +7,7 @@ const pick = require('../utils/pick');
 const { success } = require('../utils/ApiResponse');
 const ApiError = require('../utils/ApiError');
 const livequiz = require('../models/live-quiz.model');
+const User = require('../models/user.model');
 const { Question, UserAnswer } = require('../models');
 const UserParticipation = require('../models/participation.model');
 const { questionService } = require('../services');
@@ -192,30 +193,46 @@ const getTopThreeRankerInQuiz = catchAsync(async (req, res) => {
 const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
   try {
     console.log('getModalQuizLeaderboard', req.params);
-  
+
     // Fetching and sorting the user list
-    let  userList = await UserActivity.find().sort({ correct: -1 });
+    let result = await UserActivity.findOne({ user: req.params.quiz_id });
     // Calculate user rank and retrieve the specific user
-    let rank = 0;
-    let indexOfUser = userList.findIndex((user, index) => {
-      if (user.user.toString() === req.params.quiz_id) {
-        rank = index;
-        return true;
-      }
-      rank++;
-      return false;
-    });
+    let countCredit = Math.floor((result.pool / 2) * 3);
+    let reward, credit;
 
-    // If specific user not found, send an appropriate response
-    if (indexOfUser === -1) {
-      return res.json(success(httpStatus.NOT_FOUND, 'User not found in the leaderboard', {}));
+    switch (result.rank) {
+      case 1:
+        reward = Math.floor(result.pool / 2);
+        credit = 0;
+        break;
+      case 2:
+        reward = Math.floor(result.pool / 4);
+        credit = 0;
+        break;
+      case 3:
+        reward = Math.floor(result.pool / 10);
+        credit = 0;
+        break;
+      default:
+        credit = countCredit;
+        reward = 0;
     }
+    let userAmount = await User.findOne({ _id: req.params.quiz_id });
+    console.log('userAmount', userAmount);
 
-    // Add rank to user detail
-    userList[indexOfUser].time = rank;
+    let updatedDoc = await User.updateOne(
+      { _id: req.params.quiz_id }, // Make sure req.params.quiz_id is defined and valid
+      {
+        $inc: {
+          amount: reward, // Ensure 'reward' is defined and a numeric value
+          credit: credit,
+        },
+      }
+    );
 
+    const userList = { result: result, reward: reward, credit: credit, userAmount: userAmount.amount };
     // Sending success response
-    res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList[indexOfUser]));
+    res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList));
   } catch (error) {
     console.log('error in getQuizLeaderboard', error);
 
@@ -226,12 +243,10 @@ const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
 
 const calculateQuizLeaderboard = catchAsync(async (req, res) => {
   try {
-    let docs = await UserActivity.find({ role: { $ne: 'shadow' } });
-    console.log(docs.length);
-    console.log('UserActivity', docs);
-    for (let i = 0; i < docs.length; i++) {
+    let updatedUserActivityTable = await UserActivity.find({ role: { $ne: 'shadow' } });
+    for (let i = 0; i < updatedUserActivityTable.length; i++) {
       let info = await UserAnswer.find({
-        username: docs[i].username,
+        username: updatedUserActivityTable[i].username,
       });
 
       let time = 0;
@@ -248,9 +263,31 @@ const calculateQuizLeaderboard = catchAsync(async (req, res) => {
       }
 
       const result = await UserActivity.updateOne(
-        { username: docs[i].username },
+        { username: updatedUserActivityTable[i].username },
         { $set: { time: time, correct: correct } }
       );
+    }
+    const docs = await UserActivity.find({ role: 'user' }).sort({ correct: -1, time: 1 });
+    console.log('docs', docs);
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const bulkOps = docs.map((doc, index) => {
+        return {
+          updateOne: {
+            filter: { _id: doc._id },
+            update: { $set: { rank: index + 1 } },
+          },
+        };
+      });
+
+      await UserActivity.bulkWrite(bulkOps, { session });
+      await session.commitTransaction();
+    } catch (error) {
+      console.error('Error occurred while updating user ranks: ', error);
+      await session.abortTransaction();
+    } finally {
+      session.endSession();
     }
 
     res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', 'userList'));
@@ -260,11 +297,28 @@ const calculateQuizLeaderboard = catchAsync(async (req, res) => {
 });
 const getQuizLeaderboard = catchAsync(async (req, res) => {
   try {
-    const userList = await UserActivity.find().sort({ correct: -1 }); //
+    const userList = await UserActivity.find({ role: 'user' }).sort({ rank: 1 });
 
-    res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList));
+    for (let i = 0; i < userList.length; i++) {
+      const { user: userId } = userList[i];
+      const { avatar: userAvatar } = await User.findById(userId);
+
+      await UserActivity.updateOne({ user: userId }, { avatar: userAvatar });
+    }
+
+    const updatedUserList = await UserActivity.find({ role: 'user' }).sort({ rank: 1 });
+    console.log('updatedUserList',updatedUserList);
+    return res.status(httpStatus.OK).json({
+      status: 'success',
+      message: 'Quiz summary retrieved successfully',
+      data: updatedUserList,
+    });
   } catch (error) {
-    console.log('error in getQuizLeaderboard', error);
+    logger.error('Error getting Quiz Leaderboard:', error);
+
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: `An error occurred when fetching the quiz leaderboard: ${error}`,
+    });
   }
 });
 

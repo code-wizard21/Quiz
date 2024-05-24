@@ -11,7 +11,7 @@ import { setUserData } from '../../redux/actions/auth.action';
 import { register } from '../../service/user/user.service';
 import { ILoginResponse, TCreateUser } from '../../types/user.type';
 import { toast } from 'react-toastify';
-import evaarrow from '../../assets/eva_arrow-back-fill_white.svg'
+import evaarrow from '../../assets/eva_arrow-back-fill_white.svg';
 
 const SingUp: React.FC = () => {
   const { t } = useTranslation('translation', {
@@ -72,13 +72,13 @@ const SingUp: React.FC = () => {
 
   return (
     <Row className="registration-page px-8 block">
-        <div className="pt-5  flex justify-start z-20">
+      <div className="pt-16 flex justify-start z-20">
         <Link to="/">
           <img src={evaarrow} alt="user2" className=" border-4  rounded-full" width={25} height={25} />
         </Link>
       </div>
-      <div className="text-xl font-stud-regular text-white pt-5">Create account</div>
-    
+      <div className="text-xl font-stud-regular text-white pt-8 mb-8">Create account</div>
+
       <Form
         name="login"
         layout="vertical"
@@ -129,7 +129,7 @@ const SingUp: React.FC = () => {
         <Checkbox className="text-white" onChange={(e) => setTermsAgreed(e.target.checked)}>
           I agree to the <Link to={'/term'}>terms and conditions</Link>
         </Checkbox>
-        <Form.Item className="pt-2">
+        <Form.Item className="pt-8">
           <Button
             type="primary"
             htmlType="submit"
@@ -140,7 +140,6 @@ const SingUp: React.FC = () => {
           </Button>
         </Form.Item>
       </Form>
-  
     </Row>
   );
 };

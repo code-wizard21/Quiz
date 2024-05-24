@@ -35,10 +35,20 @@ const userActivitySchema = mongoose.Schema(
       type: Number,
       required: false,
     },
+    pool: {
+      type: Number,
+      required: false,
+      default: 50,
+    },
     time: {
       type: Number,
       required: false,
     },
+    rank: {
+      type: Number,
+      required: false,
+    },
+    
     role: {
       type: String,
       

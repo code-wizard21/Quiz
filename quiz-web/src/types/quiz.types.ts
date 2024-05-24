@@ -14,6 +14,7 @@ export interface IQuiz {
   status: string;
   start_date: string;
   is_paid: boolean;
+  question_id: string;
   description: string;
   is_live: boolean;
   pool: number;
@@ -21,7 +22,7 @@ export interface IQuiz {
   contestants:number;
   total_questions:number;
   image: string;
-  category: TQuizCategory;
+  category: string;
   total_votes: number;
   has_voted: boolean;
 }
@@ -56,6 +57,10 @@ export interface IAgoraRtcTokenResponse {
 export interface IQuestion {
   quiz?: string;
   _id: string;
+  state: string;
+  answer: string;
+  question_text: string;
+  duration:number;
   text: string;
   type: string;
   options?: IOption[];
@@ -77,6 +82,7 @@ export interface IOption {
 
 export interface IQuestionResponse {
   question: IQuestion;
+  quiz_id:string;
   question_index?: number;
   total_questions?: number;
   status:string
@@ -108,6 +114,10 @@ interface ILeaderboard {
 
 export interface IQuizLeaderboardOverview {
   leaderboard: ILeaderboard;
+  totalquestion: number;
+  correct: number;
+  status:string;
+  time: number;
   total_questions: number;
   page: number;
 }
