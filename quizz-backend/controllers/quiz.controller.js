@@ -202,7 +202,7 @@ const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
     }
     let result = await UserActivity.findOne({ user: req.params.quiz_id });
     // Calculate user rank and retrieve the specific user
-   console.log('result',result);
+    console.log('result', result);
     spliteCredit = Math.floor((result.pool / 2) * 3);
 
     if (result.usedticket == true) {
@@ -234,12 +234,9 @@ const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
           }
         }
       }
-      if (result.rank < 4) {
-        await UserActivity.updateOne(
-          { user: req.params.quiz_id },
-          { rewardCredit: rewardCredit, rewardAmount: rewardAmount }
-        );
-      }
+
+      await UserActivity.updateOne({ user: req.params.quiz_id }, { rewardCredit: rewardCredit, rewardAmount: rewardAmount });
+
       await User.updateOne(
         { _id: req.params.quiz_id }, // Make sure req.params.quiz_id is defined and valid
         {
@@ -249,17 +246,15 @@ const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
           },
         }
       );
-      console.log('rewardAmount',rewardAmount,'rewardCredit',rewardCredit);
+      console.log('rewardAmount', rewardAmount, 'rewardCredit', rewardCredit);
     }
-    let userInfo=await User.findOne({_id: req.params.quiz_id});
-
-    const userList = { result: result,amount: userInfo.amount, credit: userInfo.amount.credit };
+    let userInfo = await User.findOne({ _id: req.params.quiz_id });
+    let finalResult = await UserActivity.findOne({ user: req.params.quiz_id });
+    const userList = { result: finalResult, amount: userInfo.amount, credit: userInfo.amount.credit };
     // Sending success response
     res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList));
   } catch (error) {
     console.log('error in getQuizLeaderboard', error);
-
-   
   }
 });
 
