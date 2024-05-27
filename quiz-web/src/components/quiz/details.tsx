@@ -26,6 +26,7 @@ import { convertDate, getQuizBackgroundImage, showMessages } from '../../helpers
 import { setUserData } from '../../redux/actions/auth.action';
 import { setMiscellaneousData } from '../../redux/actions/miscellaneous.action';
 import { RootState } from '../../redux/reducers';
+import sideMenuSvg from '../../assets/side-menu.svg';
 import {
   getAgoraRtcToken,
   getQuizDetail,
@@ -101,6 +102,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const [currentQuizContent, setCurrentQuizContent] = useState({
     correct: 0,
+    avatar: sideMenuSvg,
     totalQuestion: 0,
     rank: 1000000000000000,
     rewardAmount: 0,
@@ -153,9 +155,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             setTicket(res.data?.data?.ticket);
             setUserAmount(res.data?.data?.amount);
             setCredit(res.data?.data?.credit);
+            if (res.data?.data?.credit < 10) {
+              setIsTip(true);
+            }
             setAnimateUserAmount(res.data?.data?.amount);
             setAnimateUserCreidt(res.data?.data?.credit);
-            
           })
           .catch((e) => console.log(e));
       }
@@ -419,13 +423,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const calculationEnd = async () => {
     setShowCalcuation(false);
     const data = await getModalData(user?.id);
-    console.log('datadata', data);
+    console.log('datadata', data?.data?.data?.result);
     localStorage.setItem('isjoinchanel', 'false');
     //  localStorage.setItem('iscounted', 'fals e');
 
     setCurrentQuizContent((prevState) => ({
       ...prevState,
       correct: data?.data?.data?.result?.correct,
+      avatar: data?.data?.data?.result?.avatar,
       totalQuestion: data?.data?.data?.result?.totalquestion,
       rank: data?.data?.data?.result?.rank,
       rewardAmount: data?.data?.data?.result?.rewardAmount,
@@ -565,12 +570,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const handleCancel1 = () => {
     setIsModalOpen1(false);
-   
-  
   };
   const handleCancel2 = () => {
     toggleLeaderboardHandler(true);
-   
+
     setIsModalOpen2(false);
   };
 
@@ -598,14 +601,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setIsSpinning(false);
   };
   const handleTip = async () => {
-    const data = { rank: currentQuizContent.rank, id: user?.id, state:isticket };
+    const data = { rank: currentQuizContent.rank, id: user?.id, state: isticket };
     await getHandleTip(data).then((res) => {
       console.log('handleto', res);
       if (res.status == 200) {
         setIsTip(true);
-        
-        setAnimateUserAmount(amount+3);
-        setAnimateUserCreidt(credit+10);
+
+        setAnimateUserAmount(res?.data?.data?.amount);
+        setAnimateUserCreidt(res?.data?.data?.credit);
         console.log('33333333333');
       }
     });
@@ -616,13 +619,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       return;
     } else {
       const data: TCreateUser = { id: user?.id || `defaultId` };
-     socket?.emit('increase_pool_amount_user', { email: user?.email, quiz_id: id, ticket: 1 });
+      socket?.emit('increase_pool_amount_user', { email: user?.email, quiz_id: id, ticket: 1 });
       setTicket((prevAmount) => prevAmount - 1);
       const result = await reduceTicket(data);
       if (result.status == 200) {
         setIsParticipants(true);
         setIsModalOpen1(false);
-      
+
         setIsticket(true);
       }
       console.log('reduceTicketresult', result);
@@ -1409,7 +1412,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                     ? '50'
                     : currentQuizContent.rank === 2
                     ? '25'
-                    : currentQuizContent.rank === 2
+                    : currentQuizContent.rank === 3
                     ? '10'
                     : '0'}
                   % of Prize Pool
@@ -1447,7 +1450,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               </>
             )}
 
-          {currentQuizContent.rank + 1 > 4 && currentQuizContent.totalQuestion != currentQuizContent.correct && (
+          {currentQuizContent.rank > 3 && currentQuizContent.totalQuestion != currentQuizContent.correct && (
             <>
               <div className="flex  mt-4 mb-2 text-black text-2xl font-bold text-center studregular  justify-center">
                 Not bad! You got
@@ -1465,7 +1468,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <div className="flex items-center rounded-full border-white gap-1">
               <img src={coinImg} alt="coin" />
               <div className="text-xl font-bold  text-black font-stud-regular">
-                <CountUp start={credit} end={credit} duration={1} />
+                <CountUp start={credit} end={animateUserCredit} duration={1} />
               </div>
             </div>
             <div className="flex items-center   rounded-full border-white gap-2">
@@ -1474,48 +1477,54 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </div>
 
             <div className="flex justify-center text-black text-xl font-bold text-center studregular">
-              $<CountUp start={userAmount} end={userAmount} duration={1} />
+              $<CountUp start={userAmount} end={animateUserAmount} duration={1} />
             </div>
           </div>
           <div className="modal-action">
-            {userAmount > 10 && currentQuizContent.rank < 4 && isticket == true ? (
-              <div className="justify-center flex">
-                <button
-                  className={`mt-8 w-[325px] h-[52px] top-[320px] rounded-[30px] space-x-[6px] border-white 
+            {credit > 10 ? (
+              <>
+                {currentQuizContent.rank < 4 && isticket == true ? (
+                  <div className="justify-center flex">
+                    <button
+                      className={`mt-8 w-[325px] h-[52px] top-[320px] rounded-[30px] space-x-[6px] border-white 
               ${isTip ? 'bg-gray-400 cursor-not-allowed' : 'bg-customBlue'}`}
-                  onClick={handleTip}
-                  disabled={isTip}
-                >
-                  <div className="flex justify-between px-2">
-                    <div className="flex px-2 items-center gap-2">
-                      <img src={tipHost} alt="user2" className="border-4  rounded-full" />
-                      <span className="text-white  text-base font-bold text-center">Tip Host</span>
-                    </div>
+                      onClick={handleTip}
+                      disabled={isTip}
+                    >
+                      <div className="flex justify-between px-2">
+                        <div className="flex px-2 items-center gap-2">
+                          <img src={tipHost} alt="user2" className="border-4  rounded-full" />
+                          <span className="text-white  text-base font-bold text-center">Tip Host</span>
+                        </div>
 
-                    <div className="text-white text-2xl font-medium text-center studregular">$3</div>
+                        <div className="text-white text-2xl font-medium text-center studregular">$3</div>
+                      </div>
+                    </button>
                   </div>
-                </button>
-              </div>
-            ) : (
-              <div className="justify-center flex">
-                <button
-                  className={`mt-8 w-[325px] h-[52px] top-[320px] rounded-[30px] space-x-[6px] border-white 
+                ) : (
+                  <div className="justify-center flex">
+                    <button
+                      className={`mt-8 w-[325px] h-[52px] top-[320px] rounded-[30px] space-x-[6px] border-white 
             ${isTip ? 'bg-gray-400 cursor-not-allowed' : 'bg-customBlue'}`}
-                  onClick={handleTip}
-                  disabled={isTip}
-                >
-                  <div className="flex justify-between px-2">
-                    <div className="flex px-2 items-center gap-2">
-                      <img src={tipHost} alt="user2" className="border-4  rounded-full" />
-                      <span className="text-white  text-base font-bold text-center">Tip Host</span>
-                    </div>
-                    <div className="flex px-2 items-center gap-2">
-                      <img src={coinImg} alt="user2" className="border-4  rounded-full" />
-                      <div className="text-white text-2xl font-medium text-center studregular">10</div>
-                    </div>
+                      onClick={handleTip}
+                      disabled={isTip}
+                    >
+                      <div className="flex justify-between px-2">
+                        <div className="flex px-2 items-center gap-2">
+                          <img src={tipHost} alt="user2" className="border-4  rounded-full" />
+                          <span className="text-white  text-base font-bold text-center">Tip Host</span>
+                        </div>
+                        <div className="flex px-2 items-center gap-2">
+                          <img src={coinImg} alt="user2" className="border-4  rounded-full" />
+                          <div className="text-white text-2xl font-medium text-center studregular">10</div>
+                        </div>
+                      </div>
+                    </button>
                   </div>
-                </button>
-              </div>
+                )}
+              </>
+            ) : (
+              <></>
             )}
 
             <div className="justify-center flex ">

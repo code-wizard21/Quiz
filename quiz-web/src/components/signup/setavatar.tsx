@@ -68,18 +68,20 @@ const SingUp: React.FC = () => {
       .then((res) => {
         console.log(res);
         if (res.status == 200) {
-         
-          
-          let  user = JSON.parse(localStorage.getItem('user'));
-          if (user && user.user && user.user.avatar) {
-            user.user.avatar = imageUrl; // Set to whatever default value you want
-            localStorage.setItem('user', JSON.stringify(user));
-          }
+          console.log('setavatar',res);
+          let user = JSON.parse(localStorage.getItem('user'));
+      
+          // localStorage.setItem('user', JSON.stringify(res.data.data));
           toast.success('Your avatar has been successfully stored.', {
             autoClose: false,
           });
-           localStorage.setItem('showWelcomeModal', 'true');
-          const prevPath = localStorage.getItem('prevPath') || '/dashboard'; 
+          const defaultPath = '/dashboard';
+          const prevPath = localStorage.getItem('prevPath') || defaultPath;
+
+          if (prevPath !== defaultPath) {
+            localStorage.setItem('showWelcomeModal', 'true');
+          }
+
           navigate(prevPath);
         }
       })

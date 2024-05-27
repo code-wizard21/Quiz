@@ -52,7 +52,11 @@ const handleTip = async (req, res) => {
     if (rank < 4 && state==true) {
       await User.updateOne({ _id: user._id }, { amount:user.amount + 3 });
     } 
-    if (state==false ||rank > 4) { 
+    if (rank < 4 && state==false) {
+      await User.updateOne({ _id: user._id }, { credit:user.credit + 10 });
+    } 
+    
+    if (rank > 3) { 
       await User.updateOne({ _id: user._id }, { credit: user.credit + 10 });
     }
 
@@ -72,22 +76,44 @@ const handleTip = async (req, res) => {
   }
 };
 
+const findUser = async (email) => {
+  try {
+      const user = await User.findOne({ email });
+      return user;
+  } catch (error) {
+      throw new Error(`Failed to find user with email: ${email}`);
+  }
+};
+
+const updateUserAvatar = async (email, avatar) => {
+  try {
+      const updatedUser = await User.updateOne({ email }, { $set: { avatar } });
+      return updatedUser;
+  } catch (error) {
+      throw new Error('Failed to update user avatar');
+  }
+};
+
 const setAvatar = async (req, res) => {
   try {
-    let user = await User.findOne({ email: req.body.email }); // First find the user to get the current ticket count
-  
-    let updatedDoc = await User.updateOne(
-      { email: req.body.email },
-      {
-        $set: {
-          avatar: req.body.avatar, // Reduce the ticket count by 1
-        },
-      }
-    );
-    res.json(success(httpStatus.OK, 'Ticket reduced successfully', updatedDoc));
+      const { email, avatar } = req.body;
+
+      // Find user
+      let user = await findUser(email); 
+
+      // Check if user exists
+      if (!user) return res.status(404).json({ message: 'User not found.' });
+
+      // Update user avatar
+      await updateUserAvatar(email, avatar);  
+
+      // Get updated user data
+      user = await findUser(email); 
+
+      res.json(success(httpStatus.OK, 'Avatar updated successfully', user));
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'An error occurred while updating the ticket count.' });
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
   }
 };
 
