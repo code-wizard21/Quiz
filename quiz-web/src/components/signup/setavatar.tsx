@@ -77,7 +77,7 @@ const SingUp: React.FC = () => {
           });
           const defaultPath = '/dashboard';
           const prevPath = localStorage.getItem('prevPath') || defaultPath;
-
+          localStorage.removeItem('prevPath');
           if (prevPath !== defaultPath) {
             localStorage.setItem('showWelcomeModal', 'true');
           }

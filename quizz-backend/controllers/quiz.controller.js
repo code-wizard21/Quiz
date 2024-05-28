@@ -250,7 +250,7 @@ const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
     }
     let userInfo = await User.findOne({ _id: req.params.quiz_id });
     let finalResult = await UserActivity.findOne({ user: req.params.quiz_id });
-    const userList = { result: finalResult, amount: userInfo.amount, credit: userInfo.amount.credit };
+    const userList = { result: finalResult, amount: userInfo.amount,ticket:userInfo.ticket, credit: userInfo.credit };
     // Sending success response
     res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList));
   } catch (error) {
@@ -260,7 +260,7 @@ const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
 
 const calculateQuizLeaderboard = catchAsync(async (req, res) => {
   try {
-    let updatedUserActivityTable = await UserActivity.find({ role: { $ne: 'shadow' } });
+    let updatedUserActivityTable = await UserActivity.find();
     for (let i = 0; i < updatedUserActivityTable.length; i++) {
       let info = await UserAnswer.find({
         username: updatedUserActivityTable[i].username,

@@ -29,6 +29,7 @@ const Payment = () => {
   const { user } = useSelector((state) => state.auth);
   const [ticket, setTicket] = useState(0);
   const [credit, setCredit] = useState(0);
+  const [amount, setAmount] = useState(0);
   const [name, setName] = useState('');
   const [imageUrl, setImageUrl] = useState(sideMenuSvg);
   const text = `
@@ -47,6 +48,7 @@ const Payment = () => {
             setImageUrl(res.data.data.avatar);
             setTicket(res.data.data.ticket);
             setCredit(res.data.data.credit);
+            setAmount(res.data.data.amount);
           })
           .catch((e) => console.log(e));
       } else {
@@ -176,6 +178,13 @@ const Payment = () => {
                       <div className="flex justify-center items-center ml-3">
                         <img src={group_red} alt="user2" className="border-4  rounded-full" />
                         <div className="studregular ml-1  text-black font-bold text-base">{ticket}</div>
+                      </div>
+                    </div>
+                    <div className="flex-col mx-8">
+                      <div className="text-black text-xl text-center studregula">Balance</div>
+                      <div className="flex justify-center items-center ml-3">
+                     $
+                        <div className="studregular ml-1  text-black font-bold text-xl">{amount}</div>
                       </div>
                     </div>
                   </div>

@@ -50,14 +50,14 @@ const handleTip = async (req, res) => {
     }
 
     if (rank < 4 && state==true) {
-      await User.updateOne({ _id: user._id }, { amount:user.amount + 3 });
+      await User.updateOne({ _id: user._id }, { amount:user.amount - 3 });
     } 
     if (rank < 4 && state==false) {
-      await User.updateOne({ _id: user._id }, { credit:user.credit + 10 });
+      await User.updateOne({ _id: user._id }, { credit:user.credit - 10 });
     } 
     
     if (rank > 3) { 
-      await User.updateOne({ _id: user._id }, { credit: user.credit + 10 });
+      await User.updateOne({ _id: user._id }, { credit: user.credit - 10 });
     }
 
     const updatedUser = await User.findById(id);

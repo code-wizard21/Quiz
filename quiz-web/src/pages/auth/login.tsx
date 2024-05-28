@@ -36,8 +36,13 @@ const Login: React.FC = () => {
           localStorage.setItem('user', JSON.stringify(res.data));
           localStorage.setItem('hasRegistered', 'true');
           
-          localStorage.setItem('showWelcomeModal', 'true');
-          const prevPath = localStorage.getItem('prevPath') || '/dashboard'; 
+          const defaultPath = '/dashboard';
+          const prevPath = localStorage.getItem('prevPath') || defaultPath;
+          localStorage.removeItem('prevPath');
+          if (prevPath !== defaultPath) {
+            localStorage.setItem('showWelcomeModal', 'true');
+          }
+
           navigate(prevPath);
         })
         .catch((err: AxiosError) => {

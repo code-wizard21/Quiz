@@ -106,6 +106,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     totalQuestion: 0,
     rank: 1000000000000000,
     rewardAmount: 0,
+    ticket:0,
+    credit:0,
+    amount:0,
     rewardCredit: 0,
   });
 
@@ -409,6 +412,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     // Check if 'showWelcomeModal' item exists in local storage
     if (localStorage.getItem('showWelcomeModal')) {
       setIsModalOpen2(true);
+      toggleLeaderboardHandler(true);
       localStorage.removeItem('showWelcomeModal'); // remove the item
     }
   }, []);
@@ -423,10 +427,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const calculationEnd = async () => {
     setShowCalcuation(false);
     const data = await getModalData(user?.id);
-    console.log('datadata', data?.data?.data?.result);
+    console.log('datadata', data?.data?.data);
     localStorage.setItem('isjoinchanel', 'false');
     //  localStorage.setItem('iscounted', 'fals e');
-
+    toggleLeaderboardHandler(true);
     setCurrentQuizContent((prevState) => ({
       ...prevState,
       correct: data?.data?.data?.result?.correct,
@@ -435,6 +439,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       rank: data?.data?.data?.result?.rank,
       rewardAmount: data?.data?.data?.result?.rewardAmount,
       rewardCredit: data?.data?.data?.result?.rewardCredit,
+      credit: data?.data?.data?.credit,
+      amount: data?.data?.data?.amount,
+      ticket: data?.data?.data?.ticket,
     }));
     // setAmount(data?.data?.data?.amount);
     // setCredit(data?.data?.data?.credit);
@@ -579,7 +586,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const handleCancel3 = () => {
     setIsModalOpen3(false);
-    toggleSummaryHandler(true);
+    toggleLeaderboardHandler(true);
   };
 
   const showDrawer = () => {
@@ -911,7 +918,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const handleJoinClick = () => {
     // Save the current path ('/quiz/:quizId/leaderboard') in local storage before navigating
     localStorage.setItem('prevPath', location.pathname);
-    navigate('/login');
+    navigate('/');
   };
   const toggleQuestion = (toDisplay: boolean = false) => {
     setViewQuestions(toDisplay);
@@ -1001,6 +1008,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
+    <button onClick={calculationEnd}>sss</button>
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}
@@ -1429,7 +1437,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                 You won
               </div>
               <div className="flex justify-center cursor-default text-[#2F0861]  text-4xl font-bold text-center studregular mb-2">
-                ${currentQuizContent.rewardAmount}
+               $
+                <CountUp start={0} end={currentQuizContent.rewardAmount} duration={1} />
               </div>
             </>
           )}
@@ -1467,20 +1476,20 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <div className="flex items-center rounded-full border-white gap-1">
               <img src={coinImg} alt="coin" />
               <div className="text-xl font-bold  text-black font-stud-regular">
-                <CountUp start={credit} end={animateUserCredit} duration={1} />
+                <CountUp start={currentQuizContent.credit} end={animateUserCredit} duration={1} />
               </div>
             </div>
             <div className="flex items-center   rounded-full border-white gap-2">
               <img src={ticketImg} alt="ticket" />
-              <div className="text-xl font-bold  text-black font-stud-regular">{ticket}</div>
+              <div className="text-xl font-bold  text-black font-stud-regular">{currentQuizContent.ticket}</div>
             </div>
 
             <div className="flex justify-center text-black text-xl font-bold text-center studregular">
-              $<CountUp start={userAmount} end={animateUserAmount} duration={1} />
+              $<CountUp start={currentQuizContent.amount} end={animateUserAmount} duration={1} />
             </div>
           </div>
           <div className="modal-action">
-            {credit > 10 ? (
+            {currentQuizContent.credit >= 10 ? (
               <>
                 {currentQuizContent.rank < 4 && isticket == true ? (
                   <div className="justify-center flex">
@@ -1531,7 +1540,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                 to="#"
                 className=" mt-8 space-x-[6px] border-white"
                 onClick={() => {
-                  toggleLeaderboardHandler(true);
                   setIsModalOpen2(false);
                 }}
               >
@@ -1591,10 +1599,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                 className="bg-customYellowBorder   mt-8 w-[325px] h-[52px] top-[320px]  rounded-[30px] space-x-[6px] border-customYellowBorder"
               >
                 <div className="flex justify-center px-2 gap-2">
-                  <div className="flex text-black justify-center text-base font-bold text-center">
+                  <div className="flex text-black justify-center text-sm font-bold text-center">
                     Join Community, get Free 20
                   </div>
-                  <img src={coinImg} width="24" height="24" alt="coin" />
+                  <img src={coinImg} width="16" height="16" alt="coin" />
                 </div>
               </button>
             </div>
@@ -1604,7 +1612,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                 to="#"
                 className=" mt-8 space-x-[6px] border-white"
                 onClick={() => {
-                  toggleSummaryHandler(true);
                   setIsModalOpen3(false);
                 }}
               >
