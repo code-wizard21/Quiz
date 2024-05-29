@@ -3,9 +3,11 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import GameSummary from '../game-summary';
+import { Drawer } from 'antd';
 import { getUserLeaderboard } from '../../service/quiz/quiz.service';
 import { IQuizLeaderboardOverview } from '../../types/quiz.types';
 import { Avatar } from 'antd';
+import { BiChevronUp } from 'react-icons/bi';
 import './style.css';
 
 const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactElement => {
@@ -15,6 +17,15 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
   const [viewSummary, setViewSummary] = useState(false);
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
+  const [open, setOpen] = useState(false);
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
 
   const handleViewSummary = () => {
     setIsSummaryLoading(true);
@@ -24,7 +35,6 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
       setViewSummary(true);
     }, 1000);
   };
-
 
   useEffect(() => {
     setIsLeaderboardLoading(true);
@@ -102,7 +112,7 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                   {leaderboardResults && leaderboardResults.length && (
                     <div className="text-white text-center">{leaderboardResults[0]?.username || 'Sam.P'}</div>
                   )}
-                   <div className="text-white text-center">${leaderboardResults?.[0]?.rewardAmount}</div>
+                  <div className="text-white text-center">${leaderboardResults?.[0]?.rewardAmount}</div>
                 </div>
                 {leaderboardResults?.[2]?.avatar && (
                   <div>
@@ -148,31 +158,38 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                             user?.username == item.username ? 'bg-white rounded-3xl text-[#662FBF]' : ' text-white '
                           }`}
                         >
-                            <div className="w-1/8 cursor-default">{index + 1}</div>
-                            <div className='w-1/8'>
-                              <Avatar src={item.avatar} alt="user1" width={35} height={35} />
-                            </div>
-                            <span className="w-1/3 cursor-default  truncate">{item.username}</span>
-                            <span className="w-1/6 cursor-default">{(parseFloat(item.time).toFixed(2))}s</span>
-                            <span className="w-1/4 cursor-default">
-                              {item.correct}/{item.totalquestion}
-                            </span>
+                          <div className="w-1/8 cursor-default">{index + 1}</div>
+                          <div className="w-1/8">
+                            <Avatar src={item.avatar} alt="user1" width={35} height={35} />
                           </div>
-                      
+                          <span className="w-1/3 cursor-default  truncate">{item.username}</span>
+                          <span className="w-1/6 cursor-default">{parseFloat(item.time).toFixed(2)}s</span>
+                          <span className="w-1/4 cursor-default">
+                            {item.correct}/{item.totalquestion}
+                          </span>
+                        </div>
                       )}
                     />
                   </InfiniteScroll>
                 )}
               </Col>
-              <Col className="m-auto pt-16  ">
-                <Button className="bg-yellow-500" loading={isSummaryLoading} onClick={handleViewSummary}>
-                  View Summary
-                </Button>
-              </Col>
+
+              <button className="bg-[#8347E2] p-12 w-full" loading={isSummaryLoading} onClick={showDrawer}>
+                <div className="flex items-center justify-center">
+                  
+                  <div className="text-white text-2xl">Game Summary</div>
+                  <BiChevronUp color='white' size={36}/>
+                </div>
+              </button>
             </Row>
+            <Drawer title="Basic Drawer" onClose={onClose} height={840} open={open} placement="bottom">
+              <div className="flex flex-col m-auto justify-center mt-2 mb-4">
+                <GameSummary quizId={user?.id} />
+              </div>
+            </Drawer>
           </div>
         )}
-         {viewSummary && <GameSummary quizId={user?.id} />}
+        {viewSummary && <GameSummary quizId={user?.id} />}
       </Spin>
     </>
   );

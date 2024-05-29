@@ -38,7 +38,6 @@ const Payment = () => {
   const [value, setValue] = useState(1);
 
   useEffect(() => {
-
     if (user != null) {
       if (user.role == 'user') {
         setName(user.name);
@@ -183,33 +182,31 @@ const Payment = () => {
                     <div className="flex-col mx-8">
                       <div className="text-black text-xl text-center studregula">Balance</div>
                       <div className="flex justify-center items-center ml-3">
-                     $
-                        <div className="studregular ml-1  text-black font-bold text-xl">{amount}</div>
+                        $<div className="studregular ml-1  text-black font-bold text-xl">{amount}</div>
                       </div>
                     </div>
                   </div>
                 </>
               </div>
             </div>
-         
           </div>
           <div className="flex -mt-10  justify-center items-center ">
-              <button className="flex flex-col justify-center items-center ml-2 bg-white w-20 h-20 rounded-[30px] space-x-[6px] border-inherit">
-                <UsergroupAddOutlined style={{ fontSize: '24px' }} />
-                <div className="studregular text-center text-sm text-black mr-2">Invite Friends</div>
-              </button>
-              <button
-                onClick={showDrawer}
-                className="flex flex-col justify-center items-center  ml-2 bg-white w-20 h-20   rounded-[30px] space-x-[6px] border-inherit"
-              >
-                <PlusCircleOutlined style={{ fontSize: '24px' }} />
-                <div className="studregular text-center text-sm text-black mr-2">Buy Credits</div>
-              </button>
-              <button className="flex flex-col justify-center items-center  ml-2 bg-white w-20 h-20  rounded-[30px] space-x-[6px] border-inherit">
-                <ProfileOutlined style={{ fontSize: '24px' }} />
-                <div className="studregular text-center text-sm text-black mr-2">Withdraw Balance</div>
-              </button>
-            </div>
+            <button className="flex flex-col justify-center items-center ml-2 bg-white w-20 h-20 rounded-[30px] space-x-[6px] border-inherit">
+              <UsergroupAddOutlined style={{ fontSize: '24px' }} />
+              <div className="studregular text-center text-sm text-black mr-2">Invite Friends</div>
+            </button>
+            <button
+              onClick={showDrawer}
+              className="flex flex-col justify-center items-center  ml-2 bg-white w-20 h-20   rounded-[30px] space-x-[6px] border-inherit"
+            >
+              <PlusCircleOutlined style={{ fontSize: '24px' }} />
+              <div className="studregular text-center text-sm text-black mr-2">Buy Credits</div>
+            </button>
+            <button className="flex flex-col justify-center items-center  ml-2 bg-white w-20 h-20  rounded-[30px] space-x-[6px] border-inherit">
+              <ProfileOutlined style={{ fontSize: '24px' }} />
+              <div className="studregular text-center text-sm text-black mr-2">Withdraw Balance</div>
+            </button>
+          </div>
           <div className="pr-8 pl-8 mt-5">
             <div className="studregular text-left text-sm   text-black p-1">Account</div>
             <Collapse items={items} defaultActiveKey={['0']} />
@@ -224,10 +221,10 @@ const Payment = () => {
         </div>
       </>
 
-      <Drawer title="Basic Drawer" onClose={onClose} height={500} open={open} placement="bottom" >
-        <div>
-          <div  >
-            <div className="flex flex-col p-2 bg-gradient-to-bl bg-white ">
+      <Drawer title="Basic Drawer" onClose={onClose} height={570} open={open} placement="bottom">
+        <div  style={{ maxWidth: '430px' }} className='flex flex-col m-auto justify-center mt-2 mb-4' >
+          <div>
+            <div className="flex justify-center  flex-col p-2 bg-gradient-to-bl bg-white ">
               <div className=" flex flex-row justify-center">
                 <div className="ml-2 text-xl font-bold text-center studregular">Purchase Tickets</div>
               </div>
@@ -330,18 +327,18 @@ const Payment = () => {
             </div>
           </div>
           <div className="flex justify-center mt-2 mb-4">
-              <button
-                onClick={handlebuyCreditClick}
-                className="bg-customYellowBorder border-white w-[295px] h-[45px] top-[320px] rounded-[30px] space-x-[6px]"
-              >
-                <div className="flex items-center justify-center">
-                  <img src={vector} alt="user2" />
-                  <div className="ml-2 studregular text-center text-base font-bold text-black mr-2 ">
-                    Continue to Payment
-                  </div>
+            <button
+              onClick={handlebuyCreditClick}
+              className="bg-customYellowBorder border-white w-[295px] h-[45px] top-[320px] rounded-[30px] space-x-[6px]"
+            >
+              <div className="flex items-center justify-center">
+                <img src={vector} alt="user2" />
+                <div className="ml-2 studregular text-center text-base font-bold text-black mr-2 ">
+                  Continue to Payment
                 </div>
-              </button>
-            </div>
+              </div>
+            </button>
+          </div>
         </div>
       </Drawer>
     </>
