@@ -17,7 +17,7 @@ const containerStyle = {
   position: 'relative',
   overflow: 'hidden',
 
-  height: 800,
+  height: 1050,
 };
 
 const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactElement => {
@@ -90,7 +90,7 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
     <>
       <Spin spinning={isLeaderboardLoading} size="large">
         {viewLeaderboard && (
-          <div style={containerStyle} id="leaderboard-container" className="rounded-2xl h-screen">
+          <div style={containerStyle} id="leaderboard-container" className="h-screen rounded-2xl h-screen">
 
             <Row>
               <Col span={24} className="mt-4 flex justify-center">
@@ -183,7 +183,7 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
 
           
             </Row>
-            <button className="bg-[#8347E2] p-12 w-full" loading={isSummaryLoading} onClick={showDrawer}>
+            <button className="bg-[#8347E2] mt-36 p-12 w-full" loading={isSummaryLoading} onClick={showDrawer}>
                 <div className="flex items-center justify-center">
                   <div className="text-white text-2xl">Game Summary</div>
                   <BiChevronUp color="white" size={36} />

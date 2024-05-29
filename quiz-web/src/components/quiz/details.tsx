@@ -1045,7 +1045,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         </div>
       )}
-      {/* {!isVideoSubed && quizData && (
+      {!isVideoSubed && quizData && (
         <div className="py-2">
           <img src={getQuizBackgroundImage(quizData.category.name).bgImage} alt="quiz-back" className="m-auto w-full" />
           <div className="mx-6 ">
@@ -1077,7 +1077,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </div>
           </div>
         </div>
-      )} */}
+      )}
 
       <div>
         {quizData && user?.role === 'shadow' && isVideoSubed && (
@@ -1134,7 +1134,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             )}
           </div>
         )}
-        {id  &&  <Leaderboard quizId={id} />}
+        {id  && showLeaderboard && <Leaderboard quizId={id} />}
 
         {isParticipants && isShowpool && (
           <div className="mt-6 w-96 h-12  z-50 bottom-0" id="view-que">
