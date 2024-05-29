@@ -84,7 +84,7 @@ const handleclick=()=>{
       <Spin spinning={isLeaderboardLoading} size="large">
         {viewLeaderboard && (
           <div style={containerStyle} id="leaderboard-container" className="rounded-2xl">
-            <div onClick={handleclick} className="flex p-4 mt-10">
+            <div onClick={handleclick} className="flex p-4">
               <img src={close} alt="coin" />
             </div>
             <Row>
