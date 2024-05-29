@@ -2,20 +2,17 @@ import { Button, Col, Divider, List, Row, Skeleton, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
+import GameSummary from '../game-summary';
 import { getUserLeaderboard } from '../../service/quiz/quiz.service';
 import { IQuizLeaderboardOverview } from '../../types/quiz.types';
 import { Avatar } from 'antd';
 import './style.css';
 
-const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) => void }> = ({
-  quizId,
-  setViewSummary,
-}) => {
+const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactElement => {
   const [leaderboardResults, setLeaderboardResults] = useState<IQuizLeaderboardOverview>();
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
   const [viewLeaderboard, setViewLeaderboard] = useState(true);
-
+  const [viewSummary, setViewSummary] = useState(false);
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
 
@@ -27,6 +24,7 @@ const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) =
       setViewSummary(true);
     }, 1000);
   };
+
 
   useEffect(() => {
     setIsLeaderboardLoading(true);
@@ -120,14 +118,14 @@ const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) =
                   </div>
                 )}
               </Col>
-              <Col span={24} className="mt-2 text-center text-white text-xl font-bold">
+              <Col span={24} className="mt-8 text-center text-white text-xl font-bold">
                 <div>Congratulations!</div>
                 <div>Here are the winners</div>
               </Col>
               <Col span={24} className="px-8">
                 <Divider className="border-white" />
               </Col>
-              <Col id="scrollableDiv" className="w-full h-56 overflow-auto px-6">
+              <Col id="scrollableDiv" className="w-full h-96 overflow-auto px-6">
                 {leaderboardResults && leaderboardResults?.length && (
                   <InfiniteScroll
                     dataLength={leaderboardResults?.length}
@@ -166,7 +164,7 @@ const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) =
                   </InfiniteScroll>
                 )}
               </Col>
-              <Col className="m-auto pt-2">
+              <Col className="m-auto pt-16  ">
                 <Button className="bg-yellow-500" loading={isSummaryLoading} onClick={handleViewSummary}>
                   View Summary
                 </Button>
@@ -174,6 +172,7 @@ const Leaderboard: React.FC<{ quizId: string; setViewSummary: (value: boolean) =
             </Row>
           </div>
         )}
+         {viewSummary && <GameSummary quizId={user?.id} />}
       </Spin>
     </>
   );

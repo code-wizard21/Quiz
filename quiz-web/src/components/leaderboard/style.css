@@ -2,10 +2,10 @@
     background-image: url("../../assets/leaderboard-screen.svg");
     background-repeat: no-repeat;
     width: 430px;
-    height: 700px;
+    height: 900px;
     margin: auto;
 }
 
 #scrollableDiv::-webkit-scrollbar {
-    display: none;
+    display: block;
 }

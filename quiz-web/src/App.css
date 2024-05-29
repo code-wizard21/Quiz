@@ -46,6 +46,7 @@ body {
 }
 
 #view-que {
+  background: #6630BF;
   background-image: url("assets/question-back.svg");
   background-repeat: no-repeat;
   background-size: cover;

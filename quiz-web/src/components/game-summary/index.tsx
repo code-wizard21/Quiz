@@ -71,7 +71,7 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                 dataSource={userGameSummary}
                 renderItem={(item, index) => (
                   <List.Item key={index} className="flex justify-between">
-                    <Col span={24} className="mt-5 flex justify-center flex-col px-6" key={index}>
+                    <Col span={24} className="mt-2 flex justify-center flex-col px-6" key={index}>
                       <div className="text-sum-que text-white text-center text-xl rounded-t-2xl pt-2 w-full">
                         <div className="text-base text-left pl-4">Q.{index + 1}</div>
                         <div className="text-left pl-4 text-base">{item.question_text}</div>

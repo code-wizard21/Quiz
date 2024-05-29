@@ -54,7 +54,6 @@ import { liveCalculationStart, getModalData } from '../../service/quiz/quiz.serv
 import { checkOutBuyticketSessionSocket } from '../../service/payment/payment.service';
 import soundFile from '../../assets/coundown_timer_mixdown.mp3';
 import './1.css';
-import GameSummary from '../game-summary';
 import backEclipse from '../../assets/backelipse.svg';
 import smallEclipse from '../../assets/return.svg';
 import { useLocation } from 'react-router-dom';
@@ -99,16 +98,16 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [userAmount, setUserAmount] = useState(0);
   const [animateUserAmount, setAnimateUserAmount] = useState(0);
   const [animateUserCredit, setAnimateUserCreidt] = useState(0);
-
+  const [startAnimation, setStartAnimation] = useState(false);
   const [currentQuizContent, setCurrentQuizContent] = useState({
     correct: 0,
     avatar: sideMenuSvg,
     totalQuestion: 0,
     rank: 1000000000000000,
     rewardAmount: 0,
-    ticket:0,
-    credit:0,
-    amount:0,
+    ticket: 0,
+    credit: 0,
+    amount: 0,
     rewardCredit: 0,
   });
 
@@ -116,11 +115,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [isParticipants, setIsParticipants] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
 
-  const [isticket, setIsticket] = useState(false);
+  const [isticket, setIsticket] = useState(true);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
-  const [viewSummary, setViewSummary] = useState(false);
+
   const { user } = useSelector((state: RootState) => state.auth);
   const [isPaused, setIsPaused] = useState(false);
   const videoRef = useRef<any>(null);
@@ -142,7 +141,16 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       socket?.off('amount_update_user_broadcast');
     };
   }, []);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStartAnimation(true);
+    }, 5000); // 3000ms equals 3 seconds.
 
+    // This will clear Timeout when component unmount like in willComponentUnmount
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
   useEffect(() => {
     stateRef.current = remoteAudioTracks;
   }, [remoteAudioTracks]);
@@ -629,6 +637,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       socket?.emit('increase_pool_amount_user', { email: user?.email, quiz_id: id, ticket: 1 });
       setTicket((prevAmount) => prevAmount - 1);
       const result = await reduceTicket(data);
+      console.log('resut', result);
       if (result.status == 200) {
         setIsParticipants(true);
         setIsModalOpen1(false);
@@ -656,7 +665,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       videoRef.current?.style.setProperty('display', 'block');
       // timerRef.current?.style.setProperty("display", "block");
     }
-    setViewSummary(status);
+
     setIsVideoSubed(status);
   }, []);
 
@@ -1008,7 +1017,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
-    <button onClick={calculationEnd}>sss</button>
+      <button onClick={calculationEnd}>sss</button>
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}
@@ -1126,8 +1135,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             )}
           </div>
         )}
-        {id && showLeaderboard && <Leaderboard quizId={id} viewSummary={viewSummary} setViewSummary={setViewSummary} />}
-        {id && viewSummary && <GameSummary quizId={user?.id} />}
+        {id && showLeaderboard && <Leaderboard quizId={id} />}
+
         {isParticipants && isShowpool && (
           <div className="mt-6 w-96 h-12  z-50 bottom-0" id="view-que">
             <div className="flex flex-col ">
@@ -1437,8 +1446,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                 You won
               </div>
               <div className="flex justify-center cursor-default text-[#2F0861]  text-4xl font-bold text-center studregular mb-2">
-               $
-                <CountUp start={0} end={currentQuizContent.rewardAmount} duration={1} />
+                ${currentQuizContent.rewardAmount}
               </div>
             </>
           )}
@@ -1476,7 +1484,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <div className="flex items-center rounded-full border-white gap-1">
               <img src={coinImg} alt="coin" />
               <div className="text-xl font-bold  text-black font-stud-regular">
-                <CountUp start={currentQuizContent.credit} end={animateUserCredit} duration={1} />
+                {startAnimation && <CountUp start={credit} end={currentQuizContent.credit} duration={5} />}
               </div>
             </div>
             <div className="flex items-center   rounded-full border-white gap-2">
@@ -1485,7 +1493,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </div>
 
             <div className="flex justify-center text-black text-xl font-bold text-center studregular">
-              $<CountUp start={currentQuizContent.amount} end={animateUserAmount} duration={1} />
+              ${startAnimation && <CountUp start={userAmount} end={currentQuizContent.amount} duration={5} />}
             </div>
           </div>
           <div className="modal-action">
@@ -1596,7 +1604,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <div className="justify-center flex">
               <button
                 onClick={handleJoinClick}
-                className="bg-customYellowBorder   mt-8 w-[325px] h-[52px] top-[320px]  rounded-[30px] space-x-[6px] border-customYellowBorder"
+                className="bg-customYellowBorder mt-8 w-[325px] h-[52px] top-[320px] rounded-[30px] space-x-[6px] border-customYellowBorder"
+                style={{ fontSize: window.innerWidth <= 412 ? 'small' : 'medium' }} // Change this line
               >
                 <div className="flex justify-center px-2 gap-2">
                   <div className="flex text-black justify-center text-sm font-bold text-center">
