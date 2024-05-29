@@ -2,10 +2,27 @@
     background-image: url("../../assets/leaderboard-screen.svg");
     background-repeat: no-repeat;
     width: 430px;
-    height: 800px;
     margin: auto;
 }
-
-#scrollableDiv::-webkit-scrollbar {
-    display: block;
+::-webkit-scrollbar {
+    width: 10px; /* Width of the vertical scrollbar */
 }
+
+::-webkit-scrollbar-track {
+    background: transparent; /* Color of the tracking area */
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.6); /* Color of the scroll thumb */
+    border-radius: 10px; /* Radius for the scroll thumb */
+    border: 3px solid transparent; /* Force a visible thumb by creating a tiny border */
+    background-clip: content-box; /* Clip background to the content (ignoring borders) */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.8); /* Add a hover effect with a slightly opaque white color */
+}
+
+.custom-drawer .ant-drawer-close-x {
+    color: white;
+  }

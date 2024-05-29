@@ -326,13 +326,21 @@ const getQuizLeaderboard = catchAsync(async (req, res) => {
     }
 
     const updatedUserList = await UserActivity.find({ role: 'user' }).sort({ rank: 1 });
-
+    const transformedList = updatedUserList.map(user => {
+      return {
+        ...user._doc,  // this will spread all of the user attributes
+        _id: user._id.toString(), // convert _id ObjectId to string
+        quiz: user.quiz.toString(),  // convert quiz ObjectId to string,
+        user: user.user.toString()  // convert user ObjectId to string
+      }
+    });
+    console.log('updatedUserList',transformedList);
     return res.status(httpStatus.OK).json({
       status: 'success',
       message: 'Quiz summary retrieved successfully',
-      data: updatedUserList,
+      data: transformedList,
     });
-  } catch (error) {
+  } catch (error) { 
     logger.error('Error getting Quiz Leaderboard:', error);
 
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({

@@ -5,7 +5,9 @@
 body {
   margin: 0;
 }
-
+.ant-drawer-close-x {
+  color: white !important;
+}
 .app {
   height: 100% !important;
   background-color: #f3f4f6;

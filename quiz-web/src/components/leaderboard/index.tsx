@@ -4,16 +4,19 @@ import close from '../../assets/close.svg';
 import { useSelector } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import GameSummary from '../game-summary';
-import { Drawer } from 'antd';
+import { CloseSquareOutlined } from "@ant-design/icons"; 
+import { Drawer,Button } from 'antd';
 import { getUserLeaderboard } from '../../service/quiz/quiz.service';
 import { IQuizLeaderboardOverview } from '../../types/quiz.types';
 import { Avatar } from 'antd';
 import { BiChevronUp } from 'react-icons/bi';
 import './style.css';
 
+
 const containerStyle = {
   position: 'relative',
   overflow: 'hidden',
+
   height: 800,
 };
 
@@ -24,7 +27,7 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
   const [open, setOpen] = useState(false);
-
+ 
   const showDrawer = () => {
     setOpen(true);
   };
@@ -32,7 +35,11 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
   const onClose = () => {
     setOpen(false);
   };
-
+  const closeDrawer = (
+    <Button  style={{ color: 'white', border: 'none' ,background: '#2F0861'}} onClick={onClose}>
+      <img src={close} alt="close" />
+    </Button>
+  );
   useEffect(() => {
     setIsLeaderboardLoading(true);
     getUserLeaderboard(quizId)
@@ -76,19 +83,17 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
   useEffect(() => {
     loadMoreLeaderboardData();
   }, []);
-const handleclick=()=>{
-  setViewLeaderboard(false);
-}
+  const handleclick = () => {
+    setViewLeaderboard(false);
+  };
   return (
     <>
       <Spin spinning={isLeaderboardLoading} size="large">
         {viewLeaderboard && (
-          <div style={containerStyle} id="leaderboard-container" className="rounded-2xl">
-            <div onClick={handleclick} className="flex p-4">
-              <img src={close} alt="coin" />
-            </div>
+          <div style={containerStyle} id="leaderboard-container" className="rounded-2xl h-screen">
+
             <Row>
-              <Col span={24} className="mt-16 flex justify-center">
+              <Col span={24} className="mt-4 flex justify-center">
                 {leaderboardResults?.[1]?.avatar && (
                   <div>
                     <img
@@ -130,7 +135,7 @@ const handleclick=()=>{
                   </div>
                 )}
               </Col>
-              <Col span={24} className="mt-8 text-center text-white text-xl font-bold">
+              <Col span={24} className="mt-4 text-center text-white text-xl font-bold">
                 <div>Congratulations!</div>
                 <div>Here are the winners</div>
               </Col>
@@ -176,18 +181,25 @@ const handleclick=()=>{
                 )}
               </Col>
 
-              <button className="bg-[#8347E2] p-12 w-full" loading={isSummaryLoading} onClick={showDrawer}>
+          
+            </Row>
+            <button className="bg-[#8347E2] p-12 w-full" loading={isSummaryLoading} onClick={showDrawer}>
                 <div className="flex items-center justify-center">
                   <div className="text-white text-2xl">Game Summary</div>
                   <BiChevronUp color="white" size={36} />
                 </div>
               </button>
-            </Row>
             <Drawer
               getContainer={false}
-              className=" m-auto shadow-2xl"
-              title={null}
+              className='custom-drawer'
+              style={{ background: '#2F0861',borderRadius:"25px" }}
+              title={
+                <Col span={24} className="text-white font-bold text-2xl text-center my-2">
+                  Game Summary
+                </Col>
+              }
               onClose={onClose}
+              closeIcon={closeDrawer}
               height={710}
               open={open}
               placement="bottom"

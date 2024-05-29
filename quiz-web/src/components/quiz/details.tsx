@@ -115,7 +115,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [isParticipants, setIsParticipants] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
 
-  const [isticket, setIsticket] = useState(true);
+  const [isticket, setIsticket] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
@@ -1045,7 +1045,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         </div>
       )}
-      {!isVideoSubed && quizData && (
+      {/* {!isVideoSubed && quizData && (
         <div className="py-2">
           <img src={getQuizBackgroundImage(quizData.category.name).bgImage} alt="quiz-back" className="m-auto w-full" />
           <div className="mx-6 ">
@@ -1077,7 +1077,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       <div>
         {quizData && user?.role === 'shadow' && isVideoSubed && (
@@ -1134,7 +1134,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             )}
           </div>
         )}
-        {id  && showLeaderboard&& <Leaderboard quizId={id} />}
+        {id  &&  <Leaderboard quizId={id} />}
 
         {isParticipants && isShowpool && (
           <div className="mt-6 w-96 h-12  z-50 bottom-0" id="view-que">
