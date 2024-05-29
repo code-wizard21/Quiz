@@ -90,7 +90,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
       >
         <Meta
           title={
-            <div className="flex justify-end items-center">
+            <div className="flex justify-start items-center">
               <div className="flex ">
                 <div className="font-stud-regular text-xl">{convertDate(quiz?.start_date)}</div>
               </div>

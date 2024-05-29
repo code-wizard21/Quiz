@@ -1,5 +1,6 @@
-import { Button, Col, Divider, List, Row, Skeleton, Spin } from 'antd';
+import { Col, Divider, List, Row, Spin } from 'antd';
 import { useEffect, useState } from 'react';
+import close from '../../assets/close.svg';
 import { useSelector } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import GameSummary from '../game-summary';
@@ -13,14 +14,13 @@ import './style.css';
 const containerStyle = {
   position: 'relative',
   overflow: 'hidden',
-  height:800
+  height: 800,
 };
 
 const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactElement => {
   const [leaderboardResults, setLeaderboardResults] = useState<IQuizLeaderboardOverview>();
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
   const [viewLeaderboard, setViewLeaderboard] = useState(true);
-  const [viewSummary, setViewSummary] = useState(false);
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
   const [open, setOpen] = useState(false);
@@ -31,15 +31,6 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
 
   const onClose = () => {
     setOpen(false);
-  };
-
-  const handleViewSummary = () => {
-    setIsSummaryLoading(true);
-    setTimeout(() => {
-      setIsSummaryLoading(false);
-      setViewLeaderboard(false);
-      setViewSummary(true);
-    }, 1000);
   };
 
   useEffect(() => {
@@ -85,12 +76,17 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
   useEffect(() => {
     loadMoreLeaderboardData();
   }, []);
-
+const handleclick=()=>{
+  setViewLeaderboard(false);
+}
   return (
     <>
-      <Spin  spinning={isLeaderboardLoading} size="large">
+      <Spin spinning={isLeaderboardLoading} size="large">
         {viewLeaderboard && (
           <div style={containerStyle} id="leaderboard-container" className="rounded-2xl">
+            <div onClick={handleclick} className="flex p-4 mt-10">
+              <img src={close} alt="coin" />
+            </div>
             <Row>
               <Col span={24} className="mt-16 flex justify-center">
                 {leaderboardResults?.[1]?.avatar && (
@@ -196,14 +192,10 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
               open={open}
               placement="bottom"
             >
-              
-                <GameSummary quizId={user?.id} />
-         
+              <GameSummary quizId={user?.id} />
             </Drawer>
-          
           </div>
         )}
-        
       </Spin>
     </>
   );

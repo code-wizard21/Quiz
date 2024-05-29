@@ -1017,7 +1017,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
-      <button onClick={calculationEnd}>sss</button>
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}
@@ -1135,7 +1134,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             )}
           </div>
         )}
-        {id && showLeaderboard && <Leaderboard quizId={id} />}
+        {id  && showLeaderboard&& <Leaderboard quizId={id} />}
 
         {isParticipants && isShowpool && (
           <div className="mt-6 w-96 h-12  z-50 bottom-0" id="view-que">
