@@ -56,6 +56,7 @@ import soundFile from '../../assets/coundown_timer_mixdown.mp3';
 import './1.css';
 import backEclipse from '../../assets/backelipse.svg';
 import smallEclipse from '../../assets/return.svg';
+import close from '../../assets/close.svg';
 import { useLocation } from 'react-router-dom';
 const channelName = 'test';
 const appId = 'b75cc48b972d4ccc92edb71a1c75fb23';
@@ -615,6 +616,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const stopSpin = () => {
     setIsSpinning(false);
   };
+  const handleClose=()=>{
+    console.log('handle Close');
+    setViewQuestions(false);
+    videoRef.current?.style.setProperty('display', 'block');
+  }
   const handleTip = async () => {
     const data = { rank: currentQuizContent.rank, id: user?.id, state: isticket };
     await getHandleTip(data).then((res) => {
@@ -628,6 +634,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       }
     });
   };
+
   const useTicket = async () => {
     if (ticket < 1) {
       showMessages('error', 'Please buy the ticket');
@@ -1027,8 +1034,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           }}
         />
       )}
-      {isVideoSubed && (
+      { isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-6" id="live-stream-header">
+          <div onClick={handleClose} className="absolute flex ml-8 w-full">
+            <img src={close} alt="live" height={24} />
+          </div>
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={16} />
           </div>
@@ -1134,7 +1144,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             )}
           </div>
         )}
-        {id  && showLeaderboard && <Leaderboard quizId={id} />}
+        {id && showLeaderboard && (
+          <>
+            <Leaderboard quizId={id} isVideoSubed={isVideoSubed} setIsVideoSubed={setIsVideoSubed} />
+          </>
+        )}
 
         {isParticipants && isShowpool && (
           <div className="mt-6 w-96 h-12  z-50 bottom-0" id="view-que">

@@ -1,33 +1,35 @@
 import { Col, Divider, List, Row, Spin } from 'antd';
 import { useEffect, useState } from 'react';
-import close from '../../assets/close.svg';
 import { useSelector } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import GameSummary from '../game-summary';
-import { CloseSquareOutlined } from "@ant-design/icons"; 
-import { Drawer,Button } from 'antd';
+import { CloseSquareOutlined } from '@ant-design/icons';
+import { Drawer, Button } from 'antd';
 import { getUserLeaderboard } from '../../service/quiz/quiz.service';
 import { IQuizLeaderboardOverview } from '../../types/quiz.types';
 import { Avatar } from 'antd';
 import { BiChevronUp } from 'react-icons/bi';
 import './style.css';
-
-
+import close from '../../assets/close.svg';
+import ic_droparrow from '../../assets/ic_droparrow.svg';
 const containerStyle = {
   position: 'relative',
   overflow: 'hidden',
 
-  height: 1050,
+  height: 900,
 };
 
-const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactElement => {
+const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
+  quizId,
+  isVideoSubed,
+}): React.ReactElement => {
   const [leaderboardResults, setLeaderboardResults] = useState<IQuizLeaderboardOverview>();
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
   const [viewLeaderboard, setViewLeaderboard] = useState(true);
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
   const [open, setOpen] = useState(false);
- 
+
   const showDrawer = () => {
     setOpen(true);
   };
@@ -36,7 +38,7 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
     setOpen(false);
   };
   const closeDrawer = (
-    <Button  style={{ color: 'white', border: 'none' ,background: '#2F0861'}} onClick={onClose}>
+    <Button style={{ color: 'white', border: 'none', background: '#2F0861' }} onClick={onClose}>
       <img src={close} alt="close" />
     </Button>
   );
@@ -84,16 +86,20 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
     loadMoreLeaderboardData();
   }, []);
   const handleclick = () => {
-    setViewLeaderboard(false);
+    window.location.reload();
   };
+
   return (
     <>
       <Spin spinning={isLeaderboardLoading} size="large">
         {viewLeaderboard && (
-          <div style={containerStyle} id="leaderboard-container" className="h-screen rounded-2xl h-screen">
+          <div style={containerStyle} id="leaderboard-container" className="h-screen">
+            <div onClick={handleclick} className="flex p-4  z-50">
+              <img src={close} alt="coin" />
+            </div>
 
             <Row>
-              <Col span={24} className="mt-4 flex justify-center">
+              <Col span={24} className="mt-8 flex justify-center">
                 {leaderboardResults?.[1]?.avatar && (
                   <div>
                     <img
@@ -180,19 +186,15 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                   </InfiniteScroll>
                 )}
               </Col>
-
-          
             </Row>
-            <button className="bg-[#8347E2] mt-36 p-12 w-full" loading={isSummaryLoading} onClick={showDrawer}>
-                <div className="flex items-center justify-center">
-                  <div className="text-white text-2xl">Game Summary</div>
-                  <BiChevronUp color="white" size={36} />
-                </div>
-              </button>
+            <div className="bg-[#8347E2] mt-24 p-12 rounded-2xl  flex items-center justify-center" onClick={showDrawer}>       
+                <div className="text-white text-2xl">Game Summary</div>
+                <img src={ic_droparrow} alt="coin" />
+            </div>
             <Drawer
               getContainer={false}
-              className='custom-drawer'
-              style={{ background: '#2F0861',borderRadius:"25px" }}
+              className="custom-drawer"
+              style={{ background: '#2F0861', borderRadius: '25px' }}
               title={
                 <Col span={24} className="text-white font-bold text-2xl text-center my-2">
                   Game Summary
