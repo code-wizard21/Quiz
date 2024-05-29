@@ -11,11 +11,19 @@ import { checkOutBuyCreditSession } from '../../service/payment/payment.service'
 import {TCreateUser} from '../../types/user.type'
 
 
+
 const QuizLayout: React.FC = (): React.ReactElement => {
   const [open, setOpen] = useState(false);
   const [open1, setOpen1] = useState(false);
   const showDrawer = () => {
     setOpen(true);
+  };
+  const containerStyle = {
+    position: 'relative',
+    height:900,
+  
+    overflow: 'hidden',
+  
   };
   const showDrawer1 = () => {
     setOpen1(true);
@@ -130,10 +138,10 @@ const QuizLayout: React.FC = (): React.ReactElement => {
   const [value, setValue] = useState(1);
   return (
     <div  className="w-full  bg-gray-100 h-screen overflow-auto">
-      <div  className="max-w-430 m-auto shadow-xl bg-white min-h-screen">
+      <div style={containerStyle}  className="max-w-430 m-auto shadow-xl bg-white min-h-screen">
         <TopBar showDrawer={showDrawer} showDrawer1={showDrawer1} />
         <Outlet />
-        <Drawer title="Basic Drawer" height={500} onClose={onClose} open={open} placement="bottom">
+        <Drawer title={null} getContainer={false} height={600} onClose={onClose} open={open} placement="bottom">
           <div>
             <div>
               <div className="flex flex-col p-2 bg-gradient-to-bl bg-white ">
@@ -222,7 +230,7 @@ const QuizLayout: React.FC = (): React.ReactElement => {
             </div>
           </div>
         </Drawer>
-        <Drawer title="Basic Drawer" height={500} onClose={onClose1} open={open1} placement="bottom">
+        <Drawer title={null}  getContainer={false}height={600} onClose={onClose1} open={open1} placement="bottom">
           <div>
             <div>
               <div className="flex flex-col p-2 bg-gradient-to-bl bg-white ">

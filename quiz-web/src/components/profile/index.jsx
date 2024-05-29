@@ -36,7 +36,13 @@ const Payment = () => {
   A dog is a type of domesticated animal.
 `;
   const [value, setValue] = useState(1);
-
+  const containerStyle = {
+    position: 'relative',
+    height:900,
+  
+    overflow: 'hidden',
+  
+  };
   useEffect(() => {
     if (user != null) {
       if (user.role == 'user') {
@@ -133,7 +139,7 @@ const Payment = () => {
 
   return (
     <>
-      <>
+       <div style={containerStyle}>
         <div className=" bg-cover bg-center bg-no-repeat h-screen bg-white">
           <div className="rounded-bl-3xl rounded-br-3xl bg-cover bg-center bg-no-repeat  bg-profile_gray h-80">
             <div className="flex flex-col">
@@ -218,129 +224,142 @@ const Payment = () => {
           <Link to="/" onClick={logoutUser} className="flex items-center ml-12 mt-8 no-underline">
             <div className="text-left text-xl font-bold text-red-500 mr-2 ">Log out</div>
           </Link>
-        </div>
-      </>
-
-      <Drawer title="Basic Drawer" onClose={onClose} height={570} open={open} placement="bottom">
-        <div  style={{ maxWidth: '430px' }} className='flex flex-col m-auto justify-center mt-2 mb-4' >
           <div>
-            <div className="flex justify-center  flex-col p-2 bg-gradient-to-bl bg-white ">
-              <div className=" flex flex-row justify-center">
-                <div className="ml-2 text-xl font-bold text-center studregular">Purchase Tickets</div>
+        
+          <Drawer
+          getContainer={false}
+            className=" m-auto shadow-2xl"
+          
+            title={null}
+        
+            onClose={onClose}
+            height={570}
+            open={open}
+            placement="bottom"
+          >
+            <div className="flex  bg-white flex-col m-auto justify-center ">
+              <div>
+                <div className="flex justify-center  flex-col p-2 bg-gradient-to-bl  ">
+                  <div className=" flex flex-row justify-center">
+                    <div className="ml-2 text-xl font-bold text-center studregular">Purchase Tickets</div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setValue(1);
+                    }}
+                    className={`mt-2 flex p-4  border-3 border-solid items-center ${
+                      value === 1 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                    } rounded-3xl`}
+                  >
+                    <div className="pl-2 text-base text-black font-bold text-center studregular">S$10.00</div>
+                    <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">100</div>
+                    <div className="justify-center  items-center relative">
+                      <img src={group_yel} alt="user2" className="border-4 rounded-full" />
+                      <img
+                        src={vector1}
+                        alt="user2"
+                        style={{ position: 'absolute', left: '5px', top: '4px' }}
+                        className="border-4 rounded-full"
+                      />
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setValue(2);
+                    }}
+                    className={`mt-2 flex pb-2 px-2 border-3 border-solid items-center ${
+                      value === 2 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                    } rounded-3xl`}
+                  >
+                    <div className="flex flex-col  justify-center">
+                      <div className="ml-2 text-base text-black font-bold text-center ">S$14.00</div>
+                      <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">Save 16%</div>
+                    </div>
+
+                    <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">160</div>
+                    <div className="justify-center  items-center relative">
+                      <img src={group_yel} alt="user2" className="border-4 rounded-full" />
+                      <img
+                        src={vector1}
+                        alt="user2"
+                        style={{ position: 'absolute', left: '5px', top: '4px' }}
+                        className="border-4 rounded-full"
+                      />
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setValue(3);
+                    }}
+                    className={`mt-2 flex pb-2 px-2 border-3 border-solid items-center ${
+                      value === 3 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                    } rounded-3xl`}
+                  >
+                    <div className="flex flex-col  justify-center">
+                      <div className="ml-2 text-base text-black font-bold text-center ">S$20.00</div>
+                      <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">Save 24%</div>
+                    </div>
+
+                    <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">260</div>
+                    <div className="justify-center  items-center relative">
+                      <img src={group_yel} alt="user2" className="border-4 rounded-full" />
+                      <img
+                        src={vector1}
+                        alt="user2"
+                        style={{ position: 'absolute', left: '5px', top: '4px' }}
+                        className="border-4 rounded-full"
+                      />
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setValue(4);
+                    }}
+                    className={`mt-2 flex pb-2 px-2 border-3 border-solid items-center ${
+                      value === 4 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
+                    } rounded-3xl`}
+                  >
+                    <div className="flex flex-col  justify-center">
+                      <div className="ml-2 text-base text-black font-bold text-center ">S$28.00</div>
+                      <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">Save 30%</div>
+                    </div>
+
+                    <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">400</div>
+                    <div className="justify-center  items-center relative">
+                      <img src={group_yel} alt="user2" className="border-4 rounded-full" />
+                      <img
+                        src={vector1}
+                        alt="user2"
+                        style={{ position: 'absolute', left: '5px', top: '4px' }}
+                        className="border-4 rounded-full"
+                      />
+                    </div>
+                  </button>
+
+                  <div className="mt-1 text-sm font-bold text-center studregular">
+                    Purchased Tickets do not have an expiry date. Use them only when you want!
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={() => {
-                  setValue(1);
-                }}
-                className={`mt-2 flex p-4  border-3 border-solid items-center ${
-                  value === 1 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
-                } rounded-3xl`}
-              >
-                <div className="pl-2 text-base text-black font-bold text-center studregular">S$10.00</div>
-                <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">100</div>
-                <div className="justify-center  items-center relative">
-                  <img src={group_yel} alt="user2" className="border-4 rounded-full" />
-                  <img
-                    src={vector1}
-                    alt="user2"
-                    style={{ position: 'absolute', left: '5px', top: '4px' }}
-                    className="border-4 rounded-full"
-                  />
-                </div>
-              </button>
-              <button
-                onClick={() => {
-                  setValue(2);
-                }}
-                className={`mt-2 flex pb-2 px-2 border-3 border-solid items-center ${
-                  value === 2 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
-                } rounded-3xl`}
-              >
-                <div className="flex flex-col  justify-center">
-                  <div className="ml-2 text-base text-black font-bold text-center ">S$14.00</div>
-                  <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">Save 16%</div>
-                </div>
-
-                <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">160</div>
-                <div className="justify-center  items-center relative">
-                  <img src={group_yel} alt="user2" className="border-4 rounded-full" />
-                  <img
-                    src={vector1}
-                    alt="user2"
-                    style={{ position: 'absolute', left: '5px', top: '4px' }}
-                    className="border-4 rounded-full"
-                  />
-                </div>
-              </button>
-              <button
-                onClick={() => {
-                  setValue(3);
-                }}
-                className={`mt-2 flex pb-2 px-2 border-3 border-solid items-center ${
-                  value === 3 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
-                } rounded-3xl`}
-              >
-                <div className="flex flex-col  justify-center">
-                  <div className="ml-2 text-base text-black font-bold text-center ">S$20.00</div>
-                  <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">Save 24%</div>
-                </div>
-
-                <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">260</div>
-                <div className="justify-center  items-center relative">
-                  <img src={group_yel} alt="user2" className="border-4 rounded-full" />
-                  <img
-                    src={vector1}
-                    alt="user2"
-                    style={{ position: 'absolute', left: '5px', top: '4px' }}
-                    className="border-4 rounded-full"
-                  />
-                </div>
-              </button>
-              <button
-                onClick={() => {
-                  setValue(4);
-                }}
-                className={`mt-2 flex pb-2 px-2 border-3 border-solid items-center ${
-                  value === 4 ? 'border-customYellowBorder bg-customYellowBg' : 'border-custom_gray'
-                } rounded-3xl`}
-              >
-                <div className="flex flex-col  justify-center">
-                  <div className="ml-2 text-base text-black font-bold text-center ">S$28.00</div>
-                  <div className="ml-2 p-1 bg-customBuleBg  text-white text-xs font-bold text-center">Save 30%</div>
-                </div>
-
-                <div className="ml-auto text-base text-black font-bold mr-3 text-center studregular">400</div>
-                <div className="justify-center  items-center relative">
-                  <img src={group_yel} alt="user2" className="border-4 rounded-full" />
-                  <img
-                    src={vector1}
-                    alt="user2"
-                    style={{ position: 'absolute', left: '5px', top: '4px' }}
-                    className="border-4 rounded-full"
-                  />
-                </div>
-              </button>
-
-              <div className="mt-1 text-sm font-bold text-center studregular">
-                Purchased Tickets do not have an expiry date. Use them only when you want!
+              <div className="flex justify-center mt-2 mb-4">
+                <button
+                  onClick={handlebuyCreditClick}
+                  className="bg-customYellowBorder border-white w-[295px] h-[45px] top-[320px] rounded-[30px] space-x-[6px]"
+                >
+                  <div className="flex items-center justify-center">
+                    <img src={vector} alt="user2" />
+                    <div className="ml-2 studregular text-center text-base font-bold text-black mr-2 ">
+                      Continue to Payment
+                    </div>
+                  </div>
+                </button>
               </div>
             </div>
-          </div>
-          <div className="flex justify-center mt-2 mb-4">
-            <button
-              onClick={handlebuyCreditClick}
-              className="bg-customYellowBorder border-white w-[295px] h-[45px] top-[320px] rounded-[30px] space-x-[6px]"
-            >
-              <div className="flex items-center justify-center">
-                <img src={vector} alt="user2" />
-                <div className="ml-2 studregular text-center text-base font-bold text-black mr-2 ">
-                  Continue to Payment
-                </div>
-              </div>
-            </button>
+          </Drawer>
           </div>
         </div>
-      </Drawer>
+
+      </div>
     </>
   );
 };

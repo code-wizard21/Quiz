@@ -10,6 +10,12 @@ import { Avatar } from 'antd';
 import { BiChevronUp } from 'react-icons/bi';
 import './style.css';
 
+const containerStyle = {
+  position: 'relative',
+  overflow: 'hidden',
+  height:800
+};
+
 const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactElement => {
   const [leaderboardResults, setLeaderboardResults] = useState<IQuizLeaderboardOverview>();
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
@@ -82,9 +88,9 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
 
   return (
     <>
-      <Spin spinning={isLeaderboardLoading} size="large">
+      <Spin  spinning={isLeaderboardLoading} size="large">
         {viewLeaderboard && (
-          <div id="leaderboard-container" className="rounded-2xl">
+          <div style={containerStyle} id="leaderboard-container" className="rounded-2xl">
             <Row>
               <Col span={24} className="mt-16 flex justify-center">
                 {leaderboardResults?.[1]?.avatar && (
@@ -176,20 +182,28 @@ const Leaderboard: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
 
               <button className="bg-[#8347E2] p-12 w-full" loading={isSummaryLoading} onClick={showDrawer}>
                 <div className="flex items-center justify-center">
-                  
                   <div className="text-white text-2xl">Game Summary</div>
-                  <BiChevronUp color='white' size={36}/>
+                  <BiChevronUp color="white" size={36} />
                 </div>
               </button>
             </Row>
-            <Drawer title="Basic Drawer" onClose={onClose} height={840} open={open} placement="bottom">
-              <div className="flex flex-col m-auto justify-center mt-2 mb-4">
+            <Drawer
+              getContainer={false}
+              className=" m-auto shadow-2xl"
+              title={null}
+              onClose={onClose}
+              height={710}
+              open={open}
+              placement="bottom"
+            >
+              
                 <GameSummary quizId={user?.id} />
-              </div>
+         
             </Drawer>
+          
           </div>
         )}
-        {viewSummary && <GameSummary quizId={user?.id} />}
+        
       </Spin>
     </>
   );

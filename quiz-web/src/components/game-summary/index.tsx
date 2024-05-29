@@ -11,6 +11,8 @@ import { BiCheck } from 'react-icons/bi';
 import { BiX } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../redux/reducers';
+
+
 const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactElement => {
   const [userGameSummary, setUserGameSummary] = useState<IQuestion[]>([]);
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
