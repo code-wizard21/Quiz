@@ -46,7 +46,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
         setLiveQuiz('complete');
       }
     });
-    const { bgImage, textImage } = getQuizBackgroundImage(quiz.category );
+    const { bgImage, textImage } = getQuizBackgroundImage(quiz.category);
     setQuizBgImage(bgImage);
     setQuizTextImage(textImage);
     getLiveQuiz(quiz._id)
@@ -92,33 +92,31 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
           title={
             <div className="flex justify-start items-center">
               <div className="flex ">
-                <div className="font-stud-regular text-xl">{convertDate(quiz?.start_date)}</div>
-              </div>
-              <div className="flex ml-2">
-                <a className="flex">
-                  <div className="text-sm text-black font-stud-regular">Share</div>
-                  <img src={shareImg} alt="share" />
-                </a>
+                <div className="font-stud-regular text-2xl">{convertDate(quiz?.start_date)}</div>
               </div>
             </div>
           }
           description={
             <div className="flex justify-between">
-              {
-                liveQuiz !== 'ongoing' && (
-                  <div className="font-stud-regular text-base">
-                    { `Starts in ${moment(quiz.start_date).diff(currentTimestamp, 'days')} days` }
-                  </div>
-                )
-              }
-              {
-                liveQuiz === 'ongoing' && (
+              {liveQuiz !== 'ongoing' && (
+                <div className="font-stud-regular text-base">
+                  {`Starts in ${moment(quiz.start_date).diff(currentTimestamp, 'days')} days`}
+                </div>
+              )}
+              {liveQuiz === 'ongoing' && (
+                <div className="flex w-full justify-between">
                   <div className="flex gap-1">
                     <img src={ellipse} alt="share" />
-                    <div className="mt-1 text-base text-[#E62728] font-bold">Live</div>
+                    <div className="text-sm text-[#E62728] font-bold">Live</div>
                   </div>
-                )
-              }
+                  <div className="flex">
+                    <a className="flex gap-2">
+                      <div className="text-sm text-black font-stud-regular">Share</div>
+                      <img src={shareImg} alt="share" />
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
           }
         />

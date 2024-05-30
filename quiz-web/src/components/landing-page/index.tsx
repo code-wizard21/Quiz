@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import google from '../../assets/social/Google.svg';
 import { GoogleLogin } from 'react-google-login';
-
+import close from '../../assets/close.svg';
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const responseGoogle = (response) => {
@@ -17,10 +17,14 @@ const LandingPage: React.FC = () => {
   };
   return (
     <>
-      <Row className="landing-page pt-96">
-        <Col className="px-6 flex flex-col ">
-          <div className="text-4xl ">
-            <div className="font-stud-regular font-bold text-white">Sign up for QuizMobb</div>
+      <Row className="landing-page p-4">
+        <div className="flex">
+          <img src={close} alt="live" height={24} />
+        </div>
+
+        <Col className="px-6 flex flex-col p-96">
+          <div className="flex justify-center">
+            <div className="text-3xl font-stud-regular font-bold text-white">Sign up for QuizMobb</div>
           </div>
           <p className="text-white text-base font-normal">
             Test your wits with our daily live quiz shows and win cash! Free quizzes of a variety of themes updated
@@ -36,14 +40,14 @@ const LandingPage: React.FC = () => {
               <div className="text-center text-base font-bold text-black mr-2 ">Continue with Google</div>
             </div>
           </Button>
-          <GoogleLogin
+          {/* <GoogleLogin
             className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full"
             clientId="YOUR_CLIENT_ID"
             buttonText="Login with Google"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
             cookiePolicy={'single_host_origin'}
-          />
+          /> */}
           <Divider style={{ borderColor: 'white', color: 'white' }}>or</Divider>
 
           <div className="flex">
@@ -80,6 +84,9 @@ const LandingPage: React.FC = () => {
               <div className="text-white text-xl underline">Continue as Guest </div>
             </Link>
           </div>
+          <p className="text-[#D0B3FF] text-base font-normal">
+            By continuing with an account located in Singapore, you agree to our Terms of Service and Privacy Policy.
+          </p>
         </Col>
       </Row>
 

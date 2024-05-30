@@ -85,21 +85,14 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
   useEffect(() => {
     loadMoreLeaderboardData();
   }, []);
-  const handleclick = () => {
-    window.location.reload();
-  };
-
   return (
     <>
       <Spin spinning={isLeaderboardLoading} size="large">
         {viewLeaderboard && (
           <div style={containerStyle} id="leaderboard-container" className="h-screen">
-            <div onClick={handleclick} className="flex p-4  z-50">
-              <img src={close} alt="coin" />
-            </div>
 
             <Row>
-              <Col span={24} className="mt-8 flex justify-center">
+              <Col span={24} className="mt-16 flex justify-center">
                 {leaderboardResults?.[1]?.avatar && (
                   <div>
                     <img
@@ -187,7 +180,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
                 )}
               </Col>
             </Row>
-            <div className="bg-[#8347E2] mt-24 p-12 rounded-2xl  flex items-center justify-center" onClick={showDrawer}>       
+            <div className="bg-[#8347E2] mt-12 p-12 rounded-2xl  flex items-center justify-center" onClick={showDrawer}>       
                 <div className="text-white text-2xl">Game Summary</div>
                 <img src={ic_droparrow} alt="coin" />
             </div>
@@ -202,7 +195,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
               }
               onClose={onClose}
               closeIcon={closeDrawer}
-              height={710}
+              height={610}
               open={open}
               placement="bottom"
             >

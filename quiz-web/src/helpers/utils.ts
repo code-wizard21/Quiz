@@ -97,6 +97,6 @@ export const convertDate = (date: string | undefined) => {
   if (currentDate.toDateString() === quizDate.toDateString()) {
     return `Today at ${moment.utc(quizDate).format('h:mm a')}`;
   } else {
-    return moment.utc(quizDate).format('MMMM Do YYYY h:mm a');
+    return moment.utc(quizDate).format('MMM Do YYYY h:mm a');
   }
 }
