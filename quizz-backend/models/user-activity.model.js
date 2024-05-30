@@ -17,11 +17,13 @@ const userActivitySchema = mongoose.Schema(
     },
     rewardCredit: {
       type: Number,
+      default: 0,
       required: false,
     },
     rewardAmount: {
       type: Number,
       required: false,
+      default: 0,
     },
     username: {
       type: String,
@@ -34,14 +36,17 @@ const userActivitySchema = mongoose.Schema(
     usedticket: {
       type: Boolean,
       required: false,
+      default: false,
     },
     allQuestionCorrect: {
       type: Boolean,
       required: false,
+      default: false,
     },
     correct: {
       type: Number,
       required: false,
+      default: false,
     },
     totalquestion: {
       type: Number,
@@ -63,7 +68,6 @@ const userActivitySchema = mongoose.Schema(
     
     role: {
       type: String,
-      
       required: false,
     },
   },

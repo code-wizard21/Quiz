@@ -317,8 +317,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       localStorage.setItem('isjoinchanel', 'false');
       //    localStorage.setItem('iscounted', 'false');
       setIsPaused(false);
-     
-      setShowLeaderboard(false);
+
       setIsShowpool(false);
       leaveChannel();
     });
@@ -616,10 +615,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const stopSpin = () => {
     setIsSpinning(false);
   };
-  const handleClose=()=>{
-    console.log('handle Close');
-   
-  }
+
   const handleTip = async () => {
     const data = { rank: currentQuizContent.rank, id: user?.id, state: isticket };
     await getHandleTip(data).then((res) => {
@@ -794,7 +790,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       .catch((err) => {
         console.log(err);
       });
-
+    setIsLoading(false);
     setIsJoined(true);
     localStorage.setItem('isjoinchanel', 'true');
     localStorage.setItem('iscounted', 'true');
@@ -863,7 +859,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         }
       }
     }
-    setIsLoading(false);
   };
 
   const startTimer = useCallback((duration: number) => {
@@ -1023,6 +1018,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
+      {/* <button onClick={calculationEnd}>sss</button> */}
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}
@@ -1033,15 +1029,15 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           }}
         />
       )}
-      { isVideoSubed && (
+      {isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-6" id="live-stream-header">
-          <div onClick={handleClose} className="absolute flex ml-8 w-full">
+          {/* <div onClick={handleClose} className="absolute flex  w-full">
             <img src={close} alt="live" height={24} />
-          </div>
+          </div> */}
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={16} />
           </div>
-          <div className="mr-5 flex z-30 cursor-pointer" onClick={toggleStreamAudio}>
+          <div className="mr-6 flex z-30 cursor-pointer" onClick={toggleStreamAudio}>
             {isMuted ? (
               <img src={ic_speakerOff} alt="speaker-off" height={24} />
             ) : (

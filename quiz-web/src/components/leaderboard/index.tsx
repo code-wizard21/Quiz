@@ -1,30 +1,25 @@
-import { Col, Divider, List, Row, Spin } from 'antd';
+import { Col, Divider, List, Row, Spin, Badge, Avatar } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import GameSummary from '../game-summary';
-import { CloseSquareOutlined } from '@ant-design/icons';
 import { Drawer, Button } from 'antd';
 import { getUserLeaderboard } from '../../service/quiz/quiz.service';
 import { IQuizLeaderboardOverview } from '../../types/quiz.types';
-import { Avatar } from 'antd';
-import { BiChevronUp } from 'react-icons/bi';
 import './style.css';
 import close from '../../assets/close.svg';
 import ic_droparrow from '../../assets/ic_droparrow.svg';
+
 const containerStyle = {
   position: 'relative',
   overflow: 'hidden',
-
-  height: 900,
+  height: 850,
 };
 
 const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
-  quizId,
-  isVideoSubed,
+  quizId
 }): React.ReactElement => {
   const [leaderboardResults, setLeaderboardResults] = useState<IQuizLeaderboardOverview>();
-  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
   const [viewLeaderboard, setViewLeaderboard] = useState(true);
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
@@ -33,7 +28,9 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
   const showDrawer = () => {
     setOpen(true);
   };
-
+  const handleClose=()=>{
+    window.location.reload();
+  }
   const onClose = () => {
     setOpen(false);
   };
@@ -90,58 +87,107 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
       <Spin spinning={isLeaderboardLoading} size="large">
         {viewLeaderboard && (
           <div style={containerStyle} id="leaderboard-container" className="h-screen">
-
             <Row>
+              <div className='flex p-4 z-40' onClick={handleClose}>
+                <img src={close}/>
+              </div>
               <Col span={24} className="mt-16 flex justify-center">
                 {leaderboardResults?.[1]?.avatar && (
-                  <div>
-                    <img
-                      src={leaderboardResults[1].avatar}
-                      className="-mr-3 border-orange-400 border-4 border-solid rounded-full"
-                      alt="user1"
-                      width={80}
-                      height={80}
-                    />
-                    <div className="text-white text-center">{leaderboardResults[1]?.username}</div>
-                    <div className="text-white text-center">${leaderboardResults?.[1]?.rewardAmount}</div>
+                  <div className="mt-4">
+                    <Badge
+                      style={{
+                        fontSize: '16px',
+                        transform: 'translate(-170%, -50%)',
+                        borderColor: '#FF9494',
+                        color: 'black',
+                        background: '#FF9494',
+                      }}
+                      count={2}
+                    >
+                      <img
+                        src={leaderboardResults[1].avatar}
+                        className="-mr-3 border-orange-400 border-4 border-solid rounded-full"
+                        alt="user1"
+                        width={100}
+                        height={100}
+                      />
+                    </Badge>
+                    <div className="text-white text-sm text-center">
+                      {leaderboardResults?.[1]?.username?.length > 4
+                        ? `${leaderboardResults?.[1]?.username.slice(0, 4)}...`
+                        : leaderboardResults?.[1]?.username}
+                    </div>
+
+                    <div className="text-white text-sm text-center">${leaderboardResults?.[1]?.rewardAmount}</div>
                   </div>
                 )}
 
                 <div className="z-20">
-                  <img
-                    src={leaderboardResults?.[0]?.avatar}
-                    alt="user2"
-                    className="border-yellow-300 border-4 border-solid rounded-full"
-                    width={100}
-                    height={100}
-                  />
-                  {leaderboardResults && leaderboardResults.length && (
-                    <div className="text-white text-center">{leaderboardResults[0]?.username || 'Sam.P'}</div>
-                  )}
-                  <div className="text-white text-center">${leaderboardResults?.[0]?.rewardAmount}</div>
+                  <Badge
+                    style={{
+                      fontSize: '16px',
+                      transform: 'translate(-250%, -50%)',
+                      color: 'black',
+                      borderColor: '#F9DC30',
+                      background: '#F9DC30',
+                    }}
+                    count={1}
+                  >
+                    <img
+                      src={leaderboardResults?.[0]?.avatar}
+                      alt="user2"
+                      className="border-yellow-300 border-4 border-solid rounded-full"
+                      width={120}
+                      height={120}
+                    />
+                  </Badge>
+                  <div className="text-white text-base text-center">
+                    {leaderboardResults?.[0]?.username?.length > 4
+                      ? `${leaderboardResults?.[0]?.username.slice(0, 4)}...`
+                      : leaderboardResults?.[0]?.username}
+                    
+                  </div>
+                  <div className="text-white text-base text-center">${leaderboardResults?.[0]?.rewardAmount}</div>
                 </div>
                 {leaderboardResults?.[2]?.avatar && (
-                  <div>
-                    <img
-                      src={leaderboardResults?.[2]?.avatar}
-                      className="-ml-3 border-green-400 border-4 border-solid rounded-full"
-                      alt="user3"
-                      width={80}
-                      height={80}
-                    />
-                    <div className="text-white text-center">{leaderboardResults?.[2]?.username || 'Sam.P'}</div>
-                    <div className="text-white text-center">${leaderboardResults?.[2]?.rewardAmount}</div>
+                  <div className="mt-4">
+                    <Badge
+                      style={{
+                        fontSize: '16px',
+                        transform: 'translate(-210%, -50%)',
+                        color: 'black',
+                        borderColor: '#51D33C',
+                        background: '#51D33C',
+                      }}
+                      count={3}
+                    >
+                      <img
+                        src={leaderboardResults?.[2]?.avatar}
+                        className="-ml-3 border-green-400 border-4 border-solid rounded-full"
+                        alt="user3"
+                        width={100}
+                        height={100}
+                      />
+                    </Badge>
+                    <div className="text-white  text-sm text-center">
+                      <div className="text-white text-sm text-center">
+                        {leaderboardResults?.[2]?.username?.length > 4
+                          ? `${leaderboardResults?.[2]?.username.slice(0, 4)}...`
+                          : leaderboardResults?.[2]?.username}
+                      </div>
+                    </div>
+                    <div className="text-white text-sm text-center">${leaderboardResults?.[2]?.rewardAmount}</div>
                   </div>
                 )}
               </Col>
-              <Col span={24} className="mt-4 text-center text-white text-xl font-bold">
+              <Col span={24} className=" text-center text-white text-2xl font-bold">
                 <div>Congratulations!</div>
                 <div>Here are the winners</div>
               </Col>
-              <Col span={24} className="px-8">
+              <Col span={24} className="-mt-4 px-8">
                 <Divider className="border-white" />
               </Col>
-              <Col id="scrollableDiv" className="w-full h-96 overflow-auto px-6">
+              <Col id="scrollableDiv" className="w-full h-[440px] -mt-4 overflow-auto px-6">
                 {leaderboardResults && leaderboardResults?.length && (
                   <InfiniteScroll
                     dataLength={leaderboardResults?.length}
@@ -161,14 +207,16 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
                         <div
                           key={index}
                           className={`px-4 flex items-center   py-2 gap-6 ${
-                            user?.username == item.username ? 'bg-white rounded-3xl text-[#662FBF]' : ' text-white '
+                            user?.username == item?.username ? 'bg-white rounded-3xl text-[#662FBF]' : ' text-white '
                           }`}
                         >
                           <div className="w-1/8 cursor-default">{index + 1}</div>
                           <div className="w-1/8">
                             <Avatar src={item.avatar} alt="user1" width={35} height={35} />
                           </div>
-                          <span className="w-1/3 cursor-default  truncate">{item.username}</span>
+                          <span className="w-1/3 cursor-default  truncate">
+                            {item.username?.length > 14 ? `${item.username.slice(0, 14)}...` : item.username}
+                          </span>
                           <span className="w-1/6 cursor-default">{parseFloat(item.time).toFixed(2)}s</span>
                           <span className="w-1/4 cursor-default">
                             {item.correct}/{item.totalquestion}
@@ -179,11 +227,17 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
                   </InfiniteScroll>
                 )}
               </Col>
+              <Col className='absolute bottom-0 w-full left-0' span={24}>
+                <div
+                  className=" bg-[#8347E2]   -mt-2  pt-2 pb-24 rounded-t-2xl gap-2  flex items-center justify-center"
+                  onClick={showDrawer}
+                >
+                  <div className="text-white text-2xl">Game Summary</div>
+                  <img src={ic_droparrow} alt="coin" />
+                </div>
+              </Col>
             </Row>
-            <div className="bg-[#8347E2] mt-12 p-12 rounded-2xl  flex items-center justify-center" onClick={showDrawer}>       
-                <div className="text-white text-2xl">Game Summary</div>
-                <img src={ic_droparrow} alt="coin" />
-            </div>
+
             <Drawer
               getContainer={false}
               className="custom-drawer"
