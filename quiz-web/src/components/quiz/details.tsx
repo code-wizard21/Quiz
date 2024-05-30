@@ -1019,7 +1019,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
-      {/* <button onClick={calculationEnd}>sss</button> */}
+    
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}

@@ -4,25 +4,25 @@
     width: 430px;
     margin: auto;
 }
-::-webkit-scrollbar {
+
+#scrollableDiv .custom-drawer .ant-drawer-body::-webkit-scrollbar {
     width: 10px; /* Width of the vertical scrollbar */
 }
 
-::-webkit-scrollbar-track {
+#scrollableDiv .custom-drawer .ant-drawer-body::-webkit-scrollbar-track {
     background: transparent; /* Color of the tracking area */
 }
 
-::-webkit-scrollbar-thumb {
+#scrollableDiv .custom-drawer .ant-drawer-body::-webkit-scrollbar-thumb {
     background:  rgba(144, 116, 184, 0.6); /* Color of the scroll thumb */
     border-radius: 10px; /* Radius for the scroll thumb */
     border: 3px solid transparent; /* Force a visible thumb by creating a tiny border */
     background-clip: content-box; /* Clip background to the content (ignoring borders) */
 }
 
-::-webkit-scrollbar-thumb:hover {
+#scrollableDiv .custom-drawer .ant-drawer-body::-webkit-scrollbar-thumb:hover {
     background:  rgba(144, 116, 184, 0.8); /* Add a hover effect with a slightly opaque white color */
 }
-
 .custom-drawer .ant-drawer-close-x {
     color: white;
   }
