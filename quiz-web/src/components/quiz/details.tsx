@@ -317,7 +317,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       localStorage.setItem('isjoinchanel', 'false');
       //    localStorage.setItem('iscounted', 'false');
       setIsPaused(false);
-      setViewSummary(false);
+     
       setShowLeaderboard(false);
       setIsShowpool(false);
       leaveChannel();
@@ -1423,7 +1423,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       <Modal title="" open={isModalOpen2} footer={null} width={'350px'} onCancel={handleCancel2}>
         <div className="modal-box">
           <div className="flex mt-6 items-center justify-center">
-            <Avatar size={128} src={localData?.user?.avatar} />
+            <Avatar size={128} src={currentQuizContent.avatar} />
           </div>
           <div className="flex mt-2 items-center justify-center">
             <div className="text-base  text-black">{user?.username}</div>

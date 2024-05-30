@@ -22,8 +22,6 @@ const QuizLayout: React.FC = (): React.ReactElement => {
     position: 'relative',
     height:900,
   
-    overflow: 'hidden',
-  
   };
   const showDrawer1 = () => {
     setOpen1(true);
