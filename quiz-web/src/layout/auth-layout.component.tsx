@@ -27,12 +27,6 @@ const AuthLayout: React.FC = (): React.ReactElement => {
         ) : (
           <Outlet />
         )}
-        {/* <div>
-                <LanguageSelector />
-            </div> */}
-        {/* <div className="m-auto">
-
-            </div> */}
       </div>
     </div>
   );

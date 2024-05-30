@@ -15,14 +15,15 @@ const LandingPage: React.FC = () => {
     navigate('/dashboard');
     window.location.reload();
   };
+  
   return (
     <>
-      <Row className="landing-page p-4">
-        <div className="flex">
+      <Row className="landing-page pl-4 pt-8">
+        <div onClick={()=>history.back()} className="flex">
           <img src={close} alt="live" height={24} />
         </div>
 
-        <Col className="px-6 flex flex-col p-96">
+        <Col className="px-6 flex flex-col pt-80">
           <div className="flex justify-center">
             <div className="text-3xl font-stud-regular font-bold text-white">Sign up for QuizMobb</div>
           </div>
@@ -33,7 +34,7 @@ const LandingPage: React.FC = () => {
 
           <Button
             type="primary"
-            className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full"
+            className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full"
           >
             <div className="flex items-center justify-center">
               <img src={google} alt="user2" />
@@ -79,18 +80,24 @@ const LandingPage: React.FC = () => {
               </div>
             </Button>
           </div>
-          <div className="mt-12 flex justify-center">
+          <div className="mt-8 flex justify-center">
             <Link to="/dashboard" onClick={handleButtonClick}>
               <div className="text-white text-xl underline">Continue as Guest </div>
             </Link>
           </div>
-          <p className="text-[#D0B3FF] text-base font-normal">
-            By continuing with an account located in Singapore, you agree to our Terms of Service and Privacy Policy.
-          </p>
+          <div className='mt-8'>
+          <div className="text-[#D0B3FF] text-sm font-normal">
+          By continuing with an account located in Singapore
+          </div>
+          <div className="text-[#D0B3FF] text-sm font-normal">
+          you agree to our Terms of Service and Privacy Policy.
+          </div>
+          </div>
+       
         </Col>
       </Row>
 
-      <Row className="mt-2"></Row>
+      
     </>
   );
 };
