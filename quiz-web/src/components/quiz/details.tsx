@@ -729,7 +729,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     videoRef.current.hidden = true;
     videoRef.current?.style.setProperty('display', 'none');
     setIsJoined(false);
-    setIsVideoSubed(false);
+    setIsVideoSubed(true);
     setViewQuestions(false);
     setIsPaused(false);
     timerRef.current?.style.setProperty('display', 'none');
@@ -739,8 +739,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setQuestionIndex(0);
     setTotalNumberOfQuestions(0);
     setCurrentQuestion(undefined);
-    setShowLeaderboard(false);
+    
   }, [id, user, client, remoteAudioTracks, remoteVideoTracks]);
+
   const killTimerOnButtonClick = useCallback(() => {
     // Assuming timerInterval is stored using useState like so:
     // const [timerInterval, setTimerInterval] = useState<ReturnType<typeof setInterval> | null>(null);
