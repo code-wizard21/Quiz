@@ -28,7 +28,7 @@ const buyCredit = catchAsync(async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `${YOUR_DOMAIN}/success`,
+      success_url: `${YOUR_DOMAIN}/dashboard`,
       cancel_url: `${YOUR_DOMAIN}/selectmode`,
       metadata: {
         email: email, // Replace with your customer's email

@@ -618,8 +618,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
   const handleClose=()=>{
     console.log('handle Close');
-    setViewQuestions(false);
-    videoRef.current?.style.setProperty('display', 'block');
+   
   }
   const handleTip = async () => {
     const data = { rank: currentQuizContent.rank, id: user?.id, state: isticket };
