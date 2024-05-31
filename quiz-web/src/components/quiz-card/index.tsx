@@ -73,7 +73,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
   const [quizTextImage, setQuizTextImage] = useState<string>('');
 
   return (
-    <div className="py-2" key={quiz._id}>
+    <div className="py-2 flex justify-center items-center" key={quiz._id}>
       <Card
         cover={
           <div className="relative">
