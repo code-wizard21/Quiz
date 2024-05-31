@@ -13,7 +13,7 @@ import ic_droparrow from '../../assets/ic_droparrow.svg';
 const containerStyle = {
   position: 'relative',
   overflow: 'hidden',
-  height: 850,
+  height: 855,
 };
 
 const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
@@ -187,7 +187,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
               <Col span={24} className="-mt-4 px-8">
                 <Divider className="border-white" />
               </Col>
-              <Col id="scrollableDiv" className="w-full h-[440px] -mt-4 overflow-auto px-6">
+              <Col id="scrollableDiv" className="w-full h-80 -mt-4 overflow-auto px-6">
                 {leaderboardResults && leaderboardResults?.length && (
                   <InfiniteScroll
                     dataLength={leaderboardResults?.length}
@@ -229,10 +229,10 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
               </Col>
               <Col className='absolute bottom-0 w-full left-0' span={24}>
                 <div
-                  className=" bg-[#8347E2]   -mt-2  pt-2 pb-24 rounded-t-2xl gap-2  flex items-center justify-center"
+                  className=" bg-[#8347E2]    pt-8 pb-20 rounded-t-2xl gap-4  flex items-center justify-center"
                   onClick={showDrawer}
                 >
-                  <div className="text-white text-2xl">Game Summary</div>
+                  <div className=" text-white text-2xl">Game Summary</div>
                   <img src={ic_droparrow} alt="coin" />
                 </div>
               </Col>
@@ -249,7 +249,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
               }
               onClose={onClose}
               closeIcon={closeDrawer}
-              height={610}
+              height={750}
               open={open}
               placement="bottom"
             >

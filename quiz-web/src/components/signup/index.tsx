@@ -72,12 +72,12 @@ const SingUp: React.FC = () => {
 
   return (
     <Row className="registration-page px-8 block">
-      <div className="pt-16 flex justify-start z-20">
+      <div className="pt-8 flex justify-start z-20">
         <Link to="/">
           <img src={evaarrow} alt="user2" className=" border-4  rounded-full" width={25} height={25} />
         </Link>
       </div>
-      <div className="text-xl font-stud-regular text-white pt-8 mb-8">Create account</div>
+      <div className="text-xl font-stud-regular text-white pt-4 mb-4">Create account</div>
 
       <Form
         name="login"

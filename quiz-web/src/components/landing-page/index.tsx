@@ -15,27 +15,25 @@ const LandingPage: React.FC = () => {
     navigate('/dashboard');
     window.location.reload();
   };
-  
+
   return (
     <>
-      <Row className="landing-page pl-4 pt-8">
-        <div onClick={()=>history.back()} className="flex">
-          <img src={close} alt="live" height={24} />
+      <Row className="landing-page pl-4">
+        <div className="flex p-2">
+          <div onClick={() => history.back()} className="flex">
+            <img src={close} alt="live" height={24} />
+          </div>
         </div>
-
-        <Col className="px-6 flex flex-col pt-80">
+        <Col className="px-6 flex flex-col pt-60">
           <div className="flex justify-center">
             <div className="text-3xl font-stud-regular font-bold text-white">Sign up for QuizMobb</div>
           </div>
-          <p className="text-white text-base font-normal">
+          <p className="text-white text-sm font-normal">
             Test your wits with our daily live quiz shows and win cash! Free quizzes of a variety of themes updated
             daily for all you brainiacs out there.
           </p>
 
-          <Button
-            type="primary"
-            className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full"
-          >
+          <Button type="primary" className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full">
             <div className="flex items-center justify-center">
               <img src={google} alt="user2" />
               <div className="text-center text-base font-bold text-black mr-2 ">Continue with Google</div>
@@ -80,24 +78,19 @@ const LandingPage: React.FC = () => {
               </div>
             </Button>
           </div>
-          <div className="mt-8 flex justify-center">
+          <div className="mt-4 flex justify-center">
             <Link to="/dashboard" onClick={handleButtonClick}>
               <div className="text-white text-xl underline">Continue as Guest </div>
             </Link>
           </div>
-          <div className='mt-8'>
-          <div className="text-[#D0B3FF] text-sm font-normal">
-          By continuing with an account located in Singapore
+          <div className="mt-8">
+            <div className="text-[#D0B3FF] text-xs font-normal">By continuing with an account located in Singapore</div>
+            <div className="text-[#D0B3FF] text-xs font-normal">
+              you agree to our Terms of Service and Privacy Policy.
+            </div>
           </div>
-          <div className="text-[#D0B3FF] text-sm font-normal">
-          you agree to our Terms of Service and Privacy Policy.
-          </div>
-          </div>
-       
         </Col>
       </Row>
-
-      
     </>
   );
 };

@@ -45,16 +45,18 @@ const QuizOverview: React.FC = (): React.ReactElement => {
           return <QuizCard quiz={quiz} key={index} />;
         })}
         {(!user || user?.role === USER_ROLE.SHADOW) && (
-          <div className='items-center justify-center fixed bottom-2 item w-[42vh]'>
-            <Link to="/">
-              <Button
-                type="primary"
-                className="quiz-action-btn h-12 shadow-none text-black font-bold rounded-3xl w-full p-4"
-              >
-                Join Community
-              </Button>
-            </Link>
-          </div>
+         <div className="absolute flex h-screen">
+         <div
+           
+           className="w-[33.5vh] flex max-w-430 py-4 rounded-t-2xl z-50 fixed bottom-10"
+         >
+           <Link to="/" className="w-full ">
+             <Button type="primary" className="w-full text-black h-12 rounded-3xl">
+               Join Community
+             </Button>
+           </Link>
+         </div>
+       </div>
         )}
       </div>
       

@@ -45,12 +45,28 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
     <Spin spinning={isSummaryLoading} size="large">
       <div id="game-summary-container" className="rounded-2xl">
         <Row>
-         
           <Col span={24} className="text-white text-center text-xl">
             Ready to Play?
           </Col>
           <Col span={24} className="text-white text-center text-xl">
             Create an account today!
+          </Col>
+          <Col span={24}>
+            {user?.role == 'shadow' && (
+              <div className="justify-center w-full items-center flex">
+                <button
+                  className="bg-customYellowBorder w-full mt-8 w-[285px] h-[52px] top-[320px]  rounded-[30px] space-x-[6px]"
+                  onClick={() => navigate('/')}
+                >
+                  <div className="flex justify-center px-4 gap-2">
+                    <div className="flex text-black justify-center text-base font-bold text-center ">
+                      Join Community, get Free 20
+                    </div>
+                    <img src={coinImg} width="24" height="24" alt="coin" />
+                  </div>
+                </button>
+              </div>
+            )}
           </Col>
           <Col id="scrollableDiv" className="w-full overflow-auto mt-3 game-summary-list">
             <InfiniteScroll
@@ -102,23 +118,6 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
                 )}
               />
             </InfiniteScroll>
-          </Col>
-          <Col span={24}>
-            {user?.role == 'shadow' && (
-              <div className="justify-center items-center flex">
-                <button
-                  className="bg-customYellowBorder mt-8 w-[285px] h-[52px] top-[320px]  rounded-[30px] space-x-[6px]"
-                  onClick={() => navigate('/')}
-                >
-                  <div className="flex justify-between px-4">
-                    <div className="flex text-black justify-center text-base font-bold text-center ">
-                      Join Community, get Free 10
-                    </div>
-                    <img src={coinImg} width="24" height="24" alt="coin" />
-                  </div>
-                </button>
-              </div>
-            )}
           </Col>
         </Row>
       </div>

@@ -729,9 +729,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     videoRef.current.hidden = true;
     videoRef.current?.style.setProperty('display', 'none');
     setIsJoined(false);
-    setIsVideoSubed(true);
+    setIsVideoSubed(false);
     setViewQuestions(false);
     setIsPaused(false);
+    setShowLeaderboard(true);
     timerRef.current?.style.setProperty('display', 'none');
     setTimerProgress(0);
     setIsOptionSubmitted(false);
@@ -1019,7 +1020,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
-    
+    {/* <button onClick={calculationEnd}>sss</button> */}
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}
@@ -1051,7 +1052,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
         </div>
       )}
-      {!isVideoSubed && quizData && (
+      {!isVideoSubed && quizData && !showLeaderboard && (
         <div className="py-2">
           <img src={getQuizBackgroundImage(quizData.category.name).bgImage} alt="quiz-back" className="m-auto w-full" />
           <div className="mx-6 ">
@@ -1086,13 +1087,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       )}
 
       <div>
-        {quizData && user?.role === 'shadow' && isVideoSubed && (
+        {quizData && user?.role === 'shadow' && isVideoSubed  && !showLeaderboard && (
           <div className="absolute flex h-screen">
             <div
               style={{ backgroundColor: '#090B40' }}
               className="w-full flex max-w-430 pb-3 pt-4 rounded-t-2xl z-50 fixed bottom-0"
             >
-              <Link to="/login" className="w-full px-5">
+              <Link to="/" className="w-full px-5">
                 <Button type="primary" className="w-full text-black h-12 rounded-3xl">
                   Join Community
                 </Button>
