@@ -18,13 +18,13 @@ const LandingPage: React.FC = () => {
 
   return (
     <>
-      <Row className="landing-page pl-4">
-        <div className="flex p-2">
+      <Row className="landing-page ">
+        <div className="flex px-4 py-8">
           <div onClick={() => history.back()} className="flex">
-            <img src={close} alt="live" height={24} />
+            <img src={close} alt="live" width={30} height={30} />
           </div>
         </div>
-        <Col className="px-6 flex flex-col pt-60">
+        <Col className="px-6 flex flex-col pt-60 justify-center">
           <div className="flex justify-center">
             <div className="text-3xl font-stud-regular font-bold text-white">Sign up for QuizMobb</div>
           </div>
