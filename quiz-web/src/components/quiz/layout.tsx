@@ -138,7 +138,7 @@ const QuizLayout: React.FC = (): React.ReactElement => {
   const [value, setValue] = useState(1);
   return (
     <div  className="w-full  bg-gray-100  overflow-auto">
-      <div style={containerStyle}  className="max-w-430 m-auto shadow-xl bg-white ">
+      <div style={containerStyle} id='layout' className="max-w-430 m-auto shadow-xl bg-white ">
         <TopBar showDrawer={showDrawer} showDrawer1={showDrawer1} />
         <Outlet />
         <Drawer title={null} getContainer={false} height={600} onClose={onClose} open={open} placement="bottom">

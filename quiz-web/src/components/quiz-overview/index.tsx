@@ -3,6 +3,7 @@ import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import coinImg from '../../assets/coin.svg';
 import { USER_ROLE } from '../../constants/enum';
 import { setMiscellaneousData } from '../../redux/actions/miscellaneous.action';
 import { RootState } from '../../redux/reducers';
@@ -52,7 +53,12 @@ const QuizOverview: React.FC = (): React.ReactElement => {
          >
            <Link to="/" className="w-full ">
              <Button type="primary" className="w-full text-black h-12 rounded-3xl">
-               Join Community
+             <div className="flex justify-center px-4 gap-2">
+                    <div className="flex text-black justify-center text-base font-bold text-center ">
+                      Join Community, get Free 20
+                    </div>
+                    <img src={coinImg} width="24" height="24" alt="coin" />
+                  </div>
              </Button>
            </Link>
          </div>

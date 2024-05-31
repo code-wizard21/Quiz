@@ -8,6 +8,26 @@ body {
 .ant-drawer-close-x {
   color: white !important;
 }
+
+
+
+#layout::-webkit-scrollbar {
+  width: 8px; /* Width of the vertical scrollbar */
+}
+
+
+
+#layout::-webkit-scrollbar-thumb {
+  background:  rgba(221, 221, 221, 1); /* Color of the scroll thumb */
+  border-radius: 10px; /* Radius for the scroll thumb */
+  border: 3px solid transparent; /* Force a visible thumb by creating a tiny border */
+  background-clip: content-box; /* Clip background to the content (ignoring borders) */
+}
+
+#layout::-webkit-scrollbar-thumb:hover {
+  background:  rgba(221, 221, 221, 0.8); /* Add a hover effect with a slightly opaque white color */
+}
+
 .app {
   height: 100% !important;
   background-color: #f3f4f6;
