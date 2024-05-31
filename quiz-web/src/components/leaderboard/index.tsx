@@ -1,6 +1,8 @@
 import { Col, Divider, List, Row, Spin, Badge, Avatar } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import coinImg from '../../assets/coin.svg';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import GameSummary from '../game-summary';
 import { Drawer, Button } from 'antd';
@@ -12,13 +14,11 @@ import ic_droparrow from '../../assets/ic_droparrow.svg';
 
 const containerStyle = {
   position: 'relative',
-  overflow: 'hidden',
+  overflow: 'none',
   height: 855,
 };
 
-const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
-  quizId
-}): React.ReactElement => {
+const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quizId }): React.ReactElement => {
   const [leaderboardResults, setLeaderboardResults] = useState<IQuizLeaderboardOverview>();
   const [viewLeaderboard, setViewLeaderboard] = useState(true);
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
@@ -28,9 +28,9 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
   const showDrawer = () => {
     setOpen(true);
   };
-  const handleClose=()=>{
+  const handleClose = () => {
     window.location.reload();
-  }
+  };
   const onClose = () => {
     setOpen(false);
   };
@@ -88,12 +88,12 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
         {viewLeaderboard && (
           <div style={containerStyle} id="leaderboard-container" className="h-screen">
             <Row>
-              <div className='flex p-4 z-40' onClick={handleClose}>
-                <img src={close}/>
+              <div className="flex mt-6 ml-4 z-40" onClick={handleClose}>
+                <img src={close} height={20} />
               </div>
-              <Col span={24} className="mt-16 flex justify-center">
+              <Col span={24} className="flex justify-center mt-4">
                 {leaderboardResults?.[1]?.avatar && (
-                  <div className="mt-4">
+                  <div className="mt-6">
                     <Badge
                       style={{
                         fontSize: '16px',
@@ -113,8 +113,8 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
                       />
                     </Badge>
                     <div className="text-white text-sm text-center">
-                      {leaderboardResults?.[1]?.username?.length > 4
-                        ? `${leaderboardResults?.[1]?.username.slice(0, 4)}...`
+                      {leaderboardResults?.[1]?.username?.length > 7
+                        ? `${leaderboardResults?.[1]?.username.slice(0, 7)}...`
                         : leaderboardResults?.[1]?.username}
                     </div>
 
@@ -126,7 +126,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
                   <Badge
                     style={{
                       fontSize: '16px',
-                      transform: 'translate(-250%, -50%)',
+                      transform: 'translate(-260%, -50%)',
                       color: 'black',
                       borderColor: '#F9DC30',
                       background: '#F9DC30',
@@ -138,19 +138,18 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
                       alt="user2"
                       className="border-yellow-300 border-4 border-solid rounded-full"
                       width={120}
-                      height={120}
+                      height={123}
                     />
                   </Badge>
                   <div className="text-white text-base text-center">
-                    {leaderboardResults?.[0]?.username?.length > 4
-                      ? `${leaderboardResults?.[0]?.username.slice(0, 4)}...`
+                    {leaderboardResults?.[0]?.username?.length > 7
+                      ? `${leaderboardResults?.[0]?.username.slice(0, 7)}...`
                       : leaderboardResults?.[0]?.username}
-                    
                   </div>
                   <div className="text-white text-base text-center">${leaderboardResults?.[0]?.rewardAmount}</div>
                 </div>
                 {leaderboardResults?.[2]?.avatar && (
-                  <div className="mt-4">
+                  <div className="mt-6">
                     <Badge
                       style={{
                         fontSize: '16px',
@@ -166,13 +165,13 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
                         className="-ml-3 border-green-400 border-4 border-solid rounded-full"
                         alt="user3"
                         width={100}
-                        height={100}
+                        height={101}
                       />
                     </Badge>
                     <div className="text-white  text-sm text-center">
                       <div className="text-white text-sm text-center">
-                        {leaderboardResults?.[2]?.username?.length > 4
-                          ? `${leaderboardResults?.[2]?.username.slice(0, 4)}...`
+                        {leaderboardResults?.[2]?.username?.length > 7
+                          ? `${leaderboardResults?.[2]?.username.slice(0, 7)}...`
                           : leaderboardResults?.[2]?.username}
                       </div>
                     </div>
@@ -187,7 +186,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
               <Col span={24} className="-mt-4 px-8">
                 <Divider className="border-white" />
               </Col>
-              <Col id="scrollableDiv" className="w-full h-80 -mt-4 overflow-auto px-6">
+              <Col id="scrollableDiv" className="w-full h-[492px] -mt-4 overflow-auto px-6">
                 {leaderboardResults && leaderboardResults?.length && (
                   <InfiniteScroll
                     dataLength={leaderboardResults?.length}
@@ -227,7 +226,8 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
                   </InfiniteScroll>
                 )}
               </Col>
-              <Col className='absolute bottom-0 w-full left-0' span={24}>
+              
+              {/* <Col className='absolute bottom-0 w-full left-0' span={24}>
                 <div
                   className=" bg-[#8347E2]    pt-8 pb-20 rounded-t-2xl gap-4  flex items-center justify-center"
                   onClick={showDrawer}
@@ -235,9 +235,20 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({
                   <div className=" text-white text-2xl">Game Summary</div>
                   <img src={ic_droparrow} alt="coin" />
                 </div>
-              </Col>
+              </Col> */}
             </Row>
-
+            <div className="absolute flex h-screen">
+                <div
+                  style={{ cursor: 'pointer', backgroundColor: '#8347E2' }}
+                  className="w-full flex max-w-430 mt-2 pb-6 pt-8 rounded-t-2xl z-50 fixed bottom-10"
+                >
+                  <div onClick={showDrawer} className=" w-full text-black h-12 rounded-3xl">
+                    <div className="flex justify-center px-4 gap-2">
+                      <div className="flex text-white justify-center text-2xl font-bold text-center ">Game Summary</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             <Drawer
               getContainer={false}
               className="custom-drawer"

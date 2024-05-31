@@ -48,7 +48,7 @@ const QuizOverview: React.FC = (): React.ReactElement => {
          <div className="absolute flex h-screen">
          <div
            
-           className="w-[33.5vh] flex max-w-430 py-4 rounded-t-2xl z-50 fixed bottom-10"
+           className="w-[33.5vh] flex max-w-430 py-2 rounded-t-2xl z-50 fixed bottom-0"
          >
            <Link to="/" className="w-full ">
              <Button type="primary" className="w-full text-black h-12 rounded-3xl">

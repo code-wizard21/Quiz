@@ -72,7 +72,7 @@ const Login: React.FC = () => {
     <div className="registration-page px-8">
       <div className="pt-20  flex justify-start z-20">
         <Link to="/">
-          <img src={evaarrow} alt="user2" className=" border-4  rounded-full" width={20} height={17.5} />
+          <img src={evaarrow} alt="user2" className=" border-4  rounded-full" width={30} height={30} />
         </Link>
       </div>
       <div className="pt-5 pb-10 text-2xl text-white font-stud-bold text-left">Welcome back</div>

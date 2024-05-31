@@ -12,7 +12,9 @@ body {
   height: 100% !important;
   background-color: #f3f4f6;
 }
-
+:where(.css-dev-only-do-not-override-l8hc0p).ant-card-bordered{
+  border:none !important  
+}
 .bg-4E13AF {
   background-color: #4E13AF !important;
 }

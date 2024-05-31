@@ -3,6 +3,7 @@ import { IAgoraRTCClient, IAgoraRTCRemoteUser, createClient } from 'agora-rtc-sd
 import { Button, Progress, message } from 'antd';
 import { AxiosResponse } from 'axios';
 import { Drawer } from 'antd';
+import evaarrow from '../../assets/eva_arrow-back-fill_white.svg';
 import { Avatar } from 'antd';
 import frame from '../../assets/figma/Frame.svg';
 import vector from '../../assets/figma/Vector.svg';
@@ -740,7 +741,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setQuestionIndex(0);
     setTotalNumberOfQuestions(0);
     setCurrentQuestion(undefined);
-    
   }, [id, user, client, remoteAudioTracks, remoteVideoTracks]);
 
   const killTimerOnButtonClick = useCallback(() => {
@@ -1020,7 +1020,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   return (
     <div className="h-full w-full relative">
-    {/* <button onClick={calculationEnd}>sss</button> */}
+      {/* <button onClick={calculationEnd}>sss</button> */}
       {!isVideoSubed && (
         <BackTab
           text={convertDate(quizData?.start_date)}
@@ -1041,9 +1041,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           </div>
           <div className="mr-6 flex z-30 cursor-pointer" onClick={toggleStreamAudio}>
             {isMuted ? (
-              <img src={ic_speakerOff} alt="speaker-off" height={24} />
+              <img src={ic_speakerOff} alt="speaker-off" height={20} />
             ) : (
-              <img src={ic_speakerOn} alt="speaker-on" height={24} />
+              <img src={ic_speakerOn} alt="speaker-on" height={20} />
             )}
           </div>
           <div className="mr-5 flex">
@@ -1087,7 +1087,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       )}
 
       <div>
-        {quizData && user?.role === 'shadow' && isVideoSubed  && !showLeaderboard && (
+        {quizData && user?.role === 'shadow' && !showLeaderboard&& (
           <div className="absolute flex h-screen">
             <div
               style={{ backgroundColor: '#090B40' }}
@@ -1095,7 +1095,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             >
               <Link to="/" className="w-full px-5">
                 <Button type="primary" className="w-full text-black h-12 rounded-3xl">
-                  Join Community
+                  <div className="flex justify-center px-4 gap-2">
+                    <div className="flex text-black justify-center text-base font-bold text-center ">
+                      Join Community, get Free 20
+                    </div>
+                    <img src={coinImg} width="24" height="24" alt="coin" />
+                  </div>
                 </Button>
               </Link>
             </div>

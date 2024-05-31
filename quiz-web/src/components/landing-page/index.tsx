@@ -83,7 +83,7 @@ const LandingPage: React.FC = () => {
               <div className="text-white text-xl underline">Continue as Guest </div>
             </Link>
           </div>
-          <div className="mt-8">
+          <div className="mt-8 text-center">
             <div className="text-[#D0B3FF] text-xs font-normal">By continuing with an account located in Singapore</div>
             <div className="text-[#D0B3FF] text-xs font-normal">
               you agree to our Terms of Service and Privacy Policy.
