@@ -108,7 +108,7 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
               <div className="justify-center items-center flex">
                 <button
                   className="bg-customYellowBorder mt-8 w-[285px] h-[52px] top-[320px]  rounded-[30px] space-x-[6px]"
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate('/')}
                 >
                   <div className="flex justify-between px-4">
                     <div className="flex text-black justify-center text-base font-bold text-center ">

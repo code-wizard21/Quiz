@@ -46,7 +46,7 @@ const QuizOverview: React.FC = (): React.ReactElement => {
         })}
         {(!user || user?.role === USER_ROLE.SHADOW) && (
           <div className='items-center justify-center fixed bottom-2 item w-[42vh]'>
-            <Link to="/login">
+            <Link to="/">
               <Button
                 type="primary"
                 className="quiz-action-btn h-12 shadow-none text-black font-bold rounded-3xl w-full p-4"
