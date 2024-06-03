@@ -235,9 +235,13 @@ const initaliseWebSocket = (server) => {
         await calculateQuizLeaderboard();
 
         viewer_count = 0;
-        io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
+        setTimeout(() => {
+          io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
   
         io.emit('host_quiz_live_calculation_end', { quiz: quiz_id });
+        }, 3000);
+      });
+        
      
       });
 
