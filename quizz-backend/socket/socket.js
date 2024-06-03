@@ -7,7 +7,7 @@ const UserAnswer = require('../models/user-answer.model');
 const Option = require('../models/option.model');
 const UserActivity = require('../models/user-activity.model');
 const { questionService } = require('../services');
-const { calculateLeaderboard } = require('../services/quiz.service');
+const { calculateLeaderboard, calculateQuizLeaderboard } = require('../services/quiz.service');
 const { Leaderboard, User } = require('../models');
 const { getNumberOfUsersInChannel } = require('../services/agora.service');
 const liveQuiz = require('../models/live-quiz.model');
@@ -36,7 +36,7 @@ const initaliseWebSocket = (server) => {
           console.log('live stream not found');
           return;
         }
-      
+
         await UserAnswer.deleteMany({});
         await UserParticipation.deleteMany({});
 
@@ -68,7 +68,7 @@ const initaliseWebSocket = (server) => {
       socket.emit('amount_update_user_broadcast', quizPoolData); // Send the initial amount
 
       socket.on('increase_pool_amount_user', async (data) => {
-      console.log('data',data);
+        console.log('data', data);
         const newData = new quizticket({
           email: data.email,
           ticket: data.ticket,
@@ -221,12 +221,9 @@ const initaliseWebSocket = (server) => {
 
         io.in(room).emit('user_quiz_live_calculation_start', { quiz: quiz_id });
 
-        // TODO: another emit to send the leaderboard to the host and users
-
-        // TODO: to be removed after testing #Remove #Testing
         await Leaderboard.deleteMany({ quiz: quiz_id });
 
-        await calculateLeaderboard(quiz_id);
+        // await calculateLeaderboard(quiz_id);
 
         // for now settimg a timeout of 10 seconds to send the result
         try {
@@ -235,13 +232,13 @@ const initaliseWebSocket = (server) => {
         } catch (err) {
           console.error(err);
         }
+        await calculateQuizLeaderboard();
 
-        setTimeout(() => {
-          viewer_count = 0;
-          io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
-          console.log('quiz_id',quiz_id);
-          io.emit('host_quiz_live_calculation_end', { quiz: quiz_id });
-        }, 5000);
+        viewer_count = 0;
+        io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
+  
+        io.emit('host_quiz_live_calculation_end', { quiz: quiz_id });
+     
       });
 
       socket.on('host_live_end', async (data) => {
@@ -374,7 +371,6 @@ const initaliseWebSocket = (server) => {
       });
 
       socket.on('host_mute_state', async (data) => {
-
         io.emit('user_mute', data);
 
         console.log('host_mute_state', data);
@@ -412,7 +408,7 @@ const initaliseWebSocket = (server) => {
         console.log('new ObjectId(question_id)}', new ObjectId(question_id));
         const userAnswered = await UserAnswer.find({ question: new ObjectId(question_id) });
         let correct = 0;
-        console.log('userAnswered',userAnswered);
+        console.log('userAnswered', userAnswered);
         for (let i = 0; i < userAnswered.length; i++) {
           if (userAnswered[i].state == 'true') {
             correct++;
@@ -427,7 +423,7 @@ const initaliseWebSocket = (server) => {
           // perhaps setting percent to 0 or some default
           percent = 0; // or some default value
         }
-        console.log('userAnswered',correct,viewer_count, percent);
+        console.log('userAnswered', correct, viewer_count, percent);
 
         const quizQuestions = await questionService.getQuestionWithOptionAndTotalAnswers(question_id);
 
@@ -436,7 +432,7 @@ const initaliseWebSocket = (server) => {
           position: position,
           correctAnswerPercent: percent,
         };
-    
+
         // TODO: another tigger with question result with percentage correct answer
         io.emit('user_quiz_live_question_result', percentData);
 
@@ -451,23 +447,23 @@ const initaliseWebSocket = (server) => {
       });
       socket.on('user_useranswer_save', async (data) => {
         console.log('user_useranswer_save');
-        const { quiz_id,  question_id,username,user_id } = data;
-        let questionExit = await UserAnswer.find({ question: question_id ,user:user_id});
-       console.log('questionExit',questionExit);
-        const question_text=await QuizQuestion.findOne({_id:question_id});
+        const { quiz_id, question_id, username, user_id } = data;
+        let questionExit = await UserAnswer.find({ question: question_id, user: user_id });
+        console.log('questionExit', questionExit);
+        const question_text = await QuizQuestion.findOne({ _id: question_id });
 
-       if (questionExit.length === 0) { 
-        console.log('No answer');
+        if (questionExit.length === 0) {
+          console.log('No answer');
           const userAnswer = new UserAnswer({
             state: 'No Answer',
             username: username,
-            question_text:question_text.text,
+            question_text: question_text.text,
             answer: '',
             quiz: quiz_id,
             user: user_id,
             question: question_id,
           });
-          
+
           await userAnswer.save();
         }
       });
@@ -476,7 +472,7 @@ const initaliseWebSocket = (server) => {
         if (!data || !data.quiz_id || !data.user_id) {
           return;
         }
-        const { quiz_id, user_id, username ,role} = data;
+        const { quiz_id, user_id, username, role } = data;
 
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id) });
 
@@ -511,15 +507,15 @@ const initaliseWebSocket = (server) => {
         }
 
         const userActivity_exist = await UserActivity.findOne({ user: new ObjectId(user_id) });
-        console.log('userActivity_exist',userActivity_exist);
+        console.log('userActivity_exist', userActivity_exist);
         let quiz_question = await QuizQuestion.find({ quiz: quiz_id });
-       
+
         if (!userActivity_exist) {
           console.log('create new User');
           const userActivity = new UserActivity({
             quiz: quiz_id,
             user: user_id,
-            role:role,
+            role: role,
             username: username,
             totalquestion: quiz_question.length,
           });
@@ -607,7 +603,7 @@ const initaliseWebSocket = (server) => {
         if (!liveStream) {
           return;
         }
-        
+
         const room = liveStream.room_id;
 
         // check if user has already answered the question
@@ -616,23 +612,23 @@ const initaliseWebSocket = (server) => {
           user: new ObjectId(user_id),
           question: new ObjectId(question_id),
         });
-      
+
         if (alreadyAnswered) {
           console.error('user_submit_live_quiz_answer :: user already answered the question');
           return;
         }
-        const optionInfo=await Option.findOne({_id:option_id});
-        console.log('optionInfo1',optionInfo);
+        const optionInfo = await Option.findOne({ _id: option_id });
+        console.log('optionInfo1', optionInfo);
         let state = 'No answer';
         if (optionInfo.is_correct == true) {
           state = 'true';
         } else {
           state = 'false';
         }
-        const question_text=await QuizQuestion.findOne({_id:question_id});
+        const question_text = await QuizQuestion.findOne({ _id: question_id });
         const userAnswer = new UserAnswer({
           state: state,
-          question_text:question_text.text,
+          question_text: question_text.text,
           username: username,
           answer: optionInfo.text,
           quiz: quiz_id,

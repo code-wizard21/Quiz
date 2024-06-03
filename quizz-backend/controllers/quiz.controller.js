@@ -258,62 +258,7 @@ const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
   }
 });
 
-const calculateQuizLeaderboard = catchAsync(async (req, res) => {
-  try {
-    let updatedUserActivityTable = await UserActivity.find();
-    for (let i = 0; i < updatedUserActivityTable.length; i++) {
-      let info = await UserAnswer.find({
-        username: updatedUserActivityTable[i].username,
-      });
 
-      let time = 0;
-      let correct = 0;
-      let allQuestionCorrect = false;
-      for (let i = 0; i < info.length; i++) {
-        if (typeof info[i].duration === 'number') {
-          time += parseFloat(info[i].duration.toFixed(2));
-        }
-
-        if (info[i].state == 'true') {
-          correct++;
-        }
-      }
-      if (correct == info.length) {
-        allQuestionCorrect = true;
-      }
-      const result = await UserActivity.updateOne(
-        { username: updatedUserActivityTable[i].username },
-        { $set: { time: time, correct: correct, allQuestionCorrect: allQuestionCorrect } }
-      );
-    }
-    const docs = await UserActivity.find({ role: 'user' }).sort({ correct: -1, time: 1 });
-    console.log('docs', docs);
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try {
-      const bulkOps = docs.map((doc, index) => {
-        return {
-          updateOne: {
-            filter: { _id: doc._id },
-            update: { $set: { rank: index + 1 } },
-          },
-        };
-      });
-
-      await UserActivity.bulkWrite(bulkOps, { session });
-      await session.commitTransaction();
-    } catch (error) {
-      console.error('Error occurred while updating user ranks: ', error);
-      await session.abortTransaction();
-    } finally {
-      session.endSession();
-    }
-
-    res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', 'userList'));
-  } catch (error) {
-    console.log('error in getQuizLeaderboard', error);
-  }
-});
 const getQuizLeaderboard = catchAsync(async (req, res) => {
   try {
     const userList = await UserActivity.find({ role: 'user' }).sort({ rank: 1 });
@@ -396,7 +341,7 @@ module.exports = {
   getOnlyQuestion,
   getTopThreeRankerInQuiz,
   getQuizeState,
-  calculateQuizLeaderboard,
+  
   // patchQuizLive,
   deleteAllUserAnswerAndParticipation,
   getAllQuizesWithDetails,

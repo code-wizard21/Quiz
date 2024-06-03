@@ -42,7 +42,6 @@ router.post(
 router.patch('/:quiz_id', auth('createQuizRight'), validate(quizValidation.updateQuiz), quizController.updateQuiz);
 
 router.get('/:quiz_id/leaderboard', validate(quizValidation.quizLeaderboard), quizController.getQuizLeaderboard);
-router.get('/:quiz_id/calculation', auth(), validate(quizValidation.quizLeaderboard), quizController.calculateQuizLeaderboard);
 router.get('/:quiz_id/getmodaldata', auth(), validate(quizValidation.quizLeaderboard), quizController.getModalQuizLeaderboard);
 router.get(
   '/:quiz_id/leaderboard/toppers',

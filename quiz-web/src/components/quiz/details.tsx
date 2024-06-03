@@ -51,7 +51,7 @@ import twitterImg from '../../assets/social/twitter.svg';
 import whatsappImg from '../../assets/social/whatsapp.svg';
 import { getTicket, getHandleTip } from '../../service/user/user.service';
 import { reduceTicket } from '../../service/user/user.service';
-import { liveCalculationStart, getModalData } from '../../service/quiz/quiz.service';
+import {  getModalData } from '../../service/quiz/quiz.service';
 import { checkOutBuyticketSessionSocket } from '../../service/payment/payment.service';
 import soundFile from '../../assets/coundown_timer_mixdown.mp3';
 import './1.css';
@@ -431,7 +431,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     timerRef.current?.style.setProperty('display', 'none');
     startSpin();
     setShowCalcuation(true);
-    liveCalculationStart(id);
   };
   const calculationEnd = async () => {
     setShowCalcuation(false);
