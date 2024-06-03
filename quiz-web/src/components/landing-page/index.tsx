@@ -19,7 +19,7 @@ const LandingPage: React.FC = () => {
   return (
     <>
       <Row className="landing-page ">
-        <div className="flex px-4 py-8">
+        <div className="flex px-4 py-4">
           <div onClick={() => history.back()} className="flex">
             <img src={close} alt="live" width={30} height={30} />
           </div>

@@ -47,7 +47,6 @@ const QuizOverview: React.FC = (): React.ReactElement => {
         {(!user || user?.role === USER_ROLE.SHADOW) && (
           <div className="absolute flex h-screen">
             <div
-              
               className="w-full flex max-w-430 py-4 rounded-t-2xl z-50 fixed bottom-0"
             >
               <Link to="/" className="w-full px-4">

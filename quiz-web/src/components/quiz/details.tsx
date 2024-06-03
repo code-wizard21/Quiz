@@ -1021,7 +1021,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   return (
     <div className="h-full w-full relative">
       {/* <button onClick={calculationEnd}>sss</button> */}
-      {!isVideoSubed && (
+    
+             
+            
+      {!isVideoSubed && !showLeaderboard &&(
         <BackTab
           text={convertDate(quizData?.start_date)}
           // text={moment(quizData?.start_time).format('dddd, MMMM Do, h:mm a')}

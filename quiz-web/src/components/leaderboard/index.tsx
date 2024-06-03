@@ -15,7 +15,7 @@ import ic_droparrow from '../../assets/ic_droparrow.svg';
 const containerStyle = {
   position: 'relative',
   overflow: 'none',
-  height: 855,
+  height: 870,
 };
 
 const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quizId }): React.ReactElement => {
@@ -86,7 +86,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quiz
     <>
       <Spin spinning={isLeaderboardLoading} size="large">
         {viewLeaderboard && (
-          <div style={containerStyle} id="leaderboard-container" className="h-screen">
+          <div style={containerStyle} id="leaderboard-container" >
             <Row>
               <div className="flex mt-6 ml-4 z-40" onClick={handleClose}>
                 <img src={close} height={20} />
@@ -186,7 +186,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quiz
               <Col span={24} className="-mt-4 px-8">
                 <Divider className="border-white" />
               </Col>
-              <Col id="scrollableDiv" className="w-full h-[492px] -mt-4 overflow-auto px-6">
+              <Col id="scrollableDiv" className="w-full h-[480px] -mt-4 overflow-auto px-6">
                 {leaderboardResults && leaderboardResults?.length && (
                   <InfiniteScroll
                     dataLength={leaderboardResults?.length}
@@ -226,7 +226,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quiz
                   </InfiniteScroll>
                 )}
               </Col>
-              
+
               {/* <Col className='absolute bottom-0 w-full left-0' span={24}>
                 <div
                   className=" bg-[#8347E2]    pt-8 pb-20 rounded-t-2xl gap-4  flex items-center justify-center"
@@ -237,18 +237,19 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quiz
                 </div>
               </Col> */}
             </Row>
-            <div className="absolute flex h-screen">
-                <div
-                  style={{ cursor: 'pointer', backgroundColor: '#8347E2' }}
-                  className="w-full flex max-w-430 mt-2 pb-6 pt-8 rounded-t-2xl z-50 fixed bottom-10"
-                >
-                  <div onClick={showDrawer} className=" w-full text-black h-12 rounded-3xl">
-                    <div className="flex justify-center px-4 gap-2">
-                      <div className="flex text-white justify-center text-2xl font-bold text-center ">Game Summary</div>
-                    </div>
-                  </div>
+
+            <div
+            onClick={showDrawer}
+              style={{ cursor: 'pointer', backgroundColor: '#8347E2' }}
+              className="absolute bottom-0  w-full left-0  flex   rounded-t-2xl z-50  "
+            >
+              <div onClick={showDrawer} className="pt-4 pb-8 w-full text-black  rounded-3xl">
+                <div className="flex justify-center ">
+                  <div className="flex text-white text-2xl font-bold">Game Summary</div>
                 </div>
               </div>
+            </div>
+
             <Drawer
               getContainer={false}
               className="custom-drawer"
@@ -260,7 +261,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quiz
               }
               onClose={onClose}
               closeIcon={closeDrawer}
-              height={750}
+              height={800}
               open={open}
               placement="bottom"
             >

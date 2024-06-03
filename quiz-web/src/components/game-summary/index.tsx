@@ -43,7 +43,7 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
 
   return (
     <Spin spinning={isSummaryLoading} size="large">
-      <div id="game-summary-container" className="rounded-2xl">
+      <div id="game-summary-container" className="rounded-t-2xl">
         <Row>
           <Col span={24} className="text-white text-center text-xl">
             Ready to Play?
