@@ -1035,9 +1035,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       )}
       {isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-6" id="live-stream-header">
-          {/* <div onClick={handleClose} className="absolute flex  w-full">
-            <img src={close} alt="live" height={24} />
-          </div> */}
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={16} />
           </div>
@@ -1055,7 +1052,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         </div>
       )}
       {!isVideoSubed && quizData && !showLeaderboard && (
-        <div className="py-2">
+        <div className="py-2 h-[770px]  ">
           <img src={getQuizBackgroundImage(quizData.category.name).bgImage} alt="quiz-back" className="m-auto w-full" />
           <div className="mx-6 ">
             <div className="justify-center my-4 font-stud-regular tracking-wider">
