@@ -240,7 +240,7 @@ const initaliseWebSocket = (server) => {
   
         io.emit('host_quiz_live_calculation_end', { quiz: quiz_id });
         }, 3000);
-      });
+      
         
      
       });
