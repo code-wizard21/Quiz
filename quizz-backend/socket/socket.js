@@ -48,7 +48,7 @@ const initaliseWebSocket = (server) => {
         // liveStream.room_id = liveStream.room_id + 1;
         await liveStream.save();
         const room = liveStream.room_id;
-
+        await UserAnswer.deleteMany({ quiz: quiz_id });
         // create room
         socket.join(room);
 
@@ -269,7 +269,7 @@ const initaliseWebSocket = (server) => {
 
           // TODO: to be removed after testing
           // Delete all user answer data for the quiz
-          await UserAnswer.deleteMany({ quiz: quiz_id });
+         
 
           // Close the room and disconnect all sockets
           // TODO: check if this is the right way to close the room
