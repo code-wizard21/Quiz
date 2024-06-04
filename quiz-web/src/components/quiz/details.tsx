@@ -1121,7 +1121,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                     key={index}
                   >
                     <div className="absolute z-40 flex justify-between w-full font-stud-regular h-12">
-                      <span className="pl-4 text-2xl font-bold  self-center">{`${index + 1}` + '. ' + option.text}</span>
+                      <span className="pl-6 text-base font-bold  self-center">{`${index + 1}` + '. ' + option.text}</span>
                       <span className="pr-3 text-base self-center">{`${option.total_answers || 0}`}</span>
                     </div>
                     <Progress
