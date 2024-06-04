@@ -1108,20 +1108,20 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         <Progress ref={timerRef} type="circle" percent={timerProgress} strokeColor={'#44E500'} className="absolute" />
         {viewQuestions && (
           <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-            <div className="p-16 pt-44 text-base text-white font-stud-regular text-center">
+            <div className="p-16 pt-48 text-base text-white font-stud-regular text-center">
               Question {`${questionIndex}`} of {`${totalNumberOfQuestions}`}
             </div>
-            <div className="p-4 text-3xl text-white font-stud-regular text-center">{currentQuestion?.question.text}</div>
-            <div className="p-5">
+            <div className="p-4 text-3xl text-white font-bold font-stud-regular text-center">{currentQuestion?.question.text}</div>
+            <div className="p-6">
               {currentQuestion?.question?.options?.map((option, index) => {
                 return (
                   <div
-                    className="relative cursor-pointer h-12 my-2"
+                    className="relative cursor-pointer h-14 my-4"
                     onClick={() => onOptionClick(option._id)}
                     key={index}
                   >
                     <div className="absolute z-40 flex justify-between w-full font-stud-regular h-12">
-                      <span className="pl-3 text-xl self-center">{`${index + 1}` + '. ' + option.text}</span>
+                      <span className="pl-4 text-2xl font-bold  self-center">{`${index + 1}` + '. ' + option.text}</span>
                       <span className="pr-3 text-base self-center">{`${option.total_answers || 0}`}</span>
                     </div>
                     <Progress
