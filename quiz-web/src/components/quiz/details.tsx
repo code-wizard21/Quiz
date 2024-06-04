@@ -1108,10 +1108,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         <Progress ref={timerRef} type="circle" percent={timerProgress} strokeColor={'#44E500'} className="absolute" />
         {viewQuestions && (
           <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-            <div className="p-16 pt-44 text-2xl text-white font-stud-regular text-center">
+            <div className="p-16 pt-44 text-base text-white font-stud-regular text-center">
               Question {`${questionIndex}`} of {`${totalNumberOfQuestions}`}
             </div>
-            <div className="p-4 text-xl text-white font-stud-regular text-center">{currentQuestion?.question.text}</div>
+            <div className="p-4 text-3xl text-white font-stud-regular text-center">{currentQuestion?.question.text}</div>
             <div className="p-5">
               {currentQuestion?.question?.options?.map((option, index) => {
                 return (
@@ -1121,8 +1121,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                     key={index}
                   >
                     <div className="absolute z-40 flex justify-between w-full font-stud-regular h-12">
-                      <span className="pl-3 self-center">{`${index + 1}` + '. ' + option.text}</span>
-                      <span className="pr-3 self-center">{`${option.total_answers || 0}`}</span>
+                      <span className="pl-3 text-xl self-center">{`${index + 1}` + '. ' + option.text}</span>
+                      <span className="pr-3 text-base self-center">{`${option.total_answers || 0}`}</span>
                     </div>
                     <Progress
                       percent={option.progress_bar_value}
@@ -1139,7 +1139,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               })}
             </div>
             {isOptionSubmitted && (
-              <div className="p-4 text-xl text-white font-stud-regular text-center">
+              <div className="p-4 text-sm text-white font-stud-regular text-center">
                 You took {`${timeTakenToAnswer.asSeconds()}`} seconds to answer!
               </div>
             )}
