@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import coinImg from '../../assets/coin.svg';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import deafult from '../../assets/user/user1.svg'
 import GameSummary from '../game-summary';
 import { Drawer, Button } from 'antd';
 import { getUserLeaderboard } from '../../service/quiz/quiz.service';
@@ -15,7 +16,7 @@ import ic_droparrow from '../../assets/ic_droparrow.svg';
 const containerStyle = {
   position: 'relative',
   overflow: 'none',
-  height: 870,
+  height: '100vh',
 };
 
 const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quizId }): React.ReactElement => {
@@ -241,7 +242,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quiz
             <div
             onClick={showDrawer}
               style={{ cursor: 'pointer', backgroundColor: '#8347E2' }}
-              className="absolute bottom-0  w-full left-0  flex   rounded-t-2xl z-50  "
+              className="absolute  bottom-0  w-full left-0  flex   rounded-t-2xl z-50  "
             >
               <div onClick={showDrawer} className="pt-4 pb-8 w-full text-black  rounded-3xl">
                 <div className="flex justify-center ">
