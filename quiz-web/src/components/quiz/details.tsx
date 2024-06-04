@@ -1108,11 +1108,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         <Progress ref={timerRef} type="circle" percent={timerProgress} strokeColor={'#44E500'} className="absolute" />
         {viewQuestions && (
           <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-            <div className="p-16 pt-48 text-base text-white font-stud-regular text-center">
+            <div className="p-8 pt-48 text-base text-white font-stud-regular text-center">
               Question {`${questionIndex}`} of {`${totalNumberOfQuestions}`}
             </div>
-            <div className="p-4 text-3xl text-white font-bold font-stud-regular text-center">{currentQuestion?.question.text}</div>
-            <div className="p-6">
+            <div className="text-3xl p-3 text-white font-bold font-stud-regular text-center">{currentQuestion?.question.text}</div>
+            <div className="p-4">
               {currentQuestion?.question?.options?.map((option, index) => {
                 return (
                   <div
@@ -1139,7 +1139,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               })}
             </div>
             {isOptionSubmitted && (
-              <div className="p-4 text-sm text-white font-stud-regular text-center">
+              <div className="p-2 mt-2 text-sm text-white font-stud-regular text-center">
                 You took {`${timeTakenToAnswer.asSeconds()}`} seconds to answer!
               </div>
             )}
