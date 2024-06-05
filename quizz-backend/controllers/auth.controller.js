@@ -6,7 +6,7 @@ const { tokenTypes } = require('../config/tokens');
 
 const register = catchAsync(async (req, res) => {
   let updatedUser;
-  req.body.ticket = 1000;
+  req.body.ticket = 10;
   req.body.credit = 20;
   if (req.body.shadow_user_id) {
     const shadowUser = await userService.getUserById(req.body.shadow_user_id);
