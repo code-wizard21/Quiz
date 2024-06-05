@@ -31,15 +31,9 @@ const createUser = async (userBody) => {
   // generate a random username if not provided
   const newUserBody = { ...userBody };
 
-  // check if username is taken
-  if (!newUserBody.username) {
-    newUserBody.name = await makeRandomUsername();
-   
-  }
 
-  if (await User.isEmailTaken(newUserBody.email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
-  }
+    newUserBody.name = await makeRandomUsername();
+
   newUserBody.username = newUserBody.name;
   // create the user
   

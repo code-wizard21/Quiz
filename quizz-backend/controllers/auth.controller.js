@@ -56,7 +56,7 @@ const shadowRegister = catchAsync(async (req, res) => {
   req.body.password = 'quizApp@123';
 
   const user = await userService.createUser(req.body);
-  const shadowuser = await userService.createShadowUser(req.body);
+  
 
   const agoraUserData = await agoraService.generateChatUserinAgora(user, req.body.password);
 

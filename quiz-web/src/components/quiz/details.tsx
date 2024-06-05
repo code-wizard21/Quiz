@@ -51,7 +51,7 @@ import twitterImg from '../../assets/social/twitter.svg';
 import whatsappImg from '../../assets/social/whatsapp.svg';
 import { getTicket, getHandleTip } from '../../service/user/user.service';
 import { reduceTicket } from '../../service/user/user.service';
-import {  getModalData } from '../../service/quiz/quiz.service';
+import { getModalData } from '../../service/quiz/quiz.service';
 import { checkOutBuyticketSessionSocket } from '../../service/payment/payment.service';
 import soundFile from '../../assets/coundown_timer_mixdown.mp3';
 import './1.css';
@@ -112,7 +112,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     amount: 0,
     rewardCredit: 0,
   });
-
+  const [newShadowUser, setNewShadowUser] = useState({
+    id: '',
+    username: '',
+  });
   const navigate = useNavigate();
   const [isParticipants, setIsParticipants] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
@@ -278,10 +281,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       const totalNumberOfAllOptionsAnswered = data?.question?.options?.reduce((acc: number, curr: IOption) => {
         return acc + (curr.total_answers || 0);
       }, 0);
+      const username = JSON.parse(localStorage.getItem('user')!).user.name;
+      const id = JSON.parse(localStorage.getItem('user')!).user.id;
       socket?.emit('user_useranswer_save', {
-        user_id: user?.id,
+        user_id: user?.id || id,
         quiz_id: data.quiz_id,
-        username: user?.username,
+        username: user?.username || username,
         question_id: data.question,
       });
 
@@ -432,9 +437,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     startSpin();
     setShowCalcuation(true);
   };
+
   const calculationEnd = async () => {
     setShowCalcuation(false);
-    const data = await getModalData(user?.id);
+   
+    const id = JSON.parse(localStorage.getItem('user')!).user.id;
+    const data = await getModalData(user?.id || id);
     console.log('datadata', data?.data?.data);
     localStorage.setItem('isjoinchanel', 'false');
     //  localStorage.setItem('iscounted', 'fals e');
@@ -475,9 +483,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       const iscounted = localStorage.getItem('iscounted');
       if (iscounted == 'true') {
         socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
-          user_id: user?.id,
+          user_id: user?.id || newShadowUser.id,
           role: user?.role,
-          username: user?.username,
+          username: user?.username || newShadowUser.username,
           quiz_id: id,
           state: 'refresh',
         });
@@ -617,7 +625,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
 
   const handleTip = async () => {
-    const data = { rank: currentQuizContent.rank, id: user?.id, state: isticket };
+    const data = { rank: currentQuizContent.rank, id: user?.id || newShadowUser.id, state: isticket };
     await getHandleTip(data).then((res) => {
       console.log('handleto', res);
       if (res.status == 200) {
@@ -706,7 +714,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     // localStorage.setItem('isjoinchanel', 'false');
     localStorage.setItem('iscounted', 'false');
 
-    socket?.emit(SOCKET_EMITTERS.USER_LEAVE_LIVE_QUIZ, { user_id: user?.id, quiz_id: id });
+    socket?.emit(SOCKET_EMITTERS.USER_LEAVE_LIVE_QUIZ, { user_id: user?.id || newShadowUser.id, quiz_id: id });
 
     if (remoteAudioTracks) {
       remoteAudioTracks.stop();
@@ -764,16 +772,21 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     if (!user) {
       // create shadow user and join
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
-      console.log('shadowUser',shadowUser);
+      console.log('shadowUser', shadowUser);
       dispatch(setUserData(shadowUser.data.user));
       localStorage.setItem('user', JSON.stringify(shadowUser.data));
+      setNewShadowUser((prevState) => ({
+        ...prevState,
+        id: shadowUser.data.user.id,
+        username: shadowUser.data.user.name,
+      }));
       socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
         user_id: shadowUser.data.user.id,
         quiz_id: id,
         role: 'shadow',
         username: shadowUser.data.user.name,
       });
-    }else{
+    } else {
       socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
         user_id: user?.id,
         quiz_id: id,
@@ -786,7 +799,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       socket?.connect();
       showMessages('error', 'Please wait while we connect you to the quiz');
     }
-   
 
     const randomUid = Math.floor(Math.random() * 1000);
 
@@ -993,13 +1005,15 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       setTimeTakenToAnswer(momentDuration);
 
       const postAnswer = {
-        username: user?.username,
-        user_id: user?.id,
+        username: user?.username || newShadowUser.username,
+        user_id: user?.id || newShadowUser.id,
         quiz_id: id,
         question_id: currentQuestion?.question._id,
         option_id: option,
         duration: Number(momentDuration.asSeconds().toFixed(2)),
       };
+      console.log('newShadowUser', newShadowUser);
+      console.log('postAnswer', postAnswer);
       // emit user_submit_live_quiz_answer event to socket
       socket?.emit(SOCKET_EMITTERS.USER_SUBMIT_LIVE_QUIZ_ANSWER, postAnswer);
 
@@ -1029,10 +1043,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   return (
     <div className="h-full w-full relative">
       {/* <button onClick={calculationEnd}>sss</button> */}
-    
-             
-            
-      {!isVideoSubed && !showLeaderboard &&(
+
+      {!isVideoSubed && !showLeaderboard && (
         <BackTab
           text={convertDate(quizData?.start_date)}
           // text={moment(quizData?.start_time).format('dddd, MMMM Do, h:mm a')}
@@ -1095,7 +1107,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       )}
 
       <div>
-        {quizData && user?.role === 'shadow' && !showLeaderboard&& (
+        {quizData && user?.role === 'shadow' && !showLeaderboard && (
           <div className="absolute flex h-screen">
             <div
               style={{ backgroundColor: '#090B40' }}
@@ -1120,7 +1132,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <div className="p-8 pt-48 text-base text-white font-stud-regular text-center">
               Question {`${questionIndex}`} of {`${totalNumberOfQuestions}`}
             </div>
-            <div className="text-3xl p-3 text-white font-bold font-stud-regular text-center">{currentQuestion?.question.text}</div>
+            <div className="text-3xl p-3 text-white font-bold font-stud-regular text-center">
+              {currentQuestion?.question.text}
+            </div>
             <div className="p-4">
               {currentQuestion?.question?.options?.map((option, index) => {
                 return (
@@ -1130,7 +1144,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                     key={index}
                   >
                     <div className="absolute z-40 flex justify-between w-full font-stud-regular h-12">
-                      <span className="pl-6 text-base font-bold  self-center">{`${index + 1}` + '. ' + option.text}</span>
+                      <span className="pl-6 text-base font-bold  self-center">
+                        {`${index + 1}` + '. ' + option.text}
+                      </span>
                       <span className="pr-3 text-base self-center">{`${option.total_answers || 0}`}</span>
                     </div>
                     <Progress
@@ -1154,9 +1170,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             )}
           </div>
         )}
-        {id  && showLeaderboard &&(
+        {id && showLeaderboard && (
           <>
-            <Leaderboard quizId={id}  />
+            <Leaderboard quizId={id} />
           </>
         )}
 

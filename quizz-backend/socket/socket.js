@@ -450,8 +450,9 @@ const initaliseWebSocket = (server) => {
         // io.in(room).emit('user_quiz_live_question_answer', {});
       });
       socket.on('user_useranswer_save', async (data) => {
-        console.log('user_useranswer_save');
+        console.log('user_useranswer_save',data);
         const { quiz_id, question_id, username, user_id } = data;
+
         let questionExit = await UserAnswer.find({ question: question_id, user: user_id });
         console.log('questionExit', questionExit);
         const question_text = await QuizQuestion.findOne({ _id: question_id });
