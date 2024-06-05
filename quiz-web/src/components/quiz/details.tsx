@@ -764,20 +764,29 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     if (!user) {
       // create shadow user and join
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
+      console.log('shadowUser',shadowUser);
       dispatch(setUserData(shadowUser.data.user));
       localStorage.setItem('user', JSON.stringify(shadowUser.data));
+      socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
+        user_id: shadowUser.data.user.id,
+        quiz_id: id,
+        role: 'shadow',
+        username: shadowUser.data.user.name,
+      });
+    }else{
+      socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
+        user_id: user?.id,
+        quiz_id: id,
+        role: user?.role,
+        username: user?.username,
+      });
     }
 
     if (!socket?.connected) {
       socket?.connect();
       showMessages('error', 'Please wait while we connect you to the quiz');
     }
-    socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
-      user_id: user?.id,
-      quiz_id: id,
-      role: user?.role,
-      username: user?.username,
-    });
+   
 
     const randomUid = Math.floor(Math.random() * 1000);
 
@@ -1145,9 +1154,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             )}
           </div>
         )}
-        {id && showLeaderboard && (
+        {id  && showLeaderboard &&(
           <>
-            <Leaderboard quizId={id} isVideoSubed={isVideoSubed} setIsVideoSubed={setIsVideoSubed} />
+            <Leaderboard quizId={id}  />
           </>
         )}
 

@@ -19,7 +19,7 @@ const containerStyle = {
   height: '100vh',
 };
 
-const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quizId }): React.ReactElement => {
+const Leaderboard: React.FC<{ quizId: string; }> = ({ quizId }): React.ReactElement => {
   const [leaderboardResults, setLeaderboardResults] = useState<IQuizLeaderboardOverview>();
   const [viewLeaderboard, setViewLeaderboard] = useState(true);
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
@@ -87,10 +87,10 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quiz
     <>
       <Spin spinning={isLeaderboardLoading} size="large">
         {viewLeaderboard && (
-          <div style={containerStyle} id="leaderboard-container" >
+          <div style={containerStyle} id="leaderboard-container" className='max-[420px]:flex-wrap min-w-96' >
             <Row>
               <div className="flex mt-6 ml-4 z-40" onClick={handleClose}>
-                <img src={close} height={20} />
+                <img src={close} height={24} />
               </div>
               <Col span={24} className="flex justify-center mt-4">
                 {leaderboardResults?.[1]?.avatar && (
@@ -199,7 +199,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quiz
                       </Divider>
                     }
                     scrollableTarget="scrollableDiv"
-                    className="w-full"
+                    className="w-full max-[420px]:w-screen"
                   >
                     <List
                       dataSource={leaderboardResults}
@@ -242,7 +242,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quiz
             <div
             onClick={showDrawer}
               style={{ cursor: 'pointer', backgroundColor: '#8347E2' }}
-              className="absolute  bottom-0  w-full left-0  flex   rounded-t-2xl z-50  "
+              className="absolute  bottom-0 w-full max-[420px]:w-screen left-0  flex   rounded-t-2xl z-50  "
             >
               <div onClick={showDrawer} className="pt-4 pb-8 w-full text-black  rounded-3xl">
                 <div className="flex justify-center ">
@@ -262,7 +262,7 @@ const Leaderboard: React.FC<{ quizId: string; isVideoSubed: boolean }> = ({ quiz
               }
               onClose={onClose}
               closeIcon={closeDrawer}
-              height={800}
+              height={700}
               open={open}
               placement="bottom"
             >

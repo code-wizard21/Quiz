@@ -1,7 +1,7 @@
 #leaderboard-container {
     background-image: url("../../assets/leaderboard-screen.svg");
     background-repeat: no-repeat;
-    width: 428px;
+    width: auto;
     margin: auto;
 }
 
