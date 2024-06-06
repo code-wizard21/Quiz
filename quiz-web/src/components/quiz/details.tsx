@@ -833,7 +833,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       }
       leaveChannel();
     });
-    const res = await getQuizState();
+    const res = await getQuizState(id);
 
     if (res.data.data.status != undefined) {
       console.log('resres', res.data);
@@ -1329,7 +1329,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         </div>
       )}
 
-      <Drawer title="Basic Drawer" height={500} onClose={onClose} open={open} placement="bottom">
+      <Drawer title="Basic Drawer" getContainer={false} height={550} onClose={onClose} open={open} placement="bottom">
         <div>
           <div>
             <div className="flex flex-col p-2 bg-gradient-to-bl bg-white ">

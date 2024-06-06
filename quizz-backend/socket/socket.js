@@ -69,19 +69,7 @@ const initaliseWebSocket = (server) => {
 
       socket.on('increase_pool_amount_user', async (data) => {
         console.log('data', data);
-        const newData = new quizticket({
-          email: data.email,
-          ticket: data.ticket,
-          quiz: data.quiz_id,
-        });
-        // await newData
-        //   .save()
-        //   .then((res) => {
-        //     console.log('res');
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //   });
+        const {email,quiz_id,ticket}=data;
         amount++;
         playCount++;
 
@@ -95,6 +83,7 @@ const initaliseWebSocket = (server) => {
         }
 
         const newData1 = new liveQuiz({
+          quiz:quiz_id,
           status: 'showpool',
           pool: amount,
           contestants: playCount,
@@ -131,6 +120,7 @@ const initaliseWebSocket = (server) => {
           }
           const newData = new liveQuiz({
             status: 'paused',
+            quiz:quiz_id
           });
 
           await newData
@@ -175,6 +165,7 @@ const initaliseWebSocket = (server) => {
         if (data.status === 'hide') {
           const newData = new liveQuiz({
             status: 'quiz_end',
+            quiz:quiz_id
           });
 
           await newData
@@ -188,10 +179,11 @@ const initaliseWebSocket = (server) => {
         } else {
           const newData = new liveQuiz({
             status: 'showpool',
+            quiz:quiz_id
           });
 
           await newData
-            .save()
+            .save() 
             .then((res) => {
               console.log('res');
             })
@@ -314,6 +306,7 @@ const initaliseWebSocket = (server) => {
         const totalNumberOfQuestions = await QuizQuestion.countDocuments({ quiz: new ObjectId(quiz_id) });
         const newData = new liveQuiz({
           status: 'quiz',
+          quiz:quiz_id,
           question_id: question_id,
           question_index: question_index,
           total_questions: totalNumberOfQuestions,

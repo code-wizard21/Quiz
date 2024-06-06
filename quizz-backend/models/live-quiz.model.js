@@ -7,6 +7,12 @@ const livequizSchema = mongoose.Schema(
     status: {
       type: String,
     },
+    quiz: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'Quiz',
+      required: true,
+      unique: true,
+  },
     question_index: {
       type: Number,
     },

@@ -13,7 +13,6 @@ router.get('/', validate(quizValidation.getQuizes), quizController.getQuizes);
 // get all quizes with questions and options
 router.get('/all', auth('getAllQuizDetails'), validate(quizValidation.getQuizes), quizController.getAllQuizesWithDetails);
 
-router.get('/getstate', validate(quizValidation.getQuizes), quizController.getQuizeState);
 router.post('/getquestion',  quizController.getQuestion);
 router.post('/getonlyquestion',  quizController.getOnlyQuestion);
 
@@ -41,6 +40,7 @@ router.post(
 
 router.patch('/:quiz_id', auth('createQuizRight'), validate(quizValidation.updateQuiz), quizController.updateQuiz);
 
+router.get('/:quiz_id/getstate', validate(quizValidation.getQuizes), quizController.getQuizeState);
 router.get('/:quiz_id/leaderboard', validate(quizValidation.quizLeaderboard), quizController.getQuizLeaderboard);
 router.get('/:quiz_id/getmodaldata', auth(), validate(quizValidation.quizLeaderboard), quizController.getModalQuizLeaderboard);
 router.get(

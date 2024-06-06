@@ -33,10 +33,11 @@ export const getQuizDetail = async (
   return get(`quizes/${quizId}`);
 }
 
-export const getQuizState = async (
 
-): Promise<AxiosResponse<IQuizResponse>> => {
-  return get(`quizes/getstate`);
+export const getQuizState = async (
+  quizId: string,
+): Promise<AxiosResponse<IQuizLeaderboardResponse>> => {
+  return get(`quizes/${quizId}/getstate`);
 }
 
 export const getAgoraRtcToken = async (

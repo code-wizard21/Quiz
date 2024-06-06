@@ -2,20 +2,30 @@ import { Button, Col, Row, Divider } from 'antd';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import google from '../../assets/social/Google.svg';
-import { GoogleLogin } from 'react-google-login';
+import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+
 import close from '../../assets/close.svg';
 const LandingPage: React.FC = () => {
+  const clientId = '1082715081696-mgk2hen3l75jf0oin4lavv7ga0r4pf9a.apps.googleusercontent.com';
   const navigate = useNavigate();
-  const responseGoogle = (response) => {
-    console.log(response);
-    // respond back to your server with this response
-  };
   const handleButtonClick = async () => {
     await localStorage.clear();
     navigate('/dashboard');
     window.location.reload();
   };
 
+  const onSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+    console.log('Success:', response);
+    navigate('/dashboard');
+  };
+
+  const onFailure = (response: any) => {
+    console.error('Login Failed:', response);
+
+    if (response.error === 'popup_closed_by_user') {
+      console.log('User manually closed the popup without signing in');
+    }
+  };
   return (
     <>
       <Row className="landing-page ">
@@ -33,20 +43,30 @@ const LandingPage: React.FC = () => {
             daily for all you brainiacs out there.
           </p>
 
-          <Button type="primary" className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full">
+          <GoogleLogin
+            clientId={clientId}
+            onSuccess={onSuccess}
+            onFailure={onFailure}
+            cookiePolicy={'single_host_origin'}
+            render={(renderProps) => (
+              <Button
+                type="primary"
+                onClick={renderProps.onClick}
+                className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full"
+              >
+                <div className="flex items-center justify-center">
+                  <img src={google} alt="user2" />
+                  <div className="text-center text-base font-bold text-black mr-2 ">Continue with Google</div>
+                </div>
+              </Button>
+            )}
+          />
+          {/* <Button type="primary" className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full">
             <div className="flex items-center justify-center">
               <img src={google} alt="user2" />
               <div className="text-center text-base font-bold text-black mr-2 ">Continue with Google</div>
             </div>
-          </Button>
-          {/* <GoogleLogin
-            className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full"
-            clientId="YOUR_CLIENT_ID"
-            buttonText="Login with Google"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            cookiePolicy={'single_host_origin'}
-          /> */}
+          </Button> */}
           <Divider style={{ borderColor: 'white', color: 'white' }}>or</Divider>
 
           <div className="flex">
@@ -84,9 +104,9 @@ const LandingPage: React.FC = () => {
             </Link>
           </div>
           <div className="mt-8 text-center">
-            <div className="text-[#D0B3FF] text-xs font-normal">By continuing with an account located in Singapore</div>
+            <div className="text-[#D0B3FF] text-xs font-normal">By continuing with an account located in Singapore</div>
             <div className="text-[#D0B3FF] text-xs font-normal">
-              you agree to our Terms of Service and Privacy Policy.
+              you agree to our Terms of Service and Privacy Policy.
             </div>
           </div>
         </Col>

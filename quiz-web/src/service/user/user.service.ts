@@ -7,10 +7,12 @@ import { post } from '../../wrappers/request';
  * @param {TCreateUser} userData
  * @returns {Promise<AxiosResponse>}
  */
+export const googleAuth = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
+  return post('auth/register', userData);
+};
 export const register = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('auth/register', userData);
 };
-
 export const createShadowUser = async (): Promise<AxiosResponse<ILoginResponse>> => {
   return post('auth/shadow/register', {});
 };
