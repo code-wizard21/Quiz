@@ -34,11 +34,10 @@ export const getQuizDetail = async (
 }
 
 
-export const getQuizState = async (
-  quizId: string,
-): Promise<AxiosResponse<IQuizLeaderboardResponse>> => {
-  return get(`quizes/${quizId}/getstate`);
-}
+
+export const getQuizState = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
+  return post('quizes/getstate', userData);
+};
 
 export const getAgoraRtcToken = async (
   channel: string,

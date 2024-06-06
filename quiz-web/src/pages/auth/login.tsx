@@ -36,7 +36,7 @@ const Login: React.FC = () => {
           localStorage.setItem('user', JSON.stringify(res.data));
           localStorage.setItem('hasRegistered', 'true');
           
-          const defaultPath = '/dashboard';
+          const defaultPath = '/';
           const prevPath = localStorage.getItem('prevPath') || defaultPath;
           localStorage.removeItem('prevPath');
           if (prevPath !== defaultPath) {

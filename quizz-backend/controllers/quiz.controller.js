@@ -74,10 +74,11 @@ const getQuizes = catchAsync(async (req, res) => {
 });
 
 const getQuizeState = catchAsync(async (req, res) => {
+  console.log('req,body',req.body);
+  console.log('req,body',req.body.id);
   let docs;
-  console.log('getquizdata',req.params);
   try {
-    docs = await livequiz.find({});
+    docs = await livequiz.find({quiz:req.body.quiz});
   } catch (err) {
     console.error(err);
   }

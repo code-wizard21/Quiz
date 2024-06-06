@@ -28,7 +28,7 @@ const buyCredit = catchAsync(async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `${YOUR_DOMAIN}/dashboard`,
+      success_url: `${YOUR_DOMAIN}`,
       cancel_url: `${YOUR_DOMAIN}/selectmode`,
       metadata: {
         email: email, // Replace with your customer's email
@@ -63,7 +63,7 @@ const buyCreditSocket = catchAsync(async (req, res) => {
       ],
       mode: 'payment',
       success_url: `${YOUR_DOMAIN}${successful_url}`,
-      cancel_url: `${YOUR_DOMAIN}/dashboard`,
+      cancel_url: `${YOUR_DOMAIN}`,
       metadata: {
         email: email, // Replace with your customer's email
         user: user,
@@ -95,8 +95,8 @@ const buyticket = catchAsync(async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `${YOUR_DOMAIN}/dashboard`,
-      cancel_url: `${YOUR_DOMAIN}/dashboard`,
+      success_url: `${YOUR_DOMAIN}`,
+      cancel_url: `${YOUR_DOMAIN}`,
       metadata: {
         email: email, // Replace with your customer's email
         user: user,

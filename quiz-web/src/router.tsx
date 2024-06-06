@@ -48,13 +48,13 @@ const Router: React.FC<{}> = (): React.ReactElement => {
       <Routes>
         <Route element={<QuizLayout />}>
           {/* <Route element={<AuthRoute />}></Route> */}
-          <Route path="/dashboard" element={<QuizOverview />} />
+          <Route path="/" element={<QuizOverview />} />
 
           <Route path="/quiz/:id" element={<QuizDetail />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route element={<AuthLayout />}>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/signup" element={<SingUp />} />
           <Route path="/setavatar" element={<SelectAvatar />} />
           <Route path="/login" element={<Login />} />

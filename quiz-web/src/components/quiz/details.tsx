@@ -124,7 +124,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
-
+  const [iscalculaed, setIscalculaed] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
   const [isPaused, setIsPaused] = useState(false);
   const videoRef = useRef<any>(null);
@@ -323,7 +323,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       localStorage.setItem('isjoinchanel', 'false');
       //    localStorage.setItem('iscounted', 'false');
       setIsPaused(false);
-
+  
       setIsShowpool(false);
       leaveChannel();
     });
@@ -440,7 +440,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const calculationEnd = async () => {
     setShowCalcuation(false);
-   
+    setIscalculaed(true);
     const id = JSON.parse(localStorage.getItem('user')!).user.id;
     const data = await getModalData(user?.id || id);
     console.log('datadata', data?.data?.data);
@@ -478,7 +478,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }, 15000); // Stop the sound after 15 seconds
   };
   const fetchQuizState = async () => {
-    const res = await getQuizState();
+    const data = { quiz: id };
+    const res = await getQuizState(data);
     try {
       const iscounted = localStorage.getItem('iscounted');
       if (iscounted == 'true') {
@@ -740,7 +741,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setIsVideoSubed(false);
     setViewQuestions(false);
     setIsPaused(false);
-    setShowLeaderboard(true);
+    console.log('showleadderboard',showLeaderboard);
+    // if(iscalculaed==false){
+    //   setShowLeaderboard(false);
+    // }
     timerRef.current?.style.setProperty('display', 'none');
     setTimerProgress(0);
     setIsOptionSubmitted(false);
@@ -833,7 +837,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       }
       leaveChannel();
     });
-    const res = await getQuizState(id);
+    const reqData={quiz:id};
+    const res = await getQuizState(reqData);
 
     if (res.data.data.status != undefined) {
       console.log('resres', res.data);
@@ -950,7 +955,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const handleJoinClick = () => {
     // Save the current path ('/quiz/:quizId/leaderboard') in local storage before navigating
     localStorage.setItem('prevPath', location.pathname);
-    navigate('/');
+    navigate('/landing');
   };
   const toggleQuestion = (toDisplay: boolean = false) => {
     setViewQuestions(toDisplay);
@@ -1050,7 +1055,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           // text={moment(quizData?.start_time).format('dddd, MMMM Do, h:mm a')}
           onClick={() => {
             dispatch(setMiscellaneousData({ topBarVisibility: true }));
-            navigate('/dashboard');
+            navigate('/');
           }}
         />
       )}
@@ -1113,7 +1118,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               style={{ backgroundColor: '#090B40' }}
               className="w-full flex max-w-430 pb-3 pt-4 rounded-t-2xl z-50 fixed bottom-0"
             >
-              <Link to="/" className="w-full px-5">
+              <Link to="/landing" className="w-full px-5">
                 <Button type="primary" className="w-full text-black h-12 rounded-3xl">
                   <div className="flex justify-center px-4 gap-2">
                     <div className="flex text-black justify-center text-base font-bold text-center ">

@@ -75,7 +75,7 @@ const SingUp: React.FC = () => {
           toast.success('Your avatar has been successfully stored.', {
             autoClose: false,
           });
-          const defaultPath = '/dashboard';
+          const defaultPath = '/';
           const prevPath = localStorage.getItem('prevPath') || defaultPath;
           localStorage.removeItem('prevPath');
           if (prevPath !== defaultPath) {

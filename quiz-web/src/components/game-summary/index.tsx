@@ -56,7 +56,7 @@ const GameSummary: React.FC<{ quizId: string }> = ({ quizId }): React.ReactEleme
               <div className="justify-center w-full items-center flex">
                 <button
                   className="bg-customYellowBorder w-full mt-8 w-[285px] h-[52px] top-[320px]  rounded-[30px] space-x-[6px]"
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/landing')}
                 >
                   <div className="flex justify-center px-4 gap-2">
                     <div className="flex text-black justify-center text-base font-bold text-center ">

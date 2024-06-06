@@ -10,13 +10,13 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const handleButtonClick = async () => {
     await localStorage.clear();
-    navigate('/dashboard');
+    navigate('/');
     window.location.reload();
   };
 
   const onSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
     console.log('Success:', response);
-    navigate('/dashboard');
+    navigate('/');
   };
 
   const onFailure = (response: any) => {
@@ -42,7 +42,6 @@ const LandingPage: React.FC = () => {
             Test your wits with our daily live quiz shows and win cash! Free quizzes of a variety of themes updated
             daily for all you brainiacs out there.
           </p>
-
           <GoogleLogin
             clientId={clientId}
             onSuccess={onSuccess}
@@ -51,7 +50,7 @@ const LandingPage: React.FC = () => {
             render={(renderProps) => (
               <Button
                 type="primary"
-                onClick={renderProps.onClick}
+                onClick={() => renderProps.onClick()}
                 className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full"
               >
                 <div className="flex items-center justify-center">
@@ -99,7 +98,7 @@ const LandingPage: React.FC = () => {
             </Button>
           </div>
           <div className="mt-4 flex justify-center">
-            <Link to="/dashboard" onClick={handleButtonClick}>
+            <Link to="/" onClick={handleButtonClick}>
               <div className="text-white text-xl underline">Continue as Guest </div>
             </Link>
           </div>

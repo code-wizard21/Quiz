@@ -25,6 +25,7 @@ const endpointSecret = 'whsec_hm0gPh68j8RunfG1DEbrF2RzSKqDo0Dm';
 
 const app = express();
 const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (request, response) => {
   const sig = request.headers['stripe-signature'];
@@ -144,6 +145,31 @@ app.use('/v1', routes);
 app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found', true, {}));
 });
+
+
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const GOOGLE_CLIENT_ID = '1082715081696-mgk2hen3l75jf0oin4lavv7ga0r4pf9a.apps.googleusercontent.com';
+const GOOGLE_CLIENT_SECRET = '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';
+passport.use(new GoogleStrategy({
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:4002/auth/google/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+      userProfile=profile;
+      return done(null, userProfile);
+  }
+));
+ 
+app.get('/auth/google', 
+  passport.authenticate('google', { scope : ['profile', 'email'] }));
+ 
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/error' }),
+  function(req, res) {
+    // Successful authentication, redirect success.
+    res.redirect('/success');
+  });
 
 // convert error to ApiError, if needed
 app.use(errorConverter);

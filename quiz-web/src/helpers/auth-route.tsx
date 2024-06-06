@@ -18,7 +18,7 @@ export function AuthRoute(): ReactElement {
 
   if (localUser && location.pathname === '/') {
     // Redirect to dashboard
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Check if localUser is authenticated, return an outlet if authorized

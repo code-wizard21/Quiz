@@ -49,7 +49,7 @@ const QuizOverview: React.FC = (): React.ReactElement => {
             <div
               className="w-full flex max-w-430 py-4 rounded-t-2xl z-50 fixed bottom-0"
             >
-              <Link to="/" className="w-full px-4">
+              <Link to="/landing" className="w-full px-4">
                 <Button type="primary" className="w-full text-black h-12 rounded-3xl">
                   <div className="flex justify-center px-4 gap-2">
                     <div className="flex text-black justify-center text-base font-bold text-center ">

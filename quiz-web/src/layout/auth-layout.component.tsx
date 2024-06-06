@@ -15,7 +15,7 @@ const AuthLayout: React.FC = (): React.ReactElement => {
   if (localUser?.user && location.pathname === '/') {
     // Redirect to dashboard if user is not shadow
     if (localUser?.user?.role !== 'shadow') {
-      return <Navigate to="/dashboard" replace />;
+      return <Navigate to="/" replace />;
     }
   }
 
@@ -23,7 +23,7 @@ const AuthLayout: React.FC = (): React.ReactElement => {
     <div className="bg-4E13AF">
       <div className="w-full  bg-gray-100 max-w-430 m-auto min-h-screen bg-4E13AF overflow-hide">
         {location.pathname === '/login' && localUser?.user && localUser?.user?.role !== 'shadow' ? (
-          <Navigate to="/dashboard" state={{ from: location }} replace />
+          <Navigate to="/" state={{ from: location }} replace />
         ) : (
           <Outlet />
         )}
