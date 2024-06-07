@@ -9,18 +9,17 @@ const nanoidAlpha = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQR
 const nanoidAlphaNumeric = () => nanoidAlpha() + nanoidNumeric();
 
 function makeRandomUsername() {
-  var result           = '';
-  var length           = 6;
-  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var result = '';
+  var length = 6;
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   var charactersLength = characters.length;
-  for ( let i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
 }
 
 // Use the function
-
 
 /**
  * Create a user
@@ -31,15 +30,14 @@ const createUser = async (userBody) => {
   // generate a random username if not provided
   const newUserBody = { ...userBody };
 
-
-    newUserBody.name = await makeRandomUsername();
+  console.log('newUserBody', newUserBody);
+  // newUserBody.name = await makeRandomUsername();
 
   newUserBody.username = newUserBody.name;
   // create the user
-  
+
   return User.create(newUserBody);
 };
-
 
 const createShadowUser = async (userBody) => {
   // generate a random username if not provided
@@ -47,11 +45,10 @@ const createShadowUser = async (userBody) => {
   // check if username is taken
   if (!newUserBody.username) {
     newUserBody.name = await makeRandomUsername();
-   
   }
   newUserBody.username = newUserBody.name;
   // create the user
- 
+
   return ShadowUser.create(newUserBody);
 };
 
@@ -69,7 +66,6 @@ const queryUsers = async (filter, options) => {
   return users;
 };
 const queryShadowUsers = async (filter, options) => {
-  
   const users = await ShadowUser.paginate(filter, options);
   return users;
 };
@@ -137,5 +133,5 @@ module.exports = {
   getUserByEmailAndRole,
   updateUserById,
   deleteUserById,
-  queryShadowUsers
+  queryShadowUsers,
 };

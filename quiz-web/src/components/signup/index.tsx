@@ -47,6 +47,7 @@ const SingUp: React.FC = () => {
           toast.success('Register was successful', {
             autoClose: false,
           });
+          console.log('res.data',res.data);
           localStorage.setItem('user', JSON.stringify(res.data));
           localStorage.setItem('hasRegistered', 'true');
           dispatch(setUserData(res.data.user));
@@ -97,8 +98,8 @@ const SingUp: React.FC = () => {
         </Form.Item>
         <Form.Item
           name="name"
-          rules={[{ required: true, message: `Full name is required` }]}
-          label={<span className="text-white">Full name</span>}
+          rules={[{ required: true, message: `username is required` }]}
+          label={<span className="text-white">Username</span>}
         >
           <Input placeholder="Enter your full name" className="h-12 rounded-xl" />
         </Form.Item>

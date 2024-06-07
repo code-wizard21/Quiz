@@ -45,7 +45,7 @@ const Payment = () => {
   useEffect(() => {
     if (user != null) {
       if (user.role == 'user') {
-        setName(user.name);
+        setName(user.username);
         const data = { id: user.id };
         getTicket(data)
           .then((res) => {

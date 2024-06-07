@@ -1,15 +1,12 @@
-module.exports = (sequelize, Sequelize) => {
-  const User = sequelize.define("googleUser", {
-    code: {
-      type: Sequelize.STRING
-    },
-    status: {
-      type: Sequelize.INTEGER
-    },
-    isDelete: {
-      type: Sequelize.BOOLEAN
-    }
-  });
+const mongoose = require('mongoose');
 
-  return User;
-};
+const GoogleUserSchema = new mongoose.Schema({
+  email: String,
+  password: String,
+  status: Number,
+  isDelete: Boolean
+});
+
+const GoogleUser = mongoose.model('GoogleUser', GoogleUserSchema);
+
+module.exports = GoogleUser;

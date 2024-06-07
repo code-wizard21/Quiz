@@ -7,9 +7,11 @@ import { googleAuth } from '../../service/payment/payment.service';
 
 
 import close from '../../assets/close.svg';
+import { useDispatch } from 'react-redux';
 const LandingPage: React.FC = () => {
   const clientId = '1082715081696-mgk2hen3l75jf0oin4lavv7ga0r4pf9a.apps.googleusercontent.com';
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleButtonClick = async () => {
     await localStorage.clear();
     navigate('/');
@@ -17,12 +19,15 @@ const LandingPage: React.FC = () => {
   };
   const googleLogin = useGoogleLogin({
     onSuccess: (credentialRespose) => {
-      console.log(credentialRespose);
+      console.log('credentialRespose',credentialRespose);
       googleAuth({
         credentialRespose
-      }).then(() => {
-      
-        navigate('/');
+      }).then((res) => {
+        console.log('googleauth',res.data.user);
+        // navigate('/');
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+        localStorage.setItem('hasRegistered', 'true');
+        dispatch(setUserData(res.data.user));
       });
     },
     flow: 'auth-code',

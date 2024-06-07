@@ -32,6 +32,7 @@ const Login: React.FC = () => {
             autoClose: false,
           });
           setIsCorrect(true);
+          console.log('res.data',res.data);
           dispatch(setUserData(res.data.user));
           localStorage.setItem('user', JSON.stringify(res.data));
           localStorage.setItem('hasRegistered', 'true');
