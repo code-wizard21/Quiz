@@ -10,7 +10,7 @@ router.post('/ticket/getall', userController.getTicket);
 router.post('/ticket/useticketquiz', userController.useTicketQuiz);
 router.post('/setavatar', userController.setAvatar);
 router.post('/handletip', userController.handleTip);
-
+router.post('/googlelogin', userController.googlelogin);
 
 router
     .route('/')

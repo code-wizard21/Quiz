@@ -2,7 +2,9 @@ import { Button, Col, Row, Divider } from 'antd';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import google from '../../assets/social/Google.svg';
-import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+import { useGoogleLogin } from '@react-oauth/google';
+import { googleAuth } from '../../service/payment/payment.service';
+
 
 import close from '../../assets/close.svg';
 const LandingPage: React.FC = () => {
@@ -13,19 +15,19 @@ const LandingPage: React.FC = () => {
     navigate('/');
     window.location.reload();
   };
-
-  const onSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-    console.log('Success:', response);
-    navigate('/');
-  };
-
-  const onFailure = (response: any) => {
-    console.error('Login Failed:', response);
-
-    if (response.error === 'popup_closed_by_user') {
-      console.log('User manually closed the popup without signing in');
-    }
-  };
+  const googleLogin = useGoogleLogin({
+    onSuccess: (credentialRespose) => {
+      console.log(credentialRespose);
+      googleAuth({
+        credentialRespose
+      }).then(() => {
+      
+        navigate('/');
+      });
+    },
+    flow: 'auth-code',
+  });
+ 
   return (
     <>
       <Row className="landing-page ">
@@ -42,15 +44,10 @@ const LandingPage: React.FC = () => {
             Test your wits with our daily live quiz shows and win cash! Free quizzes of a variety of themes updated
             daily for all you brainiacs out there.
           </p>
-          <GoogleLogin
-            clientId={clientId}
-            onSuccess={onSuccess}
-            onFailure={onFailure}
-            cookiePolicy={'single_host_origin'}
-            render={(renderProps) => (
+   
               <Button
                 type="primary"
-                onClick={() => renderProps.onClick()}
+                onClick={() => googleLogin()}
                 className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full"
               >
                 <div className="flex items-center justify-center">
@@ -58,8 +55,7 @@ const LandingPage: React.FC = () => {
                   <div className="text-center text-base font-bold text-black mr-2 ">Continue with Google</div>
                 </div>
               </Button>
-            )}
-          />
+          
           {/* <Button type="primary" className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full">
             <div className="flex items-center justify-center">
               <img src={google} alt="user2" />

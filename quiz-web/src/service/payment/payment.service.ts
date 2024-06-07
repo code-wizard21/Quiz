@@ -7,9 +7,11 @@ import { post } from '../../wrappers/request';
  * @param {TCreateUser} userData
  * @returns {Promise<AxiosResponse>}
  */
-export const checkOutBuyticketSession = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
-  return post('payment/create-checkout-ticket', userData);
+
+export const googleAuth = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
+  return post('users/googlelogin', userData);
 };
+
 export const checkOutBuyticketSessionSocket = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('payment/create-checkout-ticket-socket', userData);
 };
