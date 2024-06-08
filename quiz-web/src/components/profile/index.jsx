@@ -143,7 +143,7 @@ const Payment = () => {
           <div className="rounded-bl-3xl rounded-br-3xl bg-cover bg-center bg-no-repeat  bg-profile_gray h-80">
             <div className="flex flex-col">
               <div className="mt-5 ml-4 flex justify-start z-20">
-                <Link to="/">
+                <Link to="/quiz">
                   <img src={backSvg} alt="user2" className=" border-4  rounded-full" width={30} height={30} />
                 </Link>
               </div>

@@ -1055,7 +1055,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           // text={moment(quizData?.start_time).format('dddd, MMMM Do, h:mm a')}
           onClick={() => {
             dispatch(setMiscellaneousData({ topBarVisibility: true }));
-            navigate('/');
+            navigate('/quiz');
           }}
         />
       )}
