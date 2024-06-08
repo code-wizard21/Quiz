@@ -74,7 +74,7 @@ const SingUp: React.FC = () => {
   return (
     <Row className="registration-page px-8 block">
       <div className="pt-8 flex justify-start z-20">
-        <Link to="/">
+        <Link to="/signup">
           <img src={evaarrow} alt="user2" className=" border-4  rounded-full" width={30} height={30} />
         </Link>
       </div>
