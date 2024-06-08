@@ -955,7 +955,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const handleJoinClick = () => {
     // Save the current path ('/quiz/:quizId/leaderboard') in local storage before navigating
     localStorage.setItem('prevPath', location.pathname);
-    navigate('/landing');
+    navigate('/signup');
   };
   const toggleQuestion = (toDisplay: boolean = false) => {
     setViewQuestions(toDisplay);
@@ -1118,7 +1118,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               style={{ backgroundColor: '#090B40' }}
               className="w-full flex max-w-430 pb-3 pt-4 rounded-t-2xl z-50 fixed bottom-0"
             >
-              <Link to="/landing" className="w-full px-5">
+              <Link to="/signup" className="w-full px-5">
                 <Button type="primary" className="w-full text-black h-12 rounded-3xl">
                   <div className="flex justify-center px-4 gap-2">
                     <div className="flex text-black justify-center text-base font-bold text-center ">

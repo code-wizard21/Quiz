@@ -3,7 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const axios = require('axios');
 const catchAsync = require('../utils/catchAsync');
-const { userService } = require('../services');
+const { userService ,agoraService} = require('../services');
 const { success } = require('../utils/ApiResponse');
 const { User } = require('../models');
 const GoogleUser = require('../models/google.user.model');
@@ -17,6 +17,7 @@ const createUser = catchAsync(async (req, res) => {
 const googlelogin = async (req, res) => {
   const { credentialRespose } = req.body;
   console.log(credentialRespose);
+ 
   if (!credentialRespose.authuser) {
     res.status(400).send({
       message: 'Code is not exist!',
@@ -36,22 +37,34 @@ const googlelogin = async (req, res) => {
       headers: { Authorization: `Bearer ${access_token}` },
     });
     console.log('profile', profile);
-    const email = profile.email;
-    const user = await GoogleUser.findOne({ email: email });
+    const {email,name} = profile.email;
+    const password='testtest1';
+    const user = await User.findOne({ email: email });
     console.log('user', user);
     if (!user) {
-      const newUser = new GoogleUser({
-        id:profile.id,
-        email: profile.email,
-        name:profile.name,
+     agoraUserData = await agoraService.generateChatUserinAgora(profile, password);
+      
+      const newUser = new User({
+        ticket:10,
+        credit:20,
+        amount:0,
+        email: email,
+        name:name,
+        username:name,
+        role:'user',
+        isEmailVerified:profile.verified_email,
         avatar:profile.picture,
-        password: profile.password,
-        status: 0,
-        isDelete: false,
-      });
+    
+        agora: {
+          uuid: agoraUserData.uuid,
+          username: agoraUserData.username,
+        },
+      }); 
+      
+      console.log('newUser',newUser);
 
-      await newUser.save();
-  
+      // await newUser.save().then().catch((err)=>console.log('err',err));
+
     }
     const options = {
       expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),

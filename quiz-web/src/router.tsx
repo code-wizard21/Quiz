@@ -16,8 +16,8 @@ import { RootState } from './redux/reducers';
 import { TGeneralSettings } from './types/settings.type';
 import PaymentLayout from './components/payment/layout';
 import SelectAvatar from './components/signup/setavatar';
+import Terms from './components/signup/term';
 import Profile from './components/profile';
-
 
 const load = (Component: any) => (props: any) =>
   (
@@ -27,8 +27,6 @@ const load = (Component: any) => (props: any) =>
   );
 
 const QuizOverview = load(lazy(() => import('./components/quiz-overview')));
-
-
 
 const Router: React.FC<{}> = (): React.ReactElement => {
   const { language }: TGeneralSettings = useSelector((state: RootState) => state.settings.generalSettings);
@@ -48,15 +46,18 @@ const Router: React.FC<{}> = (): React.ReactElement => {
       <Routes>
         <Route element={<QuizLayout />}>
           {/* <Route element={<AuthRoute />}></Route> */}
-          <Route path="/" element={<QuizOverview />} />
+          <Route path="/quiz" element={<QuizOverview />} />
 
           <Route path="/quiz/:id" element={<QuizDetail />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route element={<AuthLayout />}>
-          <Route path="/landing" element={<LandingPage />} />
-          <Route path="/signup" element={<SingUp />} />
+          <Route path="/" element={<Terms />} />
+          <Route path="/signup" element={<LandingPage />} />
+          <Route path="/create" element={<SingUp />} />
           <Route path="/setavatar" element={<SelectAvatar />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<SelectAvatar />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forget-password" element={<ForgetPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />

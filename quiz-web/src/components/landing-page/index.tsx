@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import google from '../../assets/social/Google.svg';
 import { useGoogleLogin } from '@react-oauth/google';
 import { googleAuth } from '../../service/payment/payment.service';
-
-
+import { setUserData } from '../../redux/actions/auth.action';
 import close from '../../assets/close.svg';
 import { useDispatch } from 'react-redux';
 const LandingPage: React.FC = () => {
@@ -14,7 +13,7 @@ const LandingPage: React.FC = () => {
   const dispatch = useDispatch();
   const handleButtonClick = async () => {
     await localStorage.clear();
-    navigate('/');
+    navigate('/quiz');
     window.location.reload();
   };
   const googleLogin = useGoogleLogin({
@@ -24,8 +23,8 @@ const LandingPage: React.FC = () => {
         credentialRespose
       }).then((res) => {
         console.log('googleauth',res.data.user);
-        // navigate('/');
-        localStorage.setItem('user', JSON.stringify(res.data.user));
+        navigate('/');
+        localStorage.setItem('user', JSON.stringify(res.data));
         localStorage.setItem('hasRegistered', 'true');
         dispatch(setUserData(res.data.user));
       });
@@ -77,7 +76,7 @@ const LandingPage: React.FC = () => {
                 color: '#FFFFFF',
                 borderColor: 'rgba(255, 255, 255, 0.2)',
               }}
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/create')}
             >
               <div className="flex items-center justify-center">
                 <div className="ml-2 studregular text-center text-base font-bold text-white mr-2 ">Sign up</div>
@@ -99,7 +98,7 @@ const LandingPage: React.FC = () => {
             </Button>
           </div>
           <div className="mt-4 flex justify-center">
-            <Link to="/" onClick={handleButtonClick}>
+            <Link to="/quiz" onClick={handleButtonClick}>
               <div className="text-white text-xl underline">Continue as Guest </div>
             </Link>
           </div>

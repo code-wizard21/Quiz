@@ -56,13 +56,13 @@ const Payment = () => {
           })
           .catch((e) => console.log(e));
       } else {
-        navigate('/login');
+        navigate('/signup');
         toast.error('Please login as User', {
           autoClose: false,
         });
       }
     } else {
-      navigate('/login');
+      navigate('/signup');
       toast.error('Please login as User', {
         autoClose: false,
       });
@@ -220,7 +220,7 @@ const Payment = () => {
             <div className="studregular text-left text-sm   text-black p-1">About</div>
             <Collapse items={items1} defaultActiveKey={['0']} />
           </div>
-          <Link to="/landing" onClick={logoutUser} className="flex items-center ml-12 mt-8 no-underline">
+          <Link to="/signup" onClick={logoutUser} className="flex items-center ml-12 mt-8 no-underline">
             <div className="text-left text-xl font-bold text-red-500 mr-2 ">Log out</div>
           </Link>
           <div>

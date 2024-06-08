@@ -37,7 +37,7 @@ const Login: React.FC = () => {
           localStorage.setItem('user', JSON.stringify(res.data));
           localStorage.setItem('hasRegistered', 'true');
           
-          const defaultPath = '/';
+          const defaultPath = '/quiz';
           const prevPath = localStorage.getItem('prevPath') || defaultPath;
           localStorage.removeItem('prevPath');
           if (prevPath !== defaultPath) {
