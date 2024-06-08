@@ -140,17 +140,13 @@ const generateChatToken = () => {
 const generateChatUserinAgora = async (user, password) => {
   try {
     const chatAppToken = generateChatToken();
-    const chatUser1 = {
+    const chatUser = {
       username: user.id,
       password: password,
       nickname: 'username',
     };
-  //  console.log('chatUser',chatUser);
-   const chatUser={
-    username: '6662f197f6602d431b68fe45',
-    password: 'testtest1',
-    nickname: 'username'
-  }
+    console.log('chatUser',chatUser);
+
     const chatUserResponse = await axios.post(
       `https://${AGORA_CHAT_BASE_URL}/${AGORA_CHAT_ORG_NAME}/${AGORA_CHAT_APP_NAME}/users`,
       JSON.stringify(chatUser),
@@ -161,7 +157,7 @@ const generateChatUserinAgora = async (user, password) => {
         },
       }
     );
-    console.log('chatUserResponse',chatUserResponse);
+   
     if (chatUserResponse?.status !== 200) {
       throw new Error('Error creating chat user');
     } else if (chatUserResponse?.data?.entities?.length !== 0) {

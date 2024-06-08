@@ -16,6 +16,7 @@ import { RootState } from './redux/reducers';
 import { TGeneralSettings } from './types/settings.type';
 import PaymentLayout from './components/payment/layout';
 import SelectAvatar from './components/signup/setavatar';
+import HomePage from './components/homepage';
 import Terms from './components/signup/term';
 import Profile from './components/profile';
 
@@ -52,7 +53,7 @@ const Router: React.FC<{}> = (): React.ReactElement => {
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route element={<AuthLayout />}>
-          <Route path="/" element={<Terms />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<LandingPage />} />
           <Route path="/create" element={<SingUp />} />
           <Route path="/setavatar" element={<SelectAvatar />} />

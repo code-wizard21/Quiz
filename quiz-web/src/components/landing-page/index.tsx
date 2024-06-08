@@ -22,8 +22,8 @@ const LandingPage: React.FC = () => {
       googleAuth({
         credentialRespose
       }).then((res) => {
-        console.log('googleauth',res.data.user);
-        navigate('/');
+        console.log('googleauth',res.data);
+        navigate('/quiz');
         localStorage.setItem('user', JSON.stringify(res.data));
         localStorage.setItem('hasRegistered', 'true');
         dispatch(setUserData(res.data.user));
@@ -35,11 +35,6 @@ const LandingPage: React.FC = () => {
   return (
     <>
       <Row className="landing-page ">
-        <div className="flex px-4 py-4">
-          <div onClick={() => history.back()} className="flex">
-            <img src={close} alt="live" width={30} height={30} />
-          </div>
-        </div>
         <Col className="px-6 flex flex-col pt-60 justify-center">
           <div className="flex justify-center">
             <div className="text-3xl font-stud-regular font-bold text-white">Sign up for QuizMobb</div>

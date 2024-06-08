@@ -3,7 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const axios = require('axios');
 const catchAsync = require('../utils/catchAsync');
-const { userService ,agoraService} = require('../services');
+const { userService, agoraService ,tokenService} = require('../services');
 const { success } = require('../utils/ApiResponse');
 const { User } = require('../models');
 const GoogleUser = require('../models/google.user.model');
@@ -17,7 +17,7 @@ const createUser = catchAsync(async (req, res) => {
 const googlelogin = async (req, res) => {
   const { credentialRespose } = req.body;
   console.log(credentialRespose);
- 
+
   if (!credentialRespose.authuser) {
     res.status(400).send({
       message: 'Code is not exist!',
@@ -32,48 +32,70 @@ const googlelogin = async (req, res) => {
     });
 
     const { access_token, id_token } = response.data;
-    const token=`Bearer ${access_token}`;
+    const token = `Bearer ${access_token}`;
     const { data: profile } = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${access_token}` },
     });
     console.log('profile', profile);
-    const {email,name} = profile.email;
-    const password='testtest1';
-    const user = await User.findOne({ email: email });
-    console.log('user', user);
-    if (!user) {
-     agoraUserData = await agoraService.generateChatUserinAgora(profile, password);
-      
-      const newUser = new User({
-        ticket:10,
-        credit:20,
-        amount:0,
-        email: email,
-        name:name,
-        username:name,
-        role:'user',
-        isEmailVerified:profile.verified_email,
-        avatar:profile.picture,
     
-        agora: {
-          uuid: agoraUserData.uuid,
-          username: agoraUserData.username,
-        },
-      }); 
-      
-      console.log('newUser',newUser);
+const {
+  email,
+  name
+} = profile;
 
-      // await newUser.save().then().catch((err)=>console.log('err',err));
+const password = 'testtest1';
 
-    }
-    const options = {
-      expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-      httpOnly: true,
+try {
+  let user = await User.findOne({
+    email
+  });
+
+  if (!user) {
+    const newUserDetails = {
+      ticket: 10,
+      credit: 20,
+      amount: 0,
+      email,
+      name,
+      username: name,
+      role: 'user',
+      isEmailVerified: profile.verified_email,
+      avatar: profile.picture
     };
-    res.status(201).cookie('token', token, options).json({
-      success: true,
+
+    user = await userService.createUser(newUserDetails);
+
+    const agoraUserData = await agoraService.generateChatUserinAgora(user, password);
+
+    const userUpdateAgoraID = {
+      agora: {
+        uuid: agoraUserData.uuid,
+        username: agoraUserData.username,
+      },
+    };
+
+    user = await userService.updateUserById(user.id, userUpdateAgoraID);
+  }
+
+  const tokens = await tokenService.generateAuthTokens(user);
+  const cookieOptions = {
+    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    httpOnly: true
+  };
+
+  return res.status(201)
+    .cookie('token', token, cookieOptions)
+    .json({
       user,
+      tokens
     });
+} catch (error) {
+  console.error(`Error while creating user: ${error.message}`);
+  return res.status(500).json({
+    error: 'An error occurred while creating the user.'
+  });
+}
+
   }
 };
 const getUsers = catchAsync(async (req, res) => {
