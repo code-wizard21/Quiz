@@ -8,6 +8,7 @@ const { success } = require('../utils/ApiResponse');
 const { User } = require('../models');
 const GoogleUser = require('../models/google.user.model');
 const UserActivity = require('../models/user-activity.model');
+const shadowUser=require('../models/shadow-user.model');
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);

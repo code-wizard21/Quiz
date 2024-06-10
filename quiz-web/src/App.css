@@ -110,13 +110,7 @@ body {
   margin: auto;
 }
 
-.registration-page {
-  background-image: url("assets/bg_glows.svg");
-  background-repeat: no-repeat;
-  height: 100vh;
-  /* width: 432px; */
-  margin: auto;
-}
+
 
 #scrollableDiv::-webkit-scrollbar {
   display: auto;

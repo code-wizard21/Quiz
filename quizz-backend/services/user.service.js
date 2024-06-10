@@ -42,14 +42,15 @@ const createUser = async (userBody) => {
 const createShadowUser = async (userBody) => {
   // generate a random username if not provided
   const newUserBody = { ...userBody };
+  console.log('newUserBody', newUserBody);
   // check if username is taken
-  if (!newUserBody.username) {
+
     newUserBody.name = await makeRandomUsername();
-  }
+  
   newUserBody.username = newUserBody.name;
   // create the user
-
-  return ShadowUser.create(newUserBody);
+  console.log('newUserBody', newUserBody);
+  return User.create(newUserBody);
 };
 
 /**
@@ -99,6 +100,7 @@ const getUserByEmailAndRole = async (email, role) => {
  */
 const updateUserById = async (userId, updateBody) => {
   const user = await getUserById(userId);
+  console.log('updateUserByIdupdateUserById',user);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }

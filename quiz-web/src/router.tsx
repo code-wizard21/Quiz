@@ -45,6 +45,7 @@ const Router: React.FC<{}> = (): React.ReactElement => {
   return (
     <BrowserRouter>
       <Routes>
+      <Route path="/" element={<HomePage />} />
         <Route element={<QuizLayout />}>
           {/* <Route element={<AuthRoute />}></Route> */}
           <Route path="/quiz" element={<QuizOverview />} />
@@ -53,7 +54,7 @@ const Router: React.FC<{}> = (): React.ReactElement => {
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route element={<AuthLayout />}>
-          <Route path="/" element={<HomePage />} />
+        
           <Route path="/signup" element={<LandingPage />} />
           <Route path="/create" element={<SingUp />} />
           <Route path="/setavatar" element={<SelectAvatar />} />

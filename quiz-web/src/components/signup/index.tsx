@@ -48,10 +48,10 @@ const SingUp: React.FC = () => {
             autoClose: false,
           });
           console.log('res.data',res.data);
-          localStorage.setItem('user', JSON.stringify(res.data.user));
+          localStorage.setItem('user', JSON.stringify(res.data));
           localStorage.setItem('hasRegistered', 'true');
           dispatch(setUserData(res.data.user));
-          // navigate('/setavatar');
+          navigate('/setavatar');
         })
         .catch((err) => {
           toast.error(err.message, {
