@@ -30,6 +30,7 @@ const LandingPage: React.FC = () => {
       });
     },
     flow: 'auth-code',
+    redirect_uri: "https://api.quizmobb.com",
   });
  
   return (
