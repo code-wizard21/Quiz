@@ -1,4 +1,4 @@
-import Button from 'antd/lib/button';
+import { Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 const PrizeItem = ({ title, percentage, cap }) => (
   <div className="space-y-2">
@@ -16,10 +16,13 @@ function App() {
   const handleClick = () => {
     navigate('/signup');
   };
+  const handleClickCheck = () => {
+    navigate('/quiz');
+  };
   return (
     <div
       style={{ backgroundImage: "url('/home/background.jpg')" }}
-      className="w-full bg-cover bg-center bg-no-repeat bg-center"
+      className="w-full bg-cover bg-center bg-no-repeat bg-[#030737]"
     >
       <div className="py-4 ">
         <div className="flex p-8   justify-between">
@@ -27,30 +30,39 @@ function App() {
             <img src="/home/first.svg" />
             <div className="text-white text-2xl">QuizMobb</div>
           </div>
-          <div>
-            <button onClick={handleClick} className="p-2 bg-customYellowBorder w-full text-black rounded-3xl">
+          <div className="flex">
+            <Button
+              type="primary"
+              onClick={handleClick}
+              className=" bg-customYellowBorder h-12 border-customYellowBorder rounded-3xl"
+            >
               <div className="text-black font-bold">Sign up / Log in</div>
-            </button>
+            </Button>
           </div>
         </div>
       </div>
       <div className="flex flex-col sm:flex-row">
         <div className="p-4 sm:p-24 flex justify-around">
           <div className="flex flex-col">
-            <div className="text-white text-4xl sm:text-7xl font-bold">The game is</div>
-            <div className="text-white text-4xl sm:text-7xl font-bold">on.</div>
-            <div className="mt-4 text-white text-base">Test your wits with our daily live quiz shows</div>
-            <div className="text-white text-base">and win cash! Free quizzes of a variety of</div>
-            <div className="text-white text-base">themes updated daily for all you brainiacs</div>
-            <div className="mb-4 text-white text-base">out there.</div>
-            <div>
-              <button className="bg-customYellowBorder text-black rounded-3xl">
-                <div className="px-4 sm:px-16 py-2 sm:py-4 font-bold">Check out the Quiz </div>
-              </button>
+            <div className="flex flex-col">
+              <div className="text-white text-4xl sm:text-7xl font-bold">The game is</div>
+              <div className="text-white text-4xl sm:text-7xl font-bold">on.</div>
+              <div className="mt-4 text-white text-base">Test your wits with our daily live quiz shows</div>
+              <div className="text-white text-base">and win cash! Free quizzes of a variety of</div>
+              <div className="text-white text-base">themes updated daily for all you brainiacs</div>
+              <div className="mb-4 text-white text-base">out there.</div>
+            </div>
+            <div className="flex">
+              <Button type="primary" onClick={handleClickCheck} className=" bg-customYellowBorder p-4 h-12 rounded-3xl">
+                <div className="text-black px-4  font-bold">Check out the Quiz </div>
+              </Button>
             </div>
           </div>
         </div>
-        <div className="flex pt-4 sm:px-80 sm:pt-0 " style={{ backgroundImage: "url('/home/backcom.svg')" }}>
+        <div
+          className="flex pt-4 scale-70 md:scale-100 sm:px-80 sm:pt-0  bg-cover bg-center bg-no-repeat "
+          style={{ backgroundImage: "url('/home/backcom.svg')" }}
+        >
           <img className="mx-auto sm:mx-0" src="/home/card.svg" alt="" />
         </div>
       </div>
@@ -105,27 +117,25 @@ function App() {
           </div>
         </div>
       </div> */}
-      <div className="mt-16  my-8 lg:mx-64 mx-8  lg:px-0 justify-between ">
-        <div className="flex flex-col-reverse lg:flex-row gap-4">
-          <div className="bg-[#1A3EEC] text-xl p-4 lg:p-12   ">
-            <div className="flex gap-3 justify-center">
-              <img src="/home/trophy.svg" className="w-9 h-9 lg:w-6 lg:h-6" alt="1" />
-              <div className="space-y-6">
-                <PrizeItem title="WINNER" percentage="50%" cap="Capped at 5000 per quiz per month" />
-                <PrizeItem title="2ND PRIZE" percentage="25%" cap="Capped at 2000 per quiz per month" />
-                <PrizeItem title="3RD PRIZE" percentage="10%" cap="Capped at 1000 per quiz per month" />
-              </div>
-            </div>
-          </div>
-          <div className="max-w-[439px]  mx-auto lg:mx-4 my-auto text-center lg:text-left">
-            <div className="text-white text-xl lg:text-3xl font-bold">Prize Distribution</div>
-            <div className="text-white my-4 text-base lg:text-xl font-bold">
-              Unclaimed prize money goes to Social Causes
+      <div className="mt-16 my-8 mx-[10%] flex flex=col justify-between">
+        <div className="flex lg:mr-[0%] lg:flex-row gap-4">
+          <div className="flex gap-3 justify-center bg-[#1A3EEC] text-xl p-4 lg:p-6">
+            <img src="/home/trophy.svg" className="w-9 h-9 lg:w-6 lg:h-6" alt="1" />
+            <div className="space-y-6">
+              <PrizeItem title="WINNER" percentage="50%" cap="Capped at 5000 per quiz per month" />
+              <PrizeItem title="2ND PRIZE" percentage="25%" cap="Capped at 2000 per quiz per month" />
+              <PrizeItem title="3RD PRIZE" percentage="10%" cap="Capped at 1000 per quiz per month" />
             </div>
           </div>
         </div>
-        <div className=" lg:max-w-full w-fit lg:mr-auto lg:ml-auto mx-auto py-12 -mt-8 lg:-mt-48 bg-[#4500B2] space-y-3">
-          <div className="justify-center w-auto  h-auto  px-32">
+        <div className='mt-32'>
+          <div className=" mx-auto lg:mx-4 my-auto text-center lg:text-left">
+            <div className="text-white text-xl lg:text-3xl font-bold">Prize Distribution</div>
+            <div className="text-white my-4 text-base lg:text-xl font-bold">
+              Unclaimed prize money goes to Social Ca uses
+            </div>
+          </div>
+          <div className="bg-[#4500B2] space-y-3">
             <div className="text-2xl lg:text-base text-[#FFD500] font-bold">CONSOLATIONS</div>
             <div className="w-auto ">
               <div className="text-xl lg:text-xl text-white">if you have answered all questions</div>
@@ -145,8 +155,14 @@ function App() {
           <div className="my-12 sm:mx-16 text-center sm:text-left">
             <div className=" text-4xl text-white font-bold">Ready to play?</div>
             <div className="text-2xl my-4 font-bold text-white">Start here with us!</div>
-            <div className="bg-[#F9DC30] px-4 py-3 rounded-2xl text-base text-black font-bold mt-3 sm:mt-0">
-              Check out the Quiz
+            <div className="flex">
+              <Button
+                type="primary"
+                onClick={handleClickCheck}
+                className="bg-[#F9DC30] border-customYellowBorder px-4 py-3 h-12 rounded-3xl text-base text-black font-bold  sm:mt-0 "
+              >
+                <div className="text-black text-bold text-left">Check out the Quiz</div>
+              </Button>
             </div>
           </div>
           <img src="/home/image.png" className="mx-auto sm:ml-auto w-1/2 sm:w-auto h-auto my-4 sm:my-0" alt="icon" />
