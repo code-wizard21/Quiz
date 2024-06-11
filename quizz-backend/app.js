@@ -50,7 +50,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
       email: info.metadata.email,
       trx_date: new Date(),
     });
- 
+    console.log('newData',newData);
     await newData
       .save()
       .then((res) => {
@@ -61,7 +61,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (reques
       });
 
     let user = await User.findOne({ email: info.metadata.email });
-
+    console.log('user',user);
     let updatedDoc = await User.updateOne(
       { email: info.metadata.email },
       {

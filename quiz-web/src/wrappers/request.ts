@@ -188,7 +188,7 @@ axiosInstance.interceptors.response.use(
     }
     if (error && error.response && error.response.status === 401 && isRetry) {
       localStorage.clear();
-      window.location.href = '/login';
+      window.location.href = '/signup';
       return Promise.reject(error.response.data);
     }
     if (error && error.response && error.response.data) {

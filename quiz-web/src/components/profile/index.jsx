@@ -103,9 +103,9 @@ const Payment = () => {
     };
     checkOutBuyCreditSession(data)
       .then((res) => {
-        console.log(res);
+        console.log('res.data',res.data)  ;
         if (res.status == 200) {
-          window.location.href = res.data;
+          window.location.href = res.data.redirectUrl;
         }
       })
       .catch((err) => {

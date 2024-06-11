@@ -11,8 +11,8 @@ const LandingPage: React.FC = () => {
   const clientId = '1082715081696-mgk2hen3l75jf0oin4lavv7ga0r4pf9a.apps.googleusercontent.com';
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handleButtonClick = async () => {
-    await localStorage.clear();
+  const handleButtonClick =  () => {
+    localStorage.clear();
     navigate('/quiz');
     window.location.reload();
   };

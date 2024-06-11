@@ -740,7 +740,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setIsJoined(false);
     setIsVideoSubed(false);
     setViewQuestions(false);
+    setAmount(50);
     setIsPaused(false);
+    setIsParticipants(false);
     console.log('showleadderboard',showLeaderboard);
     // if(iscalculaed==false){
     //   setShowLeaderboard(false);
@@ -808,14 +810,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
 
-    await client
-      .join(appId, channelName, rtcToken.data.data, randomUid)
-      .then((res) => {
-        console.log('resres###########', res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // await client
+    //   .join(appId, channelName, rtcToken.data.data, randomUid)
+    //   .then((res) => {
+    //     console.log('resres###########', res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
     setIsLoading(false);
     setIsJoined(true);
     localStorage.setItem('isjoinchanel', 'true');
@@ -1088,7 +1090,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               type="primary"
               className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full"
               onClick={joinChannel}
-              disabled={isLoading || !isSocketConnected}
+              disabled={!isSocketConnected}
             >
               Join Channel
             </Button>
