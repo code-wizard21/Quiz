@@ -1068,19 +1068,19 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           }}
         />
       )}
-      {isVideoSubed && (
+      {!isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-6" id="live-stream-header">
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={20} />
           </div>
-          <button style={{backgroundColor: 'transparent'}} className=" mr-6 flex z-40 cursor-pointer items-center justify-center" onClick={toggleStreamAudio}>
+          <div className="mr-6 flex z-50 cursor-pointer items-center justify-center" onClick={toggleStreamAudio}>
             {isMuted ? (
               <img src={ic_speakerOff} alt="speaker-off" width={24} height={26} />
             ) : (
               <img src={ic_speakerOn} alt="speaker-on" width={24} height={26} />
             )}
            
-          </button>
+          </div>
           <div className="mr-5 flex">
             <img src={userCountIcon} alt="user-count" height={24} />
             <span className="pl-2 text-white">{liveUserCount}</span>
