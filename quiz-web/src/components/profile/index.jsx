@@ -10,16 +10,26 @@ import backSvg from '../../assets/back.svg';
 import sideMenuSvg from '../../assets/side-menu.svg';
 import { useCallback, useEffect, useState } from 'react';
 import { PlusCircleOutlined, ProfileOutlined, UsergroupAddOutlined } from '@ant-design/icons';
-import { Collapse } from 'antd';
+import { Collapse,Modal } from 'antd';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { checkOutBuyCreditSession } from '../../service/payment/payment.service';
-
+import { checkOutBuyCreditSessionProfile } from '../../service/payment/payment.service';
+import { useLocation } from 'react-router-dom';
 const Payment = () => {
   const [open, setOpen] = useState(false);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const location = useLocation();
   const showDrawer = () => {
     setOpen(true);
+  };
+  useEffect(() => {
+    const isSuccess = location.search.includes('success');
+    if(isSuccess==true){
+      setIsModalOpen(true);
+    }
+  }, []);
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   const onClose = () => {
@@ -32,6 +42,9 @@ const Payment = () => {
   const [amount, setAmount] = useState(0);
   const [name, setName] = useState('');
   const [imageUrl, setImageUrl] = useState(sideMenuSvg);
+  const handleJoinClick=()=>{
+    setIsModalOpen(false);
+  }
   const text = `
   A dog is a type of domesticated animal.
 `;
@@ -101,7 +114,7 @@ const Payment = () => {
       ticket: ticket,
       credit: credit,
     };
-    checkOutBuyCreditSession(data)
+    checkOutBuyCreditSessionProfile(data)
       .then((res) => {
         console.log('res.data',res.data)  ;
         if (res.status == 200) {
@@ -361,6 +374,47 @@ const Payment = () => {
           </div>
         </div>
       </div>
+      <Modal title="" open={isModalOpen} footer={null} width={'350px'} onCancel={handleCancel}>
+        <div className="modal-box">
+        
+            <div>
+
+              <div className="flex  mt-4  text-black text-2xl font-bold text-center studregular  justify-center">
+              Transaction Success!
+              </div>
+            </div>
+        
+          <div className=" flex text-base  text-black  justify-center">Welcome Contestant! You will need </div>
+          <div className="flex text-base  text-black justify-center">to sign up in order to access any </div>
+          <div className="flex text-base text-black justify-center">Prize Money! </div>
+
+          <div className="modal-action">
+            <div className="justify-center flex">
+              <button
+                onClick={handleJoinClick}
+                className="bg-customYellowBorder mt-8 w-[325px] h-[52px] top-[320px] rounded-[30px] space-x-[6px] border-customYellowBorder"
+                style={{ fontSize: window.innerWidth <= 412 ? 'small' : 'medium' }} // Change this line
+              ><div className='text-black font-bold'>Continue to Sign Up</div>
+                
+              </button>
+            </div>
+
+            <div className="justify-center flex ">
+              <Link
+                to="#"
+                className=" mt-8 space-x-[6px] border-white"
+                onClick={() => {
+                  setIsModalOpen(false);
+                }}
+              >
+                <div className="flex text-customBlue justify-center text-base font-bold text-center underline">
+                  Close
+                </div>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };

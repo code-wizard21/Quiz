@@ -9,6 +9,7 @@ const stripe = require('stripe')(
 );
 const YOUR_DOMAIN = 'https://quizmobb.com';
 const YOUR_DOMAIN_Quiz = 'https://quizmobb.com/quiz';
+const YOUR_DOMAIN_Profile = 'https://quizmobb.com/profile';
 //const YOUR_DOMAIN = 'http://localhost:4002/quiz';
 
 const buyCredit = catchAsync(async (req, res) => {
@@ -29,8 +30,42 @@ const buyCredit = catchAsync(async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `${YOUR_DOMAIN_Quiz}`,
-      cancel_url: `${YOUR_DOMAIN_Quiz}`,
+      success_url: `${YOUR_DOMAIN_Quiz}?success`,
+      cancel_url: `${YOUR_DOMAIN_Quiz}?cancel`,
+      metadata: {
+        email: email, // Replace with your customer's email
+        user: user,
+        credit: credit, // Replace with your customer's username
+        ticket: ticket,
+      },
+    });
+    console.log('session',session);
+    res.status(200).send({ redirectUrl: session.url });
+  } catch (error) {
+    console.error('Error confirming payment intent', error);
+    res.status(500).send({ success: false });
+  }
+});
+const buyCreditProfile = catchAsync(async (req, res) => {
+  try {
+    const { amount, credit, user, email, ticket } = req.body;
+    console.log('req.body',req.body);
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price_data: {
+            currency: 'sgd',
+            product_data: {
+              name: 'ticket',
+            },
+            unit_amount: amount,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${YOUR_DOMAIN_Profile}?success`,
+      cancel_url: `${YOUR_DOMAIN_Profile}?cancel`,
       metadata: {
         email: email, // Replace with your customer's email
         user: user,
@@ -98,8 +133,8 @@ const buyticket = catchAsync(async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `${YOUR_DOMAIN_Quiz}`,
-      cancel_url: `${YOUR_DOMAIN_Quiz}`,
+      success_url: `${YOUR_DOMAIN_Quiz}?success`,
+      cancel_url: `${YOUR_DOMAIN_Quiz}?cancel`,
       metadata: {
         email: email, // Replace with your customer's email
         user: user,
@@ -174,7 +209,7 @@ const getID = (req, res) => {
 
 module.exports = {
   getTransactionID,
-  buyticket,
+  buyticket,buyCreditProfile,
   buyCreditSocket,
   gethistory,
   getAll,

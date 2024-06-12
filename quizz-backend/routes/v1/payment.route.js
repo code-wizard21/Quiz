@@ -9,8 +9,8 @@ const router = express.Router();
  router.post('/create-checkout-ticket', payController.buyticket);
  router.post('/create-checkout-credit', payController.buyCredit);
  router.post('/create-checkout-ticket-socket', payController.buyCreditSocket);
-
-
+ router.post('/create-checkout-credit-profile', payController.buyCreditProfile);
+ 
  router.get('/history', payController.gethistory);
 router.get('/', payController.getAll);
 router.get('/:_id', payController.getID);

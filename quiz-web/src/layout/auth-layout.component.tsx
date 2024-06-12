@@ -12,10 +12,10 @@ const AuthLayout: React.FC = (): React.ReactElement => {
   const location = useLocation();
   const localUser: ILoginResponse = JSON.parse(localStorage.getItem('user') || '{}');
 
-  if (localUser?.user && location.pathname === '/') {
+  if (localUser?.user && location.pathname === '/login') {
     // Redirect to dashboard if user is not shadow
     if (localUser?.user?.role !== 'shadow') {
-      return <Navigate to="/" replace />;
+      return <Navigate to="/quiz" replace />;
     }
   }
 

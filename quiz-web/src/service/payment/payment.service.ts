@@ -19,7 +19,9 @@ export const checkOutBuyticketSessionSocket = async (userData: TCreateUser): Pro
 export const checkOutBuyCreditSession = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('payment/create-checkout-credit', userData);
 };
-
+export const checkOutBuyCreditSessionProfile = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
+  return post('payment/create-checkout-credit-profile', userData);
+};
 
 export const checkOutBuyticketSession = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('payment/create-checkout-ticket', userData);
