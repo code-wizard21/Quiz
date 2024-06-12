@@ -228,8 +228,8 @@ const initaliseWebSocket = (server) => {
 
         viewer_count = 0;
         setTimeout(() => {
-          io.in(room).emit('user_quiz_live_calculation_end', { quiz: quiz_id });
-  
+          io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
+         
         io.emit('host_quiz_live_calculation_end', { quiz: quiz_id });
         }, 3000);
       
@@ -255,7 +255,7 @@ const initaliseWebSocket = (server) => {
           await UserActivity.deleteMany({});
           //   io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
           viewer_count = 0;
-          io.in(room).emit('user_quiz_live_end', { quiz: quiz_id });
+          io.emit('user_quiz_live_end', { quiz: quiz_id });
           // TODO: rethink this implementation
           // io.emit('user_quiz_live_start', { quiz_id });
 
@@ -380,7 +380,7 @@ const initaliseWebSocket = (server) => {
         console.log('host_live_quiz_question_end');
         // get room_id from livestreams collection via quiz_id and host_id
         const { quiz_id, host_id, question_id, is_last } = data;
-        console.log('question_id, is_last', question_id, is_last);
+      
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
         if (!liveStream) {
           return;
@@ -402,10 +402,8 @@ const initaliseWebSocket = (server) => {
         }
 
         const room = liveStream.room_id;
-        console.log('new ObjectId(question_id)}', new ObjectId(question_id));
         const userAnswered = await UserAnswer.find({ question: new ObjectId(question_id) });
         let correct = 0;
-        console.log('userAnswered', userAnswered);
         for (let i = 0; i < userAnswered.length; i++) {
           if (userAnswered[i].state == 'true') {
             correct++;
@@ -420,11 +418,12 @@ const initaliseWebSocket = (server) => {
           // perhaps setting percent to 0 or some default
           percent = 0; // or some default value
         }
-        console.log('userAnswered', correct, viewer_count, percent);
+      
 
         const quizQuestions = await questionService.getQuestionWithOptionAndTotalAnswers(question_id);
-
+        console.log('user_quiz_live_question_end');
         io.in(room).emit('user_quiz_live_question_end', { question: quizQuestions, quiz_id: quiz_id });
+       
         const percentData = {
           position: position,
           correctAnswerPercent: percent,
@@ -443,11 +442,11 @@ const initaliseWebSocket = (server) => {
         // io.in(room).emit('user_quiz_live_question_answer', {});
       });
       socket.on('user_useranswer_save', async (data) => {
-        console.log('user_useranswer_save',data);
+   
         const { quiz_id, question_id, username, user_id } = data;
 
         let questionExit = await UserAnswer.find({ question: question_id, user: user_id });
-        console.log('questionExit', questionExit);
+        console.log('user_useranswer_save');
         const question_text = await QuizQuestion.findOne({ _id: question_id });
 
         if (questionExit.length === 0) {
@@ -635,7 +634,7 @@ const initaliseWebSocket = (server) => {
           option: option_id,
           duration,
         });
-        console.log('userAnswer', userAnswer);
+  
         await userAnswer.save();
 
         // make the user as a viewer. // TODO: rethink this implementation

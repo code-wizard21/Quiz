@@ -21,9 +21,6 @@ export const checkOutBuyCreditSession = async (userData: TCreateUser): Promise<A
 };
 
 
-export const createShadowUser = async (): Promise<AxiosResponse<ILoginResponse>> => {
-  return post('auth/shadow/register', {});
-};
 export const checkOutBuyticketSession = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('payment/create-checkout-ticket', userData);
 };

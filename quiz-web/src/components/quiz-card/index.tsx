@@ -41,10 +41,9 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
         setLiveQuiz('ongoing');
       }
     });
-    socket?.on(SOCKET_LISTENERS.USER_QUIZ_LIVE_CALCULATION_END, (data: USER_QUIZ_LIVE_CALCULATION_END) => {
-      if (quiz._id == data.quiz) {
-        setLiveQuiz('complete');
-      }
+    socket?.on('user_quiz_live_end', (data: USER_QUIZ_LIVE_CALCULATION_END) => {
+      console.log('livequiz',data);
+      alive(data);
     });
     const { bgImage, textImage } = getQuizBackgroundImage(quiz.category);
     setQuizBgImage(bgImage);
@@ -65,6 +64,12 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
     }
   }, [quiz.category]);
 
+  const alive=(data)=>{
+    console.log('livequiz',data);
+    if (quiz._id == data.quiz) {
+      setLiveQuiz('complete');
+    }
+  }
   const navigateToQuiz = (id: string) => {
     navigate(`/quiz/${id}`);
   };

@@ -101,6 +101,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [animateUserAmount, setAnimateUserAmount] = useState(0);
   const [animateUserCredit, setAnimateUserCreidt] = useState(0);
   const [startAnimation, setStartAnimation] = useState(false);
+  const [isClicked, setIsClicked] = useState(false); 
   const [currentQuizContent, setCurrentQuizContent] = useState({
     correct: 0,
     avatar: sideMenuSvg,
@@ -767,6 +768,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   }, [timerInterval]);
   const joinChannel = async () => {
     setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+  }, 1000);
     // message.loading("Joining Quiz");
     showMessages('loading', 'Joining Quiz');
 
@@ -775,10 +779,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       return;
       //  await leaveChannel();
     }
-    if (!user) {
+    console.log('userlogin',user);
+    if (!user||user.role=='shadow') {
       // create shadow user and join
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
-      console.log('shadowUser', shadowUser);
+      console.log('shadowUsershadowUser', shadowUser);
       dispatch(setUserData(shadowUser.data.user));
       localStorage.setItem('user', JSON.stringify(shadowUser.data));
       setNewShadowUser((prevState) => ({
@@ -810,14 +815,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
     const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
 
-    // await client
-    //   .join(appId, channelName, rtcToken.data.data, randomUid)
-    //   .then((res) => {
-    //     console.log('resres###########', res);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    await client
+      .join(appId, channelName, rtcToken.data.data, randomUid)
+      .then((res) => {
+        console.log('resres###########', res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     setIsLoading(false);
     setIsJoined(true);
     localStorage.setItem('isjoinchanel', 'true');
@@ -1090,7 +1095,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               type="primary"
               className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full"
               onClick={joinChannel}
-              disabled={!isSocketConnected}
+              disabled={!isSocketConnected||isLoading}
             >
               Join Channel
             </Button>
