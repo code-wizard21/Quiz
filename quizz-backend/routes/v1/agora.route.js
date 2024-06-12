@@ -10,7 +10,7 @@ const router = express.Router();
 router.get(
     '/rtc/:channel/:role/:token_type/:uid',
     nocache,
-    auth(),
+
     validate(agoraValidation.rtcToken),
     agoraController.generateRTCToken
 );
@@ -18,7 +18,7 @@ router.get('/rtm/:uid', nocache, validate(agoraValidation.register), agoraContro
 router.get(
     '/rte/:channel/:role/:token_type/:uid',
     nocache,
-  auth(),
+
     validate(agoraValidation.rteToken),
     agoraController.generateRTEToken
 );

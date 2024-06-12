@@ -7,8 +7,9 @@ const { tokenTypes } = require('../config/tokens');
 const stripe = require('stripe')(
   'sk_test_51DOfAJIFbzohYGemOLOrA6C52yD7aHdglSfl0kMB95gRJoxcDGSqpWHxa4sGtJDb5mzPX2azyvGDF3GekVRLirFu00NPR9PV6c'
 );
-//const YOUR_DOMAIN = 'https://quizmobb.com/quiz'';
-const YOUR_DOMAIN = 'http://localhost:4002/quiz';
+const YOUR_DOMAIN = 'https://quizmobb.com';
+const YOUR_DOMAIN_Quiz = 'https://quizmobb.com/quiz';
+//const YOUR_DOMAIN = 'http://localhost:4002/quiz';
 
 const buyCredit = catchAsync(async (req, res) => {
   try {
@@ -28,8 +29,8 @@ const buyCredit = catchAsync(async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `${YOUR_DOMAIN}`,
-      cancel_url: `${YOUR_DOMAIN}`,
+      success_url: `${YOUR_DOMAIN_Quiz}`,
+      cancel_url: `${YOUR_DOMAIN_Quiz}`,
       metadata: {
         email: email, // Replace with your customer's email
         user: user,
@@ -64,7 +65,7 @@ const buyCreditSocket = catchAsync(async (req, res) => {
       ],
       mode: 'payment',
       success_url: `${YOUR_DOMAIN}${successful_url}`,
-      cancel_url: `${YOUR_DOMAIN}`,
+      cancel_url: `${YOUR_DOMAIN}${successful_url}`,
       metadata: {
         email: email, // Replace with your customer's email
         user: user,
@@ -97,8 +98,8 @@ const buyticket = catchAsync(async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `${YOUR_DOMAIN}`,
-      cancel_url: `${YOUR_DOMAIN}`,
+      success_url: `${YOUR_DOMAIN_Quiz}`,
+      cancel_url: `${YOUR_DOMAIN_Quiz}`,
       metadata: {
         email: email, // Replace with your customer's email
         user: user,
