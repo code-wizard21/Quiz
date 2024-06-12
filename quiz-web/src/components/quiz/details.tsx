@@ -699,14 +699,16 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
 
   const toggleStreamAudio = useCallback(() => {
+    const remoteAudioTracks = stateRef.current;
     if (audio.volume == 1) {
       // Check if the track is playing
-
+      trackRef.current.stop();
       audio.volume = 0;
       setIsMuted(true);
     } else {
       // remoteAudioTracks.play(); // If so, stop it
       audio.volume = 1;
+      trackRef.current.play();
       setIsMuted(false);
     }
   }, [audio.volume]);
