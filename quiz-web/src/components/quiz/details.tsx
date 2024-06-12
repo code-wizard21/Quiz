@@ -1068,7 +1068,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           }}
         />
       )}
-      {!isVideoSubed && (
+      {isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-6" id="live-stream-header">
           <div className="absolute flex justify-center w-full">
             <img src={liveIcon} alt="live" height={20} />
