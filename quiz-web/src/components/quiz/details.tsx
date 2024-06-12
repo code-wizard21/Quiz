@@ -101,7 +101,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [animateUserAmount, setAnimateUserAmount] = useState(0);
   const [animateUserCredit, setAnimateUserCreidt] = useState(0);
   const [startAnimation, setStartAnimation] = useState(false);
-  const [isClicked, setIsClicked] = useState(false); 
+  const [isClicked, setIsClicked] = useState(false);
   const [currentQuizContent, setCurrentQuizContent] = useState({
     correct: 0,
     avatar: sideMenuSvg,
@@ -324,7 +324,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       localStorage.setItem('isjoinchanel', 'false');
       //    localStorage.setItem('iscounted', 'false');
       setIsPaused(false);
-  
+
       setIsShowpool(false);
       leaveChannel();
     });
@@ -746,7 +746,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setAmount(50);
     setIsPaused(false);
     setIsParticipants(false);
-    console.log('showleadderboard',showLeaderboard);
+    console.log('showleadderboard', showLeaderboard);
     // if(iscalculaed==false){
     //   setShowLeaderboard(false);
     // }
@@ -772,7 +772,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-  }, 1000);
+    }, 1000);
     // message.loading("Joining Quiz");
     showMessages('loading', 'Joining Quiz');
 
@@ -781,8 +781,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       return;
       //  await leaveChannel();
     }
-    console.log('userlogin',user);
-    if (!user||user.role=='shadow') {
+    console.log('userlogin', user);
+    if (!user || user.role == 'shadow') {
       // create shadow user and join
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
       console.log('shadowUsershadowUser', shadowUser);
@@ -846,7 +846,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       }
       leaveChannel();
     });
-    const reqData={quiz:id};
+    const reqData = { quiz: id };
     const res = await getQuizState(reqData);
 
     if (res.data.data.status != undefined) {
@@ -1071,15 +1071,16 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       {isVideoSubed && (
         <div className="absolute z-20 flex flex-row-reverse mt-6" id="live-stream-header">
           <div className="absolute flex justify-center w-full">
-            <img src={liveIcon} alt="live" height={24} />
+            <img src={liveIcon} alt="live" height={20} />
           </div>
-          <div className="mr-6 flex z-30 cursor-pointer items-center justify-center" onClick={toggleStreamAudio}>
+          <button style={{backgroundColor: 'transparent'}} className=" mr-6 flex z-40 cursor-pointer items-center justify-center" onClick={toggleStreamAudio}>
             {isMuted ? (
-              <img src={ic_speakerOff} alt="speaker-off" width={28} height={28} />
+              <img src={ic_speakerOff} alt="speaker-off" width={24} height={26} />
             ) : (
-              <img src={ic_speakerOn} alt="speaker-on"  width={28} height={28} />
+              <img src={ic_speakerOn} alt="speaker-on" width={24} height={26} />
             )}
-          </div>
+           
+          </button>
           <div className="mr-5 flex">
             <img src={userCountIcon} alt="user-count" height={24} />
             <span className="pl-2 text-white">{liveUserCount}</span>
@@ -1097,7 +1098,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               type="primary"
               className="quiz-action-btn h-12 mt-6 shadow-none text-black font-bold rounded-3xl w-full"
               onClick={joinChannel}
-              disabled={!isSocketConnected||isLoading}
+              disabled={!isSocketConnected || isLoading}
             >
               Join Channel
             </Button>
