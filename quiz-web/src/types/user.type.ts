@@ -9,6 +9,7 @@ interface IToken {
 export interface IUser extends IBaseUser {
   password: string;
   avatar: string;
+  shadowID:string;
   username: string;
   role: USER_ROLE.HOST | USER_ROLE.USER | USER_ROLE.SHADOW;
   remember?: boolean;
@@ -17,6 +18,11 @@ export interface IUser extends IBaseUser {
 export interface ILoginResponse {
   user: IUser;
   redirectUrl: string;
+  data:{
+    avatar:string,
+    ticket:number,
+    credit:number;
+  }
   tokens: {
     access: IToken;
     refresh: IToken;
@@ -26,6 +32,7 @@ export type TCreateUser = {
   shadow_user_id?: string;
   email?: string;
   id?: string;
+
   user?: string;
   amount?:number;
   ticket?:number;

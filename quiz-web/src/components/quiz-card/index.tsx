@@ -7,7 +7,6 @@ import shareImg from '../../assets/share.svg';
 import ellipse from '../../assets/Ellipse_709.svg';
 import { IQuiz } from '../../types/quiz.types';
 import { USER_QUIZ_LIVE_CALCULATION_END } from '../../types/socket.types';
-import { SOCKET_LISTENERS } from '../../constants/enum';
 import { SocketContext } from '../../context/socket.context';
 import { convertDate, getQuizBackgroundImage, showMessages } from '../../helpers/utils';
 import { getLiveQuiz } from '../../service/quiz/quiz.service';
@@ -35,15 +34,17 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
     if (!socket?.connected) {
       socket?.connect();
     }
-    socket?.on(SOCKET_LISTENERS.QUIZ_LIVE_START, (data) => {
+    socket?.on('quiz_live_start_contest', (data) => {
       console.log('quiz_live_start ::######### ', data);
       if (quiz._id == data.quiz_id) {
         setLiveQuiz('ongoing');
       }
     });
-    socket?.on('user_quiz_live_end', (data: USER_QUIZ_LIVE_CALCULATION_END) => {
+    socket?.on('quiz_live_end_contest', (data: USER_QUIZ_LIVE_CALCULATION_END) => {
       console.log('livequiz',data);
-      alive(data);
+      if (quiz._id == data.quiz) {
+        setLiveQuiz('complete');
+      }
     });
     const { bgImage, textImage } = getQuizBackgroundImage(quiz.category);
     setQuizBgImage(bgImage);
@@ -51,7 +52,6 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
     getLiveQuiz(quiz._id)
       .then((res) => {
         const data = res.data.data;
-        console.log('resres', data.status);
         setLiveQuiz(data.status);
       })
       .catch((err) => console.log(err));
@@ -64,12 +64,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz }): React.ReactElement => {
     }
   }, [quiz.category]);
 
-  const alive=(data)=>{
-    console.log('livequiz',data);
-    if (quiz._id == data.quiz) {
-      setLiveQuiz('complete');
-    }
-  }
+
   const navigateToQuiz = (id: string) => {
     navigate(`/quiz/${id}`);
   };

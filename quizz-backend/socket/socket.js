@@ -56,8 +56,8 @@ const initaliseWebSocket = (server) => {
 
         // TODO: Pending in #APP
         const channelViewerCount = await getNumberOfUsersInChannel('test');
-        io.emit('quiz_live_start', { quiz_id, room_id: room });
-
+        io.in(room).emit('quiz_live_start', { quiz_id, room_id: room });
+        io.emit('quiz_live_start_contest', { quiz_id, room_id: room });
         io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: viewer_count });
         console.log('quiz_live_start', viewer_count);
         // emit quiz live emitting quiz_id and room_id
@@ -72,7 +72,12 @@ const initaliseWebSocket = (server) => {
         const {email,quiz_id,ticket}=data;
         amount++;
         playCount++;
-
+        const liveStream = await LiveStream.findOne({quiz: new ObjectId(quiz_id)});
+        if (!liveStream) {
+          console.log('live stream not found');
+          return;
+        }
+        const room = liveStream.room_id;
         const channelViewerCount = await getNumberOfUsersInChannel('test');
         const quizPoolData = { amount: amount, playCount: playCount, channelViewerCount: viewer_count - playCount };
         try {
@@ -99,7 +104,7 @@ const initaliseWebSocket = (server) => {
             console.log(err);
           });
         console.log('increase_amount_pool_host_user');
-        io.emit('amount_update_user_broadcast', quizPoolData); // Send the updated amount to all clients
+        io.in(room).emit('amount_update_user_broadcast', quizPoolData); // Send the updated amount to all clients
 
         io.emit('increase_amount_pool_host_user', quizPoolData); // Send the updated amount to all clients
       });
@@ -255,7 +260,8 @@ const initaliseWebSocket = (server) => {
           await UserActivity.deleteMany({});
           //   io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
           viewer_count = 0;
-          io.emit('user_quiz_live_end', { quiz: quiz_id });
+          io.in(room).emit('user_quiz_live_end', { quiz: quiz_id });
+          io.emit('quiz_live_end_contest', { quiz: quiz_id });
           // TODO: rethink this implementation
           // io.emit('user_quiz_live_start', { quiz_id });
 

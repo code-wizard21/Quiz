@@ -23,6 +23,14 @@ const Login: React.FC = () => {
   const onFinish = useCallback(
     (values: IUser) => {
       setIsCheckingCred(true);
+      if(localStorage.getItem('user')){
+        const userInfo=JSON.parse(localStorage.getItem('user')!);
+        console.log('userInfo',userInfo);
+        if(userInfo.user.role=='shadow'){
+          values.shadowID=userInfo.user.id;
+        }
+        console.log('userInfo',userInfo);
+      }
       if (values.remember) {
         delete values.remember;
       }
@@ -40,9 +48,7 @@ const Login: React.FC = () => {
           const defaultPath = '/quiz';
           const prevPath = localStorage.getItem('prevPath') || defaultPath;
           localStorage.removeItem('prevPath');
-          if (prevPath !== defaultPath) {
-            localStorage.setItem('showWelcomeModal', 'true');
-          }
+      
 
           navigate(prevPath);
         })

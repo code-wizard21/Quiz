@@ -53,5 +53,5 @@ export enum OPTION_PROGRESS_COLORS {
   USER_SELECTION_BG = '#F9DC30', // yellow
   USER_SELECTION_CORRECT = '#AEE7A5', // light green
   USER_SELECTION_CORRECT_BG = '#66C956', // green
-  USER_SELECTION_WRONG_BG = '#FFFFFF', // white
+  USER_SELECTION_WRONG_BG = '#FFFFF', // white
 }

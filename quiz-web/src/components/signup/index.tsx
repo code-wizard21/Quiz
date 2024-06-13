@@ -41,7 +41,7 @@ const SingUp: React.FC = () => {
         values.shadow_user_id = user?.user?.id;
         values.refresh_token = user?.tokens?.refresh?.token;
       }
-      console.log('valuse', values);
+ 
       register(values)
         .then((res: AxiosResponse<ILoginResponse>) => {
           toast.success('Register was successful', {

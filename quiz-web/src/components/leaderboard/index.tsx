@@ -1,27 +1,23 @@
 import { Col, Divider, List, Row, Spin, Badge, Avatar } from 'antd';
 import { useEffect, useState } from 'react';
+import { RootState } from '../../redux/reducers';
 import { useSelector } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import coinImg from '../../assets/coin.svg';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import deafult from '../../assets/user/user1.svg'
 import GameSummary from '../game-summary';
 import { Drawer, Button } from 'antd';
 import { getUserLeaderboard } from '../../service/quiz/quiz.service';
-import { IQuizLeaderboardOverview } from '../../types/quiz.types';
+import { ILeaderboard} from '../../types/quiz.types';
 import './style.css';
 import close from '../../assets/close.svg';
-import ic_droparrow from '../../assets/ic_droparrow.svg';
-
 const containerStyle = {
   position: 'relative',
   overflow: 'none',
   height: '100vh',
 };
 
+
 const Leaderboard: React.FC<{ quizId: string; }> = ({ quizId }): React.ReactElement => {
-  const [leaderboardResults, setLeaderboardResults] = useState<IQuizLeaderboardOverview>();
-  const [viewLeaderboard, setViewLeaderboard] = useState(true);
+  const [leaderboardResults, setLeaderboardResults] = useState<ILeaderboard>();
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
   const [open, setOpen] = useState(false);
@@ -86,7 +82,7 @@ const Leaderboard: React.FC<{ quizId: string; }> = ({ quizId }): React.ReactElem
   return (
     <>
       <Spin spinning={isLeaderboardLoading} size="large">
-        {viewLeaderboard && (
+     
           <div style={containerStyle} id="leaderboard-container" className='max-[420px]:flex-wrap min-w-96' >
             <Row>
               <div className="flex mt-6 ml-4 z-40" onClick={handleClose}>
@@ -203,7 +199,7 @@ const Leaderboard: React.FC<{ quizId: string; }> = ({ quizId }): React.ReactElem
                   >
                     <List
                       dataSource={leaderboardResults}
-                      renderItem={(item, index) => (
+                      renderItem={(item: LeaderboardEntry, index: number) => (
                         <div
                           key={index}
                           className={`px-4 flex items-center   py-2 gap-6 ${
@@ -269,7 +265,7 @@ const Leaderboard: React.FC<{ quizId: string; }> = ({ quizId }): React.ReactElem
               <GameSummary quizId={user?.id} />
             </Drawer>
           </div>
-        )}
+      
       </Spin>
     </>
   );

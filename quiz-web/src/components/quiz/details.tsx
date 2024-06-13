@@ -3,7 +3,6 @@ import { IAgoraRTCClient, IAgoraRTCRemoteUser, createClient } from 'agora-rtc-sd
 import { Button, Progress, message } from 'antd';
 import { AxiosResponse } from 'axios';
 import { Drawer } from 'antd';
-import evaarrow from '../../assets/eva_arrow-back-fill_white.svg';
 import { Avatar } from 'antd';
 import frame from '../../assets/figma/Frame.svg';
 import vector from '../../assets/figma/Vector.svg';
@@ -42,7 +41,6 @@ import { ILoginResponse, TCreateUser } from '../../types/user.type';
 import BackTab from '../back-tab';
 import Leaderboard from '../leaderboard';
 import './style.css';
-
 import group_red from '../../assets/figma/Group_red.svg';
 import group_yel from '../../assets/figma/Ellipse1.svg';
 import facebookImg from '../../assets/social/facebook.svg';
@@ -57,7 +55,6 @@ import soundFile from '../../assets/coundown_timer_mixdown.mp3';
 import './1.css';
 import backEclipse from '../../assets/backelipse.svg';
 import smallEclipse from '../../assets/return.svg';
-import close from '../../assets/close.svg';
 import { useLocation } from 'react-router-dom';
 const channelName = 'test';
 const appId = 'b75cc48b972d4ccc92edb71a1c75fb23';
@@ -68,8 +65,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const { id } = useParams();
 
   const dispatch = useDispatch();
-  const localData = JSON.parse(localStorage?.getItem('user'));
-  console.log('localData', localData);
   const stateRef = useRef();
   const socket = useContext(SocketContext)?.socket;
   const [open, setOpen] = useState(false);
@@ -85,12 +80,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [optionStartTime, setOptionStartTime] = useState<moment.Moment>();
   const [timeTakenToAnswer, setTimeTakenToAnswer] = useState<Duration>(moment.duration(0));
   const [timerProgress, setTimerProgress] = useState<number>(0);
-  const [timerInterval, setTimerInterval] = useState<any>(null);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showCalcuation, setShowCalcuation] = useState(false);
   const [liveUserCount, setLiveUserCount] = useState(0);
-  const [remoteVideoTracks, setRemoteVideoTracks] = useState<any>(null);
-  const [remoteAudioTracks, setRemoteAudioTracks] = useState<any>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isTip, setIsTip] = useState(false);
   const [numberParticipants, setNumberParticipants] = useState(0);
@@ -98,10 +90,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [amount, setAmount] = useState(50);
   const [credit, setCredit] = useState(0);
   const [userAmount, setUserAmount] = useState(0);
-  const [animateUserAmount, setAnimateUserAmount] = useState(0);
-  const [animateUserCredit, setAnimateUserCreidt] = useState(0);
   const [startAnimation, setStartAnimation] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
   const [currentQuizContent, setCurrentQuizContent] = useState({
     correct: 0,
     avatar: sideMenuSvg,
@@ -120,23 +109,25 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const navigate = useNavigate();
   const [isParticipants, setIsParticipants] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
-
   const [isticket, setIsticket] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
-  const [iscalculaed, setIscalculaed] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
   const [isPaused, setIsPaused] = useState(false);
-  const videoRef = useRef<any>(null);
-  const timerRef = useRef<any>(null);
-  const viewQuestionRef = useRef<any>(null);
   const [value, setValue] = useState(1);
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
-  const trackRef = useRef<any>(null);
   const [audio] = useState(new Audio(soundFile));
   const [isSpinning, setIsSpinning] = useState(false);
+  const videoRef = useRef<any>(null);
+  const [timerInterval, setTimerInterval] = useState<any>(null);
+  const timerRef = useRef<any>(null);
+  const trackRef = useRef<any>(null);
+  const viewQuestionRef = useRef<any>(null);
+  const [remoteVideoTracks, setRemoteVideoTracks] = useState<any>(null);
+  const [remoteAudioTracks, setRemoteAudioTracks] = useState<any>(null);
+
   useEffect(() => {
     socket?.on('amount_update_user_broadcast', (data) => {
       setAmount(data.amount);
@@ -162,21 +153,16 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   }, [remoteAudioTracks]);
   useEffect(() => {
     if (user != null) {
-      console.log('userinfo', user);
       if (user.role == 'user') {
         const data: TCreateUser = { id: user?.id };
-
         getTicket(data)
           .then((res) => {
-            console.log('resresres', res);
             setTicket(res.data?.data?.ticket);
             setUserAmount(res.data?.data?.amount);
             setCredit(res.data?.data?.credit);
             if (res.data?.data?.credit < 10) {
               setIsTip(true);
             }
-            setAnimateUserAmount(res.data?.data?.amount);
-            setAnimateUserCreidt(res.data?.data?.credit);
           })
           .catch((e) => console.log(e));
       }
@@ -424,11 +410,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    // Check if 'showWelcomeModal' item exists in local storage
-    if (localStorage.getItem('showWelcomeModal')) {
+    localStorage.removeItem('prevPath'); 
+    const state = JSON.parse(localStorage.getItem('setmodal'));
+    if (state==true) {
       setIsModalOpen2(true);
       toggleLeaderboardHandler(true);
-      localStorage.removeItem('showWelcomeModal'); // remove the item
+      localStorage.removeItem('setmodal'); // remove the item
     }
   }, []);
 
@@ -441,7 +428,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const calculationEnd = async () => {
     setShowCalcuation(false);
-    setIscalculaed(true);
     const id = JSON.parse(localStorage.getItem('user')!).user.id;
     const data = await getModalData(user?.id || id);
     console.log('datadata', data?.data?.data);
@@ -566,7 +552,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         setIsShowpool(false);
         const query_answer = { question_id: res.data.data.question_id };
         toggleQuestion(true);
-        const quizAnswerQuestions: any = await getQuestionWithOption(query_answer);
+        const quizAnswerQuestions = await getQuestionWithOption(query_answer);
         setCurrentQuestion(quizAnswerQuestions.data);
         setQuestionIndex(res.data.data.question_index);
         setTotalNumberOfQuestions(res.data.data.total_questions);
@@ -629,13 +615,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const handleTip = async () => {
     const data = { rank: currentQuizContent.rank, id: user?.id || newShadowUser.id, state: isticket };
     await getHandleTip(data).then((res) => {
-      console.log('handleto', res);
       if (res.status == 200) {
         setIsTip(true);
-
-        setAnimateUserAmount(res?.data?.data?.amount);
-        setAnimateUserCreidt(res?.data?.data?.credit);
-        console.log('33333333333');
       }
     });
   };
@@ -699,7 +680,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
 
   const toggleStreamAudio = useCallback(() => {
-    const remoteAudioTracks = stateRef.current;
+
     if (audio.volume == 1) {
       // Check if the track is playing
       trackRef.current.stop();
@@ -768,6 +749,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       setTimerInterval(null); // Updates the reference to the current interval to 'null'
     }
   }, [timerInterval]);
+
   const joinChannel = async () => {
     setIsLoading(true);
     setTimeout(() => {
@@ -869,10 +851,10 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setIsPaused(false);
           setIsShowpool(false);
           const query_question_start = { question_id: res.data.data.question_id };
-          const quizStartQuestions: any = await getOnlyQuestion(query_question_start);
+          const quizStartQuestions = await getOnlyQuestion(query_question_start);
           setQuestionIndex(res.data.data.question_index);
           setTotalNumberOfQuestions(res.data.data.total_questions);
-          setCurrentQuestion(quizStartQuestions.data);
+          setCurrentQuestion(quizStartQuestions?.data);
           toggleQuestion(true);
           setIsOptionSubmitted(false);
           break;
@@ -964,8 +946,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const handleJoinClick = () => {
     // Save the current path ('/quiz/:quizId/leaderboard') in local storage before navigating
     localStorage.setItem('prevPath', location.pathname);
+    localStorage.setItem('setmodal',true);
     navigate('/signup');
   };
+  const handleJoinCommunity=()=>{
+    localStorage.setItem('prevPath', location.pathname);
+
+    navigate('/signup');
+  }
   const toggleQuestion = (toDisplay: boolean = false) => {
     setViewQuestions(toDisplay);
 
@@ -1074,11 +1062,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             <img src={liveIcon} alt="live" height={20} />
           </div>
           <div className="mr-6 flex z-50 cursor-pointer items-center justify-center" onClick={toggleStreamAudio}>
-            {isMuted ? (
+            {/* {isMuted ? (
               <img src={ic_speakerOff} alt="speaker-off" width={24} height={26} />
             ) : (
               <img src={ic_speakerOn} alt="speaker-on" width={24} height={26} />
-            )}
+            )} */}
            
           </div>
           <div className="mr-5 flex">
@@ -1129,7 +1117,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               className="w-full flex max-w-430 pb-3 pt-4 rounded-t-2xl z-50 fixed bottom-0"
             >
               <Link to="/signup" className="w-full px-5">
-                <Button type="primary" className="w-full text-black h-12 rounded-3xl">
+                <Button onClick={handleJoinCommunity} type="primary" className="w-full text-black h-12 rounded-3xl">
                   <div className="flex justify-center px-4 gap-2">
                     <div className="flex text-black justify-center text-base font-bold text-center ">
                       Join Community, get Free 20

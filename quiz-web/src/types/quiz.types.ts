@@ -96,6 +96,8 @@ export interface IQuestionStats {
 export interface ILeaderboardResult {
   quiz: string;
   user: IUser;
+  avatar:string;
+
   rank: number;
   correct_answers: number;
   total_duration: number;
@@ -104,7 +106,7 @@ export interface ILeaderboardResult {
   id: string;
 }
 
-interface ILeaderboard {
+export interface ILeaderboard {
   results: ILeaderboardResult[];
   page: number;
   limit: number;
@@ -113,9 +115,20 @@ interface ILeaderboard {
 }
 
 export interface IQuizLeaderboardOverview {
-  leaderboard: ILeaderboard;
+   results: ILeaderboardResult[];
   totalquestion: number;
   correct: number;
+  credit:number;
+  amount:number;
+  ticket:number;
+  result:{
+    correct:number;
+    avatar:string;
+    rank:number;
+    rewardAmount:number;
+    rewardCredit:number;
+    totalquestion:number;
+  }
   status:string;
   time: number;
   total_questions: number;

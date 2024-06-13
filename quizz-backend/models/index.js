@@ -10,3 +10,4 @@ module.exports.QuizVote = require('./quiz-vote.model');
 module.exports.LiveStream = require('./live-stream.model');
 module.exports.Leaderboard = require('./leaderboard.model');
 module.exports.Payment = require('./payment.model');
+module.exports.UserActivity = require('./user-activity.model');

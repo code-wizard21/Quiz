@@ -10,7 +10,7 @@ router.get('/shadow/user', authController.getShadowUser);
 router.post('/shadow/register', validate(authValidation.shadowRegister), authController.shadowRegister);
 
 router.post('/register', validate(authValidation.register), authController.register);
-router.post('/user/login', validate(authValidation.login), authController.userLogin);
+router.post('/user/login',  authController.userLogin);
 router.post('/host/login', authController.hostLogin);
 router.post('/admin/login', validate(authValidation.login), authController.adminLogin);
 router.post('/admin/register', authController.adminRegister);

@@ -194,6 +194,7 @@ const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
   try {
     let updatedUserActivityTable = await UserActivity.find({ role: { $ne: 'shadow' } });
     let total = 0;
+    
     let spliteCredit = 0;
     let rewardAmount = 0,
       rewardCredit = 0;
@@ -202,10 +203,17 @@ const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
         total++;
       }
     }
+    console.log('req.params.quiz_id',req.params.quiz_id);
     let result = await UserActivity.findOne({ user: req.params.quiz_id });
     // Calculate user rank and retrieve the specific user
     console.log('result', result);
-    spliteCredit = Math.floor((result.pool / 2) * 3);
+    if(result==null){
+      const userList = { };
+    // Sending success response
+    res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList));  
+    }else{
+      
+    spliteCredit = Math.floor((result?.pool / 2) * 3)||0;
 
     if (result.usedticket == true) {
       switch (result.rank) {
@@ -255,6 +263,8 @@ const getModalQuizLeaderboard = catchAsync(async (req, res, next) => {
     const userList = { result: finalResult, amount: userInfo.amount,ticket:userInfo.ticket, credit: userInfo.credit };
     // Sending success response
     res.json(success(httpStatus.OK, 'Quiz summary retrieved successfully', userList));
+    }
+
   } catch (error) {
     console.log('error in getQuizLeaderboard', error);
   }

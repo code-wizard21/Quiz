@@ -1,4 +1,4 @@
-import { Button, Upload, Col, Row, Avatar } from 'antd';
+import { Button, Upload, Col, Row, Avatar,message } from 'antd';
 import { setAvatar } from '../../service/user/user.service';
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
@@ -39,13 +39,12 @@ const SingUp: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [imageUrl, setImageUrl] = useState(sideMenuSvg);
   useEffect(() => {
-    console.log('user', user);
     if (user != null) {
       if (user.role == 'user') {
         const data = { id: user.id };
         getTicket(data)
           .then((res) => {
-            setImageUrl(res.data.data.avatar);
+            setImageUrl(res?.data?.data?.avatar);
           })
           .catch((e) => console.log(e));
       } else {
@@ -66,11 +65,7 @@ const SingUp: React.FC = () => {
     const data: SetAvatarData = { email: user.email, avatar: imageUrl };
     setAvatar(data)
       .then((res) => {
-        console.log(res);
         if (res.status == 200) {
-          console.log('setavatar',res);
-          let user = JSON.parse(localStorage.getItem('user'));
-      
           // localStorage.setItem('user', JSON.stringify(res.data.data));
           toast.success('Your avatar has been successfully stored.', {
             autoClose: false,
@@ -92,7 +87,17 @@ const SingUp: React.FC = () => {
         });
       });
   };
-
+  const beforeUpload: UploadProps['beforeUpload'] = (file) => {
+    const isImage = file.type.startsWith('image/');
+    if (!isImage) {
+      message.error('You can only upload image files!');
+    }
+    const isLt1M = file.size / 1024 / 1024 < 1;
+    if (!isLt1M) {
+      message.error('Image must smaller than 1MB!');
+    }
+    return isImage && isLt1M;
+  };
   const handleChange: UploadProps['onChange'] = (info) => {
     if (info.file.status === 'uploading') {
       return;
@@ -128,6 +133,7 @@ const SingUp: React.FC = () => {
               listType="picture-circle"
               className="avatar-uploader"
               showUploadList={false}
+              beforeUpload={beforeUpload}
               action={UploadURL}
               onChange={handleChange}
             >

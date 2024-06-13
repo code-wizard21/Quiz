@@ -100,7 +100,7 @@ const getUserByEmailAndRole = async (email, role) => {
  */
 const updateUserById = async (userId, updateBody) => {
   const user = await getUserById(userId);
-  console.log('updateUserByIdupdateUserById',user);
+
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }

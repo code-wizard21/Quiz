@@ -1,13 +1,14 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService, agoraService } = require('../services');
-const { Token } = require('../models');
+const { Token,UserAnswer ,UserActivity} = require('../models');
 const { tokenTypes } = require('../config/tokens');
 
 const register = catchAsync(async (req, res) => {
   let updatedUser;
   req.body.ticket = 10;
   req.body.credit = 20;
+  console.log('req.body',req.body);
   if (req.body.shadow_user_id) {
     const shadowUser = await userService.getUserById(req.body.shadow_user_id);
     if (shadowUser) {
@@ -15,14 +16,23 @@ const register = catchAsync(async (req, res) => {
       const userUpdateBody = { ...req.body, role: 'user' };
 
       updatedUser = await userService.updateUserById(shadowUser.id, userUpdateBody);
-
+      console.log('updatedUser,',updatedUser);
+      const shadowAnswer=await UserAnswer.findOne({user:req.body.shadow_user_id});
+      if(shadowAnswer!=null){
+        await U
+        await UserAnswer.updateMany(
+          { user: shadowID },
+          { $set: { username: updatedUser.name, updatedUser: user._id } },
+          { multi: true }
+        );
+      }
       // remove old user refresh token
-      const refreshTokenDoc = await Token.findOne({
-        token: req.body.refresh_token,
-        type: tokenTypes.REFRESH,
-        blacklisted: false,
-      });
-      await refreshTokenDoc.deleteOne();
+    //   const refreshTokenDoc = await Token.findOne({
+    //     token: req.body.refresh_token,
+    //     type: tokenTypes.REFRESH,
+    //     blacklisted: false,
+    //   });
+    //   await refreshTokenDoc.deleteOne();
     }
   } else {
     const user = await userService.createUser(req.body);
@@ -93,8 +103,23 @@ const getShadowUser = catchAsync(async (req, res, next) => {
 });
 
 const userLogin = catchAsync(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password ,shadowID} = req.body;
+ 
+  const shadowAnswer=await UserAnswer.findOne({user:shadowID});
+ 
   const user = await authService.loginUserWithEmailAndPassword(email, password, 'user');
+  console.log('user',user);
+  console.log('shadowAnswer',shadowAnswer);
+  if(shadowAnswer!=null){
+    const activityUser=await UserActivity.findOne({user:shadowID});
+    console.log('activityUser',activityUser);
+  
+    await UserAnswer.updateMany(
+      { user: shadowID },
+      { $set: { username: user.name, user: user._id } },
+      { multi: true }
+    );
+  }
   const tokens = await tokenService.generateAuthTokens(user);
   // TODO: Implement coin service
   const coin = {

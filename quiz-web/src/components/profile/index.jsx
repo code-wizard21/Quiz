@@ -60,8 +60,10 @@ const Payment = () => {
       if (user.role == 'user') {
         setName(user.username);
         const data = { id: user.id };
+        
         getTicket(data)
           .then((res) => {
+            console.log('res',res);
             setImageUrl(res.data.data.avatar);
             setTicket(res.data.data.ticket);
             setCredit(res.data.data.credit);
