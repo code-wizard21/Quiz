@@ -10,6 +10,11 @@ import { post } from '../../wrappers/request';
 export const googleAuth = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('auth/register', userData);
 };
+
+
+export const getexistUser = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
+  return post('users/existUser', userData);
+};
 export const register = async (userData: TCreateUser): Promise<AxiosResponse<ILoginResponse>> => {
   return post('auth/register', userData);
 };

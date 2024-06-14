@@ -510,11 +510,11 @@ const initaliseWebSocket = (server) => {
         }
 
         const userActivity_exist = await UserActivity.findOne({ user: new ObjectId(user_id) });
-        console.log('userActivity_exist', userActivity_exist);
+     
         let quiz_question = await QuizQuestion.find({ quiz: quiz_id });
 
         if (!userActivity_exist) {
-          console.log('create new User');
+
           const userActivity = new UserActivity({
             quiz: quiz_id,
             user: user_id,

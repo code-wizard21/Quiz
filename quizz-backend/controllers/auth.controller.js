@@ -8,7 +8,7 @@ const register = catchAsync(async (req, res) => {
   let updatedUser;
   req.body.ticket = 10;
   req.body.credit = 20;
-  console.log('req.body',req.body);
+ 
   if (req.body.shadow_user_id) {
     const shadowUser = await userService.getUserById(req.body.shadow_user_id);
     if (shadowUser) {
@@ -16,7 +16,7 @@ const register = catchAsync(async (req, res) => {
       const userUpdateBody = { ...req.body, role: 'user' };
 
       updatedUser = await userService.updateUserById(shadowUser.id, userUpdateBody);
-      console.log('updatedUser,',updatedUser);
+     
       const shadowAnswer=await UserAnswer.findOne({user:req.body.shadow_user_id});
       if(shadowAnswer!=null){
         await U
@@ -67,7 +67,7 @@ const shadowRegister = catchAsync(async (req, res) => {
 
   const user = await userService.createShadowUser(req.body);
   
-  console.log('shaddown ',user);
+ 
   const agoraUserData = await agoraService.generateChatUserinAgora(user, req.body.password);
 
   const userUpdateID = {
@@ -76,9 +76,9 @@ const shadowRegister = catchAsync(async (req, res) => {
       username: agoraUserData.username,
     },
   };
-  console.log('user.id, userUpdateID',user.id, userUpdateID);
+ 
   const updatedUser = await userService.updateUserById(user.id, userUpdateID);
-  console.log('updatedUser',updatedUser);
+ 
   const tokens = await tokenService.generateAuthTokens(updatedUser);
 
   res.status(httpStatus.CREATED).send({ user: updatedUser, tokens });
@@ -108,12 +108,10 @@ const userLogin = catchAsync(async (req, res) => {
   const shadowAnswer=await UserAnswer.findOne({user:shadowID});
  
   const user = await authService.loginUserWithEmailAndPassword(email, password, 'user');
-  console.log('user',user);
-  console.log('shadowAnswer',shadowAnswer);
+;
   if(shadowAnswer!=null){
     const activityUser=await UserActivity.findOne({user:shadowID});
-    console.log('activityUser',activityUser);
-  
+
     await UserAnswer.updateMany(
       { user: shadowID },
       { $set: { username: user.name, user: user._id } },

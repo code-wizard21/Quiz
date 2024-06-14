@@ -15,7 +15,7 @@ const YOUR_DOMAIN_Profile = 'https://quizmobb.com/profile';
 const buyCredit = catchAsync(async (req, res) => {
   try {
     const { amount, credit, user, email, ticket } = req.body;
-    console.log('req.body',req.body);
+  
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -49,7 +49,7 @@ const buyCredit = catchAsync(async (req, res) => {
 const buyCreditProfile = catchAsync(async (req, res) => {
   try {
     const { amount, credit, user, email, ticket } = req.body;
-    console.log('req.body',req.body);
+  
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -82,7 +82,7 @@ const buyCreditProfile = catchAsync(async (req, res) => {
 });
 const buyCreditSocket = catchAsync(async (req, res) => {
   try {
-    console.log('req.body',req.body);
+   
     const { amount, credit, user, email, successful_url, ticket } = req.body;
 
     const session = await stripe.checkout.sessions.create({
@@ -117,7 +117,7 @@ const buyCreditSocket = catchAsync(async (req, res) => {
 });
 const buyticket = catchAsync(async (req, res) => {
   try {
-    console.log('req.body',req.body);
+  
     const { amount, ticket, user, email, credit } = req.body;
     const session = await stripe.checkout.sessions.create({
       line_items: [

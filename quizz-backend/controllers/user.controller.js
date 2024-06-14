@@ -3,12 +3,12 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const axios = require('axios');
 const catchAsync = require('../utils/catchAsync');
-const { userService, agoraService ,tokenService} = require('../services');
+const { userService, agoraService, tokenService } = require('../services');
 const { success } = require('../utils/ApiResponse');
 const { User } = require('../models');
 const GoogleUser = require('../models/google.user.model');
 const UserActivity = require('../models/user-activity.model');
-const shadowUser=require('../models/shadow-user.model');
+const shadowUser = require('../models/shadow-user.model');
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -16,89 +16,103 @@ const createUser = catchAsync(async (req, res) => {
 });
 
 const googlelogin = async (req, res) => {
-  const { credentialRespose } = req.body;
-  console.log(credentialRespose);
+  const { credentialResponse } = req.body;
+  console.log(credentialResponse);
 
-  if (!credentialRespose.authuser) {
+  if (!credentialResponse.authuser) {
     res.status(400).send({
       message: 'Code is not exist!',
     });
-  } else {
-    const response = await axios.post('https://oauth2.googleapis.com/token', {
-      code: credentialRespose.code,
-      client_id: '1082715081696-mgk2hen3l75jf0oin4lavv7ga0r4pf9a.apps.googleusercontent.com',
-      client_secret: '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',
-      redirect_uri: 'https://api.quizmobb.com',
-      grant_type: 'authorization_code',
-    });
-
-    const { access_token, id_token } = response.data;
-    const token = `Bearer ${access_token}`;
-    const { data: profile } = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
-      headers: { Authorization: `Bearer ${access_token}` },
-    });
-    console.log('profile', profile);
-    
-const {
-  email,
-  name
-} = profile;
-
-const password = 'testtest1';
-
-try {
-  let user = await User.findOne({
-    email
-  });
-
-  if (!user) {
-    const newUserDetails = {
-      ticket: 10,
-      credit: 20,
-      amount: 0,
-      email,
-      name,
-      username: name,
-      role: 'user',
-      isEmailVerified: profile.verified_email,
-      avatar: profile.picture
-    };
-
-    user = await userService.createUser(newUserDetails);
-
-    const agoraUserData = await agoraService.generateChatUserinAgora(user, password);
-
-    const userUpdateAgoraID = {
-      agora: {
-        uuid: agoraUserData.uuid,
-        username: agoraUserData.username,
-      },
-    };
-
-    user = await userService.updateUserById(user.id, userUpdateAgoraID);
   }
 
-  const tokens = await tokenService.generateAuthTokens(user);
-  const cookieOptions = {
-    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-    httpOnly: true
-  };
-
-  return res.status(201)
-    .cookie('token', token, cookieOptions)
-    .json({
-      user,
-      tokens
-    });
-} catch (error) {
-  console.error(`Error while creating user: ${error.message}`);
-  return res.status(500).json({
-    error: 'An error occurred while creating the user.'
+  const response = await axios.post('https://oauth2.googleapis.com/token', {
+    code: credentialResponse.code,
+    client_id: '1082715081696-mgk2hen3l75jf0oin4lavv7ga0r4pf9a.apps.googleusercontent.com',
+    client_secret: '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',
+    redirect_uri: 'https://www.quizmobb.com',
+    grant_type: 'authorization_code',
   });
-}
 
+  console.log('response', response);
+  const { access_token, id_token } = response.data;
+  const token = `Bearer ${access_token}`;
+  const { data: profile } = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
+  console.log('profile', profile);
+
+  const { email, name } = profile;
+
+  const password = 'testtest1';
+
+  try {
+    let user = await User.findOne({
+      email,
+    });
+
+    if (!user) {
+      const newUserDetails = {
+        ticket: 10,
+        credit: 20,
+        amount: 0,
+        email,
+        name,
+        username: name,
+        role: 'user',
+        isEmailVerified: profile.verified_email,
+        avatar: profile.picture,
+      };
+
+      user = await userService.createUser(newUserDetails);
+
+      const agoraUserData = await agoraService.generateChatUserinAgora(user, password);
+
+      const userUpdateAgoraID = {
+        agora: {
+          uuid: agoraUserData.uuid,
+          username: agoraUserData.username,
+        },
+      };
+
+      user = await userService.updateUserById(user.id, userUpdateAgoraID);
+    }
+
+    const tokens = await tokenService.generateAuthTokens(user);
+    const cookieOptions = {
+      expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+    };
+
+    return res.status(201).cookie('token', token, cookieOptions).json({
+      user,
+      tokens,
+    });
+  } catch (error) {
+    console.error(`Error while creating user: ${error.message}`);
+    return res.status(500).json({
+      error: 'An error occurred while creating the user.',
+    });
   }
 };
+
+
+const existUser = catchAsync(async (req, res) => {
+
+  try {
+    console.log('req.bodyexistUser',req.body);
+    const {id}=req.body
+    const result = await UserActivity.findOne({ user:id });
+    console.log('userActivity_exist',result);
+  
+
+    res.json(success(httpStatus.OK, 'Shadow users retrieved successfully', result));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while querying shadow users.' });
+  }
+
+});
+
 const getUsers = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
   const options = pick(req.query, ['sort_by', 'limit', 'page']);
@@ -131,7 +145,7 @@ const handleTip = async (req, res) => {
   console.log('req.body', req.body);
   try {
     const user = await User.findById(id);
-    console.log('user', user);
+
     if (!user) {
       return res.status(httpStatus.NOT_FOUND).json({ message: `User not found with id: ${id}` });
     }
@@ -206,7 +220,7 @@ const setAvatar = async (req, res) => {
 
 const useTicketQuiz = async (req, res) => {
   try {
-    console.log('req.body', req.body);
+   
     let user = await User.findOne({ _id: req.body.id });
     await UserActivity.updateMany({}, { $inc: { pool: 1 } })
       .then((result) => {
@@ -279,4 +293,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  existUser
 };

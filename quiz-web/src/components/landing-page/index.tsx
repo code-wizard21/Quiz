@@ -27,10 +27,10 @@ const LandingPage: React.FC = () => {
     window.location.reload();
   };
   const googleLogin = useGoogleLogin({
-    onSuccess: (credentialRespose) => {
-      console.log('credentialRespose', credentialRespose);
+    onSuccess: (credentialResponse) => {
+      console.log('credentialRespose', credentialResponse);
       googleAuth({
-        credentialRespose,
+        credentialResponse,
       }).then((res) => {
         console.log('googleauth', res.data);
         navigate('/quiz');

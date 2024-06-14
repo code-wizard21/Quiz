@@ -145,7 +145,7 @@ const generateChatUserinAgora = async (user, password) => {
       password: password,
       nickname: 'username',
     };
-    console.log('chatUser',chatUser);
+
 
     const chatUserResponse = await axios.post(
       `https://${AGORA_CHAT_BASE_URL}/${AGORA_CHAT_ORG_NAME}/${AGORA_CHAT_APP_NAME}/users`,

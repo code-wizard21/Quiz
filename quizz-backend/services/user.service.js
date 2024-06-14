@@ -30,7 +30,7 @@ const createUser = async (userBody) => {
   // generate a random username if not provided
   const newUserBody = { ...userBody };
 
-  console.log('newUserBody', newUserBody);
+
   // newUserBody.name = await makeRandomUsername();
 
   newUserBody.username = newUserBody.name;
@@ -42,14 +42,14 @@ const createUser = async (userBody) => {
 const createShadowUser = async (userBody) => {
   // generate a random username if not provided
   const newUserBody = { ...userBody };
-  console.log('newUserBody', newUserBody);
+
   // check if username is taken
 
     newUserBody.name = await makeRandomUsername();
   
   newUserBody.username = newUserBody.name;
   // create the user
-  console.log('newUserBody', newUserBody);
+  
   return User.create(newUserBody);
 };
 

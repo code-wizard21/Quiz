@@ -48,7 +48,7 @@ import instagramImg from '../../assets/social/instagram.svg';
 import twitterImg from '../../assets/social/twitter.svg';
 import whatsappImg from '../../assets/social/whatsapp.svg';
 import { getTicket, getHandleTip } from '../../service/user/user.service';
-import { reduceTicket } from '../../service/user/user.service';
+import { reduceTicket, getexistUser } from '../../service/user/user.service';
 import { getModalData } from '../../service/quiz/quiz.service';
 import { checkOutBuyticketSessionSocket } from '../../service/payment/payment.service';
 import soundFile from '../../assets/coundown_timer_mixdown.mp3';
@@ -56,6 +56,7 @@ import './1.css';
 import backEclipse from '../../assets/backelipse.svg';
 import smallEclipse from '../../assets/return.svg';
 import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 const channelName = 'test';
 const appId = 'b75cc48b972d4ccc92edb71a1c75fb23';
 
@@ -410,17 +411,17 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    localStorage.removeItem('prevPath'); 
+    localStorage.removeItem('prevPath');
     const state = JSON.parse(localStorage.getItem('setmodal'));
-    if (state==true) {
+    if (state == true) {
       setIsModalOpen2(true);
       toggleLeaderboardHandler(true);
       localStorage.removeItem('setmodal'); // remove the item
     }
     const stateJoin = JSON.parse(localStorage.getItem('startGuest'));
-    if (stateJoin==true) {
-     joinChannel();
-     localStorage.removeItem('startGuest');
+    if (stateJoin == true) {
+      joinChannel();
+      localStorage.removeItem('startGuest');
     }
   }, []);
 
@@ -653,7 +654,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const toggleLeaderboardHandler = useCallback((status: boolean) => {
     setShowLeaderboard(status);
     setIsVideoSubed(status);
-  }, []);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+  }, []);
   const toggleSummaryHandler = useCallback((status: boolean) => {
     console.log('toggleSummaryHandler', toggleSummaryHandler);
     if (status) {
@@ -685,7 +686,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   };
 
   const toggleStreamAudio = useCallback(() => {
-
     if (audio.volume == 1) {
       // Check if the track is playing
       trackRef.current.stop();
@@ -703,7 +703,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     // emitted when user leaves the live quiz
     // localStorage.setItem('isjoinchanel', 'false');
     localStorage.setItem('iscounted', 'false');
-
+   
     socket?.emit(SOCKET_EMITTERS.USER_LEAVE_LIVE_QUIZ, { user_id: user?.id || newShadowUser.id, quiz_id: id });
 
     if (remoteAudioTracks) {
@@ -768,76 +768,65 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       return;
       //  await leaveChannel();
     }
-    console.log('userlogin', user);
+    if (!socket?.connected) {
+      socket?.connect();
+      showMessages('error', 'Please wait while we connect you to the quiz');
+    }
     if (!user || user.role == 'shadow') {
       // create shadow user and join
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
       console.log('shadowUsershadowUser', shadowUser);
       dispatch(setUserData(shadowUser.data.user));
       localStorage.setItem('user', JSON.stringify(shadowUser.data));
-      setNewShadowUser((prevState) => ({
-        ...prevState,
-        id: shadowUser.data.user.id,
-        username: shadowUser.data.user.name,
-      }));
-      socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
-        user_id: shadowUser.data.user.id,
-        quiz_id: id,
-        role: 'shadow',
-        username: shadowUser.data.user.name,
-      });
+      const idData = { id: shadowUser.data.user.id };
+      await getexistUser(idData)
+        .then((res) => {
+          console.log('resresres', res);
+          if (res.data.data == null) {
+            setNewShadowUser((prevState) => ({
+              ...prevState,
+              id: shadowUser.data.user.id,
+              username: shadowUser.data.user.name,
+            }));
+            socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
+              user_id: shadowUser.data.user.id,
+              quiz_id: id,
+              role: 'shadow',
+              username: shadowUser.data.user.name,
+            });
+            joinAgora();
+          } else {
+            showMessages('error', 'already Joined');
+
+          }
+        })
+        .catch((err) => console.log(err));
     } else {
-      socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
-        user_id: user?.id,
-        quiz_id: id,
-        role: user?.role,
-        username: user?.username,
-      });
+      const idData = { id: user?.id };
+      await getexistUser(idData)
+        .then((res) => {
+          console.log('resresres', res.data.data);
+          if (res.data.data == null) {
+            socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
+              user_id: user?.id,
+              quiz_id: id,
+              role: user?.role,
+              username: user?.username,
+            });
+            joinAgora();
+          } else {
+            showMessages('error', 'already Joined');
+          }
+        })
+        .catch((err) => console.log(err));
     }
 
-    if (!socket?.connected) {
-      socket?.connect();
-      showMessages('error', 'Please wait while we connect you to the quiz');
-    }
+  
 
-    const randomUid = Math.floor(Math.random() * 1000);
-
-    const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
-
-    await client
-      .join(appId, channelName, rtcToken.data.data, randomUid)
-      .then((res) => {
-        console.log('resres###########', res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    setIsLoading(false);
-    setIsJoined(true);
-    localStorage.setItem('isjoinchanel', 'true');
-    localStorage.setItem('iscounted', 'true');
-    message.destroy();
-    videoRef.current.hidden = false;
-    videoRef.current?.style.setProperty('display', 'block');
-    toggleQuestion(false);
-    dispatch(setMiscellaneousData({ topBarVisibility: false }));
-
-    client.on('user-published', onUserPublish);
-
-    client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
-      if (mediaType === 'video') {
-        user.videoTrack?.stop();
-      }
-      if (mediaType === 'audio') {
-        user.audioTrack?.stop();
-      }
-      leaveChannel();
-    });
     const reqData = { quiz: id };
     const res = await getQuizState(reqData);
 
     if (res.data.data.status != undefined) {
-      console.log('resres', res.data);
       switch (res.data.data.status) {
         case 'paused':
           videoRef.current?.style.setProperty('display', 'none');
@@ -898,6 +887,24 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }, intervalDuration);
     setTimerInterval(timerInterval);
   }, []);
+  const joinAgora = async () => {
+    const randomUid = Math.floor(Math.random() * 1000);
+
+    const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
+
+    await client
+      .join(appId, channelName, rtcToken.data.data, randomUid)
+      .then((res) => {
+        console.log('resres###########', res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setIsLoading(false);
+    setIsJoined(true);
+    localStorage.setItem('isjoinchanel', 'true');
+    localStorage.setItem('iscounted', 'true');
+  };
   const handleBuyTicketClick = () => {
     let amount, ticket;
     switch (value) {
@@ -951,14 +958,14 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const handleJoinClick = () => {
     // Save the current path ('/quiz/:quizId/leaderboard') in local storage before navigating
     localStorage.setItem('prevPath', location.pathname);
-    localStorage.setItem('setmodal',true);
+    localStorage.setItem('setmodal', true);
     navigate('/signup');
   };
-  const handleJoinCommunity=()=>{
+  const handleJoinCommunity = () => {
     localStorage.setItem('prevPath', location.pathname);
 
     navigate('/signup');
-  }
+  };
   const toggleQuestion = (toDisplay: boolean = false) => {
     setViewQuestions(toDisplay);
 
@@ -1072,7 +1079,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             ) : (
               <img src={ic_speakerOn} alt="speaker-on" width={24} height={26} />
             )} */}
-           
           </div>
           <div className="mr-5 flex">
             <img src={userCountIcon} alt="user-count" height={24} />

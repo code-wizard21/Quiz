@@ -69,7 +69,7 @@ const calculateQuizLeaderboard = async () => {
       );
     }
     const docs = await UserActivity.find({ role: 'user' }).sort({ correct: -1, time: 1 });
-    console.log('docs', docs);
+
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
