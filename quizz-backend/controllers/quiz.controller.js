@@ -291,7 +291,7 @@ const getQuizLeaderboard = catchAsync(async (req, res) => {
         user: user.user.toString()  // convert user ObjectId to string
       }
     });
-    console.log('updatedUserList',transformedList);
+    console.log('getQuizLeaderboard updatedUserList',transformedList);
     return res.status(httpStatus.OK).json({
       status: 'success',
       message: 'Quiz summary retrieved successfully',
