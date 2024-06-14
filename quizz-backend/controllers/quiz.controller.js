@@ -295,7 +295,7 @@ const getQuizLeaderboard = catchAsync(async (req, res) => {
     return res.status(httpStatus.OK).json({
       status: 'success',
       message: 'Quiz summary retrieved successfully',
-      data: updatedUserList,
+      data: transformedList,
     });
   } catch (error) { 
     logger.error('Error getting Quiz Leaderboard:', error);

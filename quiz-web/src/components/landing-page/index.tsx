@@ -8,21 +8,31 @@ import { setUserData } from '../../redux/actions/auth.action';
 import close from '../../assets/close.svg';
 import { useDispatch } from 'react-redux';
 const LandingPage: React.FC = () => {
-  const clientId = '1082715081696-mgk2hen3l75jf0oin4lavv7ga0r4pf9a.apps.googleusercontent.com';
+ 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handleButtonClick =  () => {
-    localStorage.clear();
-    navigate('/quiz');
+  const handleButtonClick = () => {
+   
+    const defaultPath = '/quiz';
+    const prevPath = localStorage.getItem('prevPath') || defaultPath;
+    navigate(prevPath);
+    if (prevPath !== defaultPath) {
+      localStorage.clear();
+      localStorage.setItem('startGuest', true);
+    }else{
+      localStorage.clear();
+    }
+    
+   
     window.location.reload();
   };
   const googleLogin = useGoogleLogin({
     onSuccess: (credentialRespose) => {
-      console.log('credentialRespose',credentialRespose);
+      console.log('credentialRespose', credentialRespose);
       googleAuth({
-        credentialRespose
+        credentialRespose,
       }).then((res) => {
-        console.log('googleauth',res.data);
+        console.log('googleauth', res.data);
         navigate('/quiz');
         localStorage.setItem('user', JSON.stringify(res.data));
         localStorage.setItem('hasRegistered', 'true');
@@ -30,9 +40,8 @@ const LandingPage: React.FC = () => {
       });
     },
     flow: 'auth-code',
-    
   });
- 
+
   return (
     <>
       <Row className="landing-page ">
@@ -44,18 +53,18 @@ const LandingPage: React.FC = () => {
             Test your wits with our daily live quiz shows and win cash! Free quizzes of a variety of themes updated
             daily for all you brainiacs out there.
           </p>
-   
-              <Button
-                type="primary"
-                onClick={() => googleLogin()}
-                className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full"
-              >
-                <div className="flex items-center justify-center">
-                  <img src={google} alt="user2" />
-                  <div className="text-center text-base font-bold text-black mr-2 ">Continue with Google</div>
-                </div>
-              </Button>
-          
+
+          <Button
+            type="primary"
+            onClick={() => googleLogin()}
+            className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full"
+          >
+            <div className="flex items-center justify-center">
+              <img src={google} alt="user2" />
+              <div className="text-center text-base font-bold text-black mr-2 ">Continue with Google</div>
+            </div>
+          </Button>
+
           {/* <Button type="primary" className="quiz-action-btn h-12  shadow-none text-black font-bold rounded-3xl w-full">
             <div className="flex items-center justify-center">
               <img src={google} alt="user2" />

@@ -417,6 +417,11 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       toggleLeaderboardHandler(true);
       localStorage.removeItem('setmodal'); // remove the item
     }
+    const stateJoin = JSON.parse(localStorage.getItem('startGuest'));
+    if (stateJoin==true) {
+     joinChannel();
+     localStorage.removeItem('startGuest');
+    }
   }, []);
 
   const calculationStart = async () => {
@@ -648,7 +653,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const toggleLeaderboardHandler = useCallback((status: boolean) => {
     setShowLeaderboard(status);
     setIsVideoSubed(status);
-  }, []);
+  }, []);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
   const toggleSummaryHandler = useCallback((status: boolean) => {
     console.log('toggleSummaryHandler', toggleSummaryHandler);
     if (status) {
