@@ -111,6 +111,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const [isParticipants, setIsParticipants] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean | undefined>(undefined);
   const [isticket, setIsticket] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
@@ -201,6 +202,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     socket?.on('amount_update_user_broadcast', (data) => {
       setAmount(data.amount);
       setNumberParticipants(data.playCount);
+    });
+    socket?.on('user_joined', (data) => {
+     setIsLoading(false);
     });
     // host_live_change
 
@@ -703,7 +707,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     // emitted when user leaves the live quiz
     // localStorage.setItem('isjoinchanel', 'false');
     localStorage.setItem('iscounted', 'false');
-   
+
     socket?.emit(SOCKET_EMITTERS.USER_LEAVE_LIVE_QUIZ, { user_id: user?.id || newShadowUser.id, quiz_id: id });
 
     if (remoteAudioTracks) {
@@ -757,9 +761,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const joinChannel = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+ 
     // message.loading("Joining Quiz");
     showMessages('loading', 'Joining Quiz');
 
@@ -772,61 +774,58 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       socket?.connect();
       showMessages('error', 'Please wait while we connect you to the quiz');
     }
-    if (!user || user.role == 'shadow') {
+    if (!user && isChecked==false) {
+      console.log('useruser');
+      setIsLoading(true);
       // create shadow user and join
       const shadowUser: AxiosResponse<ILoginResponse> = await createShadowUser();
-      console.log('shadowUsershadowUser', shadowUser);
+      setIsChecked(true);
       dispatch(setUserData(shadowUser.data.user));
       localStorage.setItem('user', JSON.stringify(shadowUser.data));
-      const idData = { id: shadowUser.data.user.id };
-      await getexistUser(idData)
-        .then((res) => {
-          console.log('resresres', res);
-          if (res.data.data == null) {
-            setNewShadowUser((prevState) => ({
-              ...prevState,
-              id: shadowUser.data.user.id,
-              username: shadowUser.data.user.name,
-            }));
-            socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
-              user_id: shadowUser.data.user.id,
-              quiz_id: id,
-              role: 'shadow',
-              username: shadowUser.data.user.name,
-            });
-            joinAgora();
-          } else {
-            showMessages('error', 'already Joined');
+      setNewShadowUser((prevState) => ({
+        ...prevState,
+        id: shadowUser.data.user.id,
+        username: shadowUser.data.user.name,
+      }));
+      socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
+        user_id: shadowUser.data.user.id,
+        quiz_id: id,
+        role: 'shadow',
+        username: shadowUser.data.user.name,
+      });
+      await joinAgora();
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 3500);
+      
+    }
 
-          }
-        })
-        .catch((err) => console.log(err));
-    } else {
+    if (user) {
       const idData = { id: user?.id };
       await getexistUser(idData)
         .then((res) => {
-          console.log('resresres', res.data.data);
           if (res.data.data == null) {
+            console.log('res.data.data',res.data);
+            console.log('############################');
             socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
               user_id: user?.id,
               quiz_id: id,
               role: user?.role,
               username: user?.username,
             });
-            joinAgora();
+            // joinAgora();
+     
           } else {
             showMessages('error', 'already Joined');
+            setIsLoading(false);
           }
         })
         .catch((err) => console.log(err));
     }
-
-  
-
     const reqData = { quiz: id };
     const res = await getQuizState(reqData);
 
-    if (res.data.data.status != undefined) {
+    if (res?.data?.data?.status != undefined) {
       switch (res.data.data.status) {
         case 'paused':
           videoRef.current?.style.setProperty('display', 'none');
@@ -872,6 +871,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       }
     }
   };
+
+
 
   const startTimer = useCallback((duration: number) => {
     const intervalDuration = (duration / 100) * 1000;
@@ -952,7 +953,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         }
       })
       .catch((err) => {
-        console.error(err.message);
+        console.error(err);
       });
   };
   const handleJoinClick = () => {

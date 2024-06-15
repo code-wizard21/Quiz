@@ -69,10 +69,10 @@ const initaliseWebSocket = (server) => {
 
       socket.on('increase_pool_amount_user', async (data) => {
         console.log('data', data);
-        const {email,quiz_id,ticket}=data;
+        const { email, quiz_id, ticket } = data;
         amount++;
         playCount++;
-        const liveStream = await LiveStream.findOne({quiz: new ObjectId(quiz_id)});
+        const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id) });
         if (!liveStream) {
           console.log('live stream not found');
           return;
@@ -88,7 +88,7 @@ const initaliseWebSocket = (server) => {
         }
 
         const newData1 = new liveQuiz({
-          quiz:quiz_id,
+          quiz: quiz_id,
           status: 'showpool',
           pool: amount,
           contestants: playCount,
@@ -125,7 +125,7 @@ const initaliseWebSocket = (server) => {
           }
           const newData = new liveQuiz({
             status: 'paused',
-            quiz:quiz_id
+            quiz: quiz_id,
           });
 
           await newData
@@ -170,7 +170,7 @@ const initaliseWebSocket = (server) => {
         if (data.status === 'hide') {
           const newData = new liveQuiz({
             status: 'quiz_end',
-            quiz:quiz_id
+            quiz: quiz_id,
           });
 
           await newData
@@ -184,11 +184,11 @@ const initaliseWebSocket = (server) => {
         } else {
           const newData = new liveQuiz({
             status: 'showpool',
-            quiz:quiz_id
+            quiz: quiz_id,
           });
 
           await newData
-            .save() 
+            .save()
             .then((res) => {
               console.log('res');
             })
@@ -234,12 +234,9 @@ const initaliseWebSocket = (server) => {
         viewer_count = 0;
         setTimeout(() => {
           io.emit('user_quiz_live_calculation_end', { quiz: quiz_id });
-         
-        io.emit('host_quiz_live_calculation_end', { quiz: quiz_id });
+
+          io.emit('host_quiz_live_calculation_end', { quiz: quiz_id });
         }, 3000);
-      
-        
-     
       });
 
       socket.on('host_live_end', async (data) => {
@@ -267,7 +264,6 @@ const initaliseWebSocket = (server) => {
 
           // TODO: to be removed after testing
           // Delete all user answer data for the quiz
-         
 
           // Close the room and disconnect all sockets
           // TODO: check if this is the right way to close the room
@@ -312,7 +308,7 @@ const initaliseWebSocket = (server) => {
         const totalNumberOfQuestions = await QuizQuestion.countDocuments({ quiz: new ObjectId(quiz_id) });
         const newData = new liveQuiz({
           status: 'quiz',
-          quiz:quiz_id,
+          quiz: quiz_id,
           question_id: question_id,
           question_index: question_index,
           total_questions: totalNumberOfQuestions,
@@ -386,7 +382,7 @@ const initaliseWebSocket = (server) => {
         console.log('host_live_quiz_question_end');
         // get room_id from livestreams collection via quiz_id and host_id
         const { quiz_id, host_id, question_id, is_last } = data;
-      
+
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
         if (!liveStream) {
           return;
@@ -424,12 +420,11 @@ const initaliseWebSocket = (server) => {
           // perhaps setting percent to 0 or some default
           percent = 0; // or some default value
         }
-      
 
         const quizQuestions = await questionService.getQuestionWithOptionAndTotalAnswers(question_id);
         console.log('user_quiz_live_question_end');
         io.in(room).emit('user_quiz_live_question_end', { question: quizQuestions, quiz_id: quiz_id });
-       
+
         const percentData = {
           position: position,
           correctAnswerPercent: percent,
@@ -448,7 +443,6 @@ const initaliseWebSocket = (server) => {
         // io.in(room).emit('user_quiz_live_question_answer', {});
       });
       socket.on('user_useranswer_save', async (data) => {
-   
         const { quiz_id, question_id, username, user_id } = data;
 
         let questionExit = await UserAnswer.find({ question: question_id, user: user_id });
@@ -508,24 +502,16 @@ const initaliseWebSocket = (server) => {
 
           await participation.save();
         }
+        const quiz_question = await QuizQuestion.find({ quiz: quiz_id });
+        const userActivity = new UserActivity({
+          quiz: quiz_id,
+          user: user_id,
+          role: role,
+          username: username,
+          totalquestion: quiz_question.length,
+        });
+        await userActivity.save();
 
-        const userActivity_exist = await UserActivity.findOne({ user: new ObjectId(user_id) });
-     
-        let quiz_question = await QuizQuestion.find({ quiz: quiz_id });
-
-        if (!userActivity_exist) {
-
-          const userActivity = new UserActivity({
-            quiz: quiz_id,
-            user: user_id,
-            role: role,
-            username: username,
-            totalquestion: quiz_question.length,
-          });
-          await userActivity.save();
-        }
-
-        // update viewer count in live stream and emit to users
         ++liveStream.viewer_count;
 
         await liveStream.save();
@@ -535,12 +521,13 @@ const initaliseWebSocket = (server) => {
           console.log('rejoin');
           viewer_count++;
         }
-
         // TODO: fix the channel name implementation as for now it is hardcoded
         const channelViewerCount = await getNumberOfUsersInChannel('test');
         console.log('user_join_live_quiz', viewer_count);
         setTimeout(() => {
           io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: viewer_count });
+         console.log('user_joined');
+          io.in(room).emit('user_joined', { viewer_count: viewer_count });
         }, 1500);
       });
 
@@ -640,7 +627,7 @@ const initaliseWebSocket = (server) => {
           option: option_id,
           duration,
         });
-  
+
         await userAnswer.save();
 
         // make the user as a viewer. // TODO: rethink this implementation
