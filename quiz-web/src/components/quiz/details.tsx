@@ -793,7 +793,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         role: 'shadow',
         username: shadowUser.data.user.name,
       });
-      await joinAgora();
+       joinAgora();
       setTimeout(() => {
         setIsLoading(false);
       }, 3500);
@@ -813,7 +813,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               role: user?.role,
               username: user?.username,
             });
-            // joinAgora();
+              joinAgora();
      
           } else {
             showMessages('error', 'already Joined');
@@ -862,7 +862,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setCurrentQuestion(quizAnswerQuestions.data);
           setQuestionIndex(res.data.data.question_index);
           setTotalNumberOfQuestions(res.data.data.total_questions);
-
           timerRef.current?.style.setProperty('display', 'block');
           setOptionStartTime(moment());
           startTimer(15);
@@ -889,6 +888,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     setTimerInterval(timerInterval);
   }, []);
   const joinAgora = async () => {
+    localStorage.setItem('iscounted', 'true');
     const randomUid = Math.floor(Math.random() * 1000);
 
     const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
@@ -901,10 +901,28 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       .catch((err) => {
         console.log(err);
       });
-    setIsLoading(false);
+  
     setIsJoined(true);
     localStorage.setItem('isjoinchanel', 'true');
     localStorage.setItem('iscounted', 'true');
+    message.destroy();
+    videoRef.current.hidden = false;
+    // videoRef.current?.style.setProperty('display', 'block');
+    toggleQuestion(false);
+    dispatch(setMiscellaneousData({ topBarVisibility: false }));
+
+    client.on('user-published', onUserPublish);
+
+    client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+      if (mediaType === 'video') {
+        user.videoTrack?.stop();
+      }
+      if (mediaType === 'audio') {
+        user.audioTrack?.stop();
+      }
+      leaveChannel();
+    });    
+
   };
   const handleBuyTicketClick = () => {
     let amount, ticket;
