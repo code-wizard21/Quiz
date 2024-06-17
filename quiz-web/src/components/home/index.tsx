@@ -1,5 +1,7 @@
 import { Button } from 'antd';
+import useResponsive from '../responsive/responsive';
 import { useNavigate } from 'react-router-dom';
+
 const PrizeItem = ({ title, percentage, cap }) => (
   <div className="space-y-2">
     <div className="text-yellow-400 text-[20px] max-[500px]:text-[14px] font-bold">{title}</div>
@@ -13,6 +15,7 @@ const PrizeItem = ({ title, percentage, cap }) => (
 
 function App() {
   const navigate = useNavigate();
+  const { isMobile } = useResponsive();
   const handleClick = () => {
     navigate('/signup');
   };
@@ -42,7 +45,7 @@ function App() {
         </div>
       </div>
       <div className="flex flex-col sm:flex-row">
-        <div className="p-4 sm:p-24 flex justify-around">
+        <div className="p-4 md:p-24 flex justify-around">
           <div className="flex flex-col">
             <div className="flex flex-col">
               <div className="text-white text-4xl sm:text-7xl font-bold">The game is</div>
@@ -59,11 +62,10 @@ function App() {
             </div>
           </div>
         </div>
-        <div
-          className="flex pt-4 scale-70 md:scale-100 sm:px-80 sm:pt-0  bg-cover bg-center bg-no-repeat "
-          style={{ backgroundImage: "url('/home/backcom.svg')" }}
-        >
-          <img className="mx-auto sm:mx-0" src="/home/card.svg" alt="" />
+        <div className="flex flex-1 justify-center  mx-auto bg-[url('/home/backcom.svg')]   pt-4 bg-red  bg-cover bg-center bg-no-repeat z-10">
+          <div className="justify-center">
+            <img className="mx-auto sm:mx-0 " src="/home/card.svg" alt="" />
+          </div>
         </div>
       </div>
       <div className="space-y-3 mt-32">
@@ -117,68 +119,82 @@ function App() {
           </div>
         </div>
       </div> */}
-         <div className="max-w-[1086px] mx-auto pt-[126px] container">
-        <div className="flex gap-[20px] max-[840px]:flex-col-reverse">
-          <div className="bg-[#1A3EEC] p-[19px] min-[990px]:p-[50px] max-[500px]:ml-[9px] max-[500px]:mr-[17px] max-[500px]:w-auto content-center max-[840px]:mx-auto">
-            <div className="flex gap-[5px] justify-center">
-              <img
-                src="/home/trophy.svg"
-                className="w-9 h-9 max-[500px]:w-6 max-[500px]:h-6"
-                alt="image"
-              />
-              <div className="space-y-6">
-                <PrizeItem
-                  title="WINNER"
-                  percentage="50%"
-                  cap="Capped at 5000 per quiz per month"
-                />
-                <PrizeItem
-                  title="2ND PRIZE"
-                  percentage="25%"
-                  cap="Capped at 2000 per quiz per month"
-                />
-                <PrizeItem
-                  title="3RD PRIZE"
-                  percentage="10%"
-                  cap="Capped at 1000 per quiz per month"
-                />
+
+      {isMobile ? (
+        <>
+         <div className="max-w-5xl mx-4 pt-24 ">
+          <div className="flex flex-col gap-5">
+          <div className="max-w-[439px]  max-[600px]:max-w-[258px] max-[600px]:ml-[9px] my-auto max-[840px]:mr-auto">
+              <div className="text-white text-[48px] max-[600px]:text-[32px] font-bold">Prize Distribution</div>
+              <div className="text-white text-center text-[24px] max-[500px]:text-[20px] font-bold">
+                Unclaimed prize money goes to Social Causes
+              </div>
+            </div>
+            <div className="bg-[#1A3EEC] p-4 min-[990px]:p-[50px] max-[600px]:ml-[9px] max-[600px]:mr-[17px] max-[600px]:w-auto content-center max-[840px]:mx-auto">
+              <div className="flex gap-2 justify-center">
+                <img src="/home/trophy.svg" className="w-9 h-9 max-[500px]:w-6 max-[500px]:h-6" alt="image" />
+                <div className="space-y-6">
+                  <PrizeItem title="WINNER" percentage="50%" cap="Capped at 5000 per quiz per month" />
+                  <PrizeItem title="2ND PRIZE" percentage="25%" cap="Capped at 2000 per quiz per month" />
+                  <PrizeItem title="3RD PRIZE" percentage="10%" cap="Capped at 1000 per quiz per month" />
+                </div>
+              </div>
+            </div>
+           
+          </div>
+          <div className="min-[840px]:max-w-[604px] min-[840px]:w-full w-fit max-[840px]:mr-[1px] max-[840px]:ml-[32px] ml-auto py-[60px] mt-[-10vh] max-[840px]:mx-auto max-[840px]:mt-[-3vh] bg-[#4500B2] space-y-[7px]">
+            <div className="ml-auto max-w-[426px] justify-center w-auto h-auto p-[20px]">
+              <div className="text-xl max-[500px]:text-base text-[#FFD500] font-bold">CONSOLATIONS</div>
+              <div className="w-auto">
+                <div className="text-[24px] max-[500px]:text-[20px] text-white">
+                  if you have answered all questions correctly and placed outside of the top placed winners.
+                </div>
+                <div className="text-[36px] max-[500px]:text-[24px] w-auto text-white font-bold">15% of prize pool</div>
+                <div className="text-[14px] text-white">Capped at 20 per quiz per month</div>
               </div>
             </div>
           </div>
-          <div className="max-w-[439px] max-[500px]:max-w-[258px] max-[500px]:ml-[9px] my-auto max-[840px]:mr-auto">
-            <div className="text-white text-[48px] max-[500px]:text-[32px] font-bold">
-              Prize Distribution
+        </div></>
+      ) : (
+        <div className="max-w-5xl mx-auto pt-24">
+          <div className="flex gap-5">
+            <div className="bg-[#1A3EEC] p-4 min-[990px]:p-[50px] max-[600px]:ml-[9px] max-[600px]:mr-[17px] max-[600px]:w-auto content-center max-[840px]:mx-auto">
+              <div className="flex gap-2 justify-center">
+                <img src="/home/trophy.svg" className="w-9 h-9 max-[500px]:w-6 max-[500px]:h-6" alt="image" />
+                <div className="space-y-6">
+                  <PrizeItem title="WINNER" percentage="50%" cap="Capped at 5000 per quiz per month" />
+                  <PrizeItem title="2ND PRIZE" percentage="25%" cap="Capped at 2000 per quiz per month" />
+                  <PrizeItem title="3RD PRIZE" percentage="10%" cap="Capped at 1000 per quiz per month" />
+                </div>
+              </div>
             </div>
-            <div className="text-white text-[24px] max-[500px]:text-[20px] font-bold">
-              Unclaimed prize money goes to Social Causes
+            <div className="max-w-[439px]  max-[600px]:max-w-[258px] max-[600px]:ml-[9px] my-auto max-[840px]:mr-auto">
+              <div className="text-white text-[48px] max-[600px]:text-[32px] font-bold">Prize Distribution</div>
+              <div className="text-white text-center text-[24px] max-[500px]:text-[20px] font-bold">
+                Unclaimed prize money goes to Social Causes
+              </div>
+            </div>
+          </div>
+          <div className="min-[840px]:max-w-[604px] min-[840px]:w-full w-fit max-[840px]:mr-[1px] max-[840px]:ml-[32px] ml-auto py-[60px] mt-[-10vh] max-[840px]:mx-auto max-[840px]:mt-[-3vh] bg-[#4500B2] space-y-[7px]">
+            <div className="ml-auto max-w-[426px] justify-center w-auto h-auto p-[20px]">
+              <div className="text-xl max-[500px]:text-base text-[#FFD500] font-bold">CONSOLATIONS</div>
+              <div className="w-auto">
+                <div className="text-[24px] max-[500px]:text-[20px] text-white">
+                  if you have answered all questions correctly and placed outside of the top placed winners.
+                </div>
+                <div className="text-[36px] max-[500px]:text-[24px] w-auto text-white font-bold">15% of prize pool</div>
+                <div className="text-[14px] text-white">Capped at 20 per quiz per month</div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="min-[840px]:max-w-[604px] min-[840px]:w-full w-fit max-[840px]:mr-[1px] max-[840px]:ml-[32px] ml-auto py-[60px] mt-[-10vh] max-[840px]:mx-auto max-[840px]:mt-[-3vh] bg-[#4500B2] space-y-[7px]">
-          <div className="ml-auto max-w-[406px] justify-center w-auto h-auto p-[20px]">
-            <div className="text-[20px] max-[500px]:text-[14px] text-[#FFD500] font-bold">
-              CONSOLATIONS
-            </div>
-            <div className="w-auto">
-              <div className="text-[24px] max-[500px]:text-[20px] text-white">
-                if you have answered all questions correctly and placed outside
-                of the top placed winners.
-              </div>
-              <div className="text-[36px] max-[500px]:text-[24px] w-auto text-white font-bold">
-                15% of prize pool
-              </div>
-              <div className="text-[14px] text-white">
-                Capped at 20 per quiz per month
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
+
       <div
         style={{ backgroundImage: "url('/home/back.svg')" }}
         className="my-24 mx-4 sm:mx-24 bg-gradient-to-r bg-cover bg-center rounded-4xl "
       >
-        <div className="px-4 sm:px-24 py-4 mx-auto flex flex-col sm:flex-row items-center">
+        <div className="px-4 sm:px-24 py-4 mx-auto flex flex-col md:flex-row items-center">
           <div className="my-12 sm:mx-16 text-center sm:text-left">
             <div className=" text-4xl text-white font-bold">Ready to play?</div>
             <div className="text-2xl my-4 font-bold text-white">Start here with us!</div>
@@ -192,7 +208,11 @@ function App() {
               </Button>
             </div>
           </div>
-          <img src="/home/image.png" className="mx-auto sm:ml-auto w-1/2 sm:w-auto h-auto my-4 sm:my-0" alt="icon" />
+          <img
+            src="/home/image.png"
+            className="mx-auto sm:ml-auto  md:w-1/4 w-1/2 sm:w-full h-auto my-4 sm:my-0"
+            alt="icon"
+          />
         </div>
       </div>
       <div className="text-base text-center  mx-auto pb-4">

@@ -238,9 +238,9 @@ const Leaderboard: React.FC<{ quizId: string; }> = ({ quizId }): React.ReactElem
             <div
             onClick={showDrawer}
               style={{ cursor: 'pointer', backgroundColor: '#8347E2' }}
-              className="absolute  bottom-0 w-full max-[420px]:w-screen left-0  flex   rounded-t-2xl z-50  "
+              className="absolute  bottom-0 w-full max-[420px]:w-screen left-0 shadow-xl   flex   rounded-t-2xl z-50  "
             >
-              <div onClick={showDrawer} className="pt-4 pb-8 w-full text-black  rounded-3xl">
+              <div onClick={showDrawer} className="pt-4 pb-8 w-full shadow-xl text-black  rounded-3xl">
                 <div className="flex justify-center ">
                   <div className="flex text-white text-2xl font-bold">Game Summary</div>
                 </div>
