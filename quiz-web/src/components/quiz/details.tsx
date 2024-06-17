@@ -204,7 +204,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       setNumberParticipants(data.playCount);
     });
     socket?.on('user_joined', (data) => {
-     setIsLoading(false);
+      setIsLoading(false);
     });
     // host_live_change
 
@@ -422,10 +422,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       toggleLeaderboardHandler(true);
       localStorage.removeItem('setmodal'); // remove the item
     }
-    const stateJoin = JSON.parse(localStorage.getItem('startGuest'));
+    const stateJoin = JSON.parse(localStorage.getItem('isjoinchanel'));
     if (stateJoin == true) {
-      joinChannel();
-      localStorage.removeItem('startGuest');
+      joinChannel();   
     }
   }, []);
 
@@ -497,9 +496,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       }
       localStorage.setItem('iscounted', 'true');
       const randomUid = Math.floor(Math.random() * 1000);
-
       const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
-
       await client
         .join(appId, channelName, rtcToken.data.data, randomUid)
         .then((res) => {
@@ -513,9 +510,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       // videoRef.current?.style.setProperty('display', 'block');
       toggleQuestion(false);
       dispatch(setMiscellaneousData({ topBarVisibility: false }));
-
       client.on('user-published', onUserPublish);
-
       client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
         if (mediaType === 'video') {
           user.videoTrack?.stop();
@@ -761,7 +756,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   const joinChannel = async () => {
     setIsLoading(true);
- 
+
     // message.loading("Joining Quiz");
     showMessages('loading', 'Joining Quiz');
 
@@ -774,7 +769,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       socket?.connect();
       showMessages('error', 'Please wait while we connect you to the quiz');
     }
-    if (!user && isChecked==false) {
+    if (!user && isChecked == false) {
       console.log('useruser');
       setIsLoading(true);
       // create shadow user and join
@@ -793,34 +788,97 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         role: 'shadow',
         username: shadowUser.data.user.name,
       });
-       joinAgora();
+
+      const randomUid = Math.floor(Math.random() * 1000);
+
+      const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
+
+      await client
+        .join(appId, channelName, rtcToken.data.data, randomUid)
+        .then((res) => {
+          console.log('resres###########', res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setIsLoading(false);
+      setIsJoined(true);
+      localStorage.setItem('isjoinchanel', 'true');
+      localStorage.setItem('iscounted', 'true');
+      message.destroy();
+      videoRef.current.hidden = false;
+      videoRef.current?.style.setProperty('display', 'block');
+      toggleQuestion(false);
+      dispatch(setMiscellaneousData({ topBarVisibility: false }));
+
+      client.on('user-published', onUserPublish);
+
+      client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+        if (mediaType === 'video') {
+          user.videoTrack?.stop();
+        }
+        if (mediaType === 'audio') {
+          user.audioTrack?.stop();
+        }
+        leaveChannel();
+      });
+
       setTimeout(() => {
         setIsLoading(false);
       }, 3500);
-      
     }
 
     if (user) {
       const idData = { id: user?.id };
-      await getexistUser(idData)
-        .then((res) => {
-          if (res.data.data == null) {
-            console.log('res.data.data',res.data);
-            console.log('############################');
-            socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
-              user_id: user?.id,
-              quiz_id: id,
-              role: user?.role,
-              username: user?.username,
-            });
-              joinAgora();
-     
-          } else {
-            showMessages('error', 'already Joined');
-            setIsLoading(false);
+      const res = await getexistUser(idData);
+
+      if (res.data.data == null) {
+        console.log('res.data.data', res.data);
+        console.log('############################');
+        socket?.emit(SOCKET_EMITTERS.USER_JOIN_LIVE_QUIZ, {
+          user_id: user?.id,
+          quiz_id: id,
+          role: user?.role,
+          username: user?.username,
+        });
+
+        const randomUid = Math.floor(Math.random() * 1000);
+
+        const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
+
+        await client
+          .join(appId, channelName, rtcToken.data.data, randomUid)
+          .then((res) => {
+            console.log('resres###########', res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        setIsLoading(false);
+        setIsJoined(true);
+        localStorage.setItem('isjoinchanel', 'true');
+        localStorage.setItem('iscounted', 'true');
+        message.destroy();
+        videoRef.current.hidden = false;
+        videoRef.current?.style.setProperty('display', 'block');
+        toggleQuestion(false);
+        dispatch(setMiscellaneousData({ topBarVisibility: false }));
+
+        client.on('user-published', onUserPublish);
+
+        client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+          if (mediaType === 'video') {
+            user.videoTrack?.stop();
           }
-        })
-        .catch((err) => console.log(err));
+          if (mediaType === 'audio') {
+            user.audioTrack?.stop();
+          }
+          leaveChannel();
+        });
+      } else {
+        showMessages('error', 'already Joined');
+        setIsLoading(false);
+      }
     }
     const reqData = { quiz: id };
     const res = await getQuizState(reqData);
@@ -871,8 +929,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }
   };
 
-
-
   const startTimer = useCallback((duration: number) => {
     const intervalDuration = (duration / 100) * 1000;
     const timerInterval = setInterval(() => {
@@ -901,13 +957,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       .catch((err) => {
         console.log(err);
       });
-  
+
     setIsJoined(true);
     localStorage.setItem('isjoinchanel', 'true');
     localStorage.setItem('iscounted', 'true');
     message.destroy();
     videoRef.current.hidden = false;
-    // videoRef.current?.style.setProperty('display', 'block');
     toggleQuestion(false);
     dispatch(setMiscellaneousData({ topBarVisibility: false }));
 
@@ -921,8 +976,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         user.audioTrack?.stop();
       }
       leaveChannel();
-    });    
-
+    });
   };
   const handleBuyTicketClick = () => {
     let amount, ticket;
@@ -981,6 +1035,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     navigate('/signup');
   };
   const handleJoinCommunity = () => {
+ 
+      const statejoin = localStorage.getItem('isjoinchanel');
     localStorage.setItem('prevPath', location.pathname);
 
     navigate('/signup');

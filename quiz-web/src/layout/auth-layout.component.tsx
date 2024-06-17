@@ -20,8 +20,8 @@ const AuthLayout: React.FC = (): React.ReactElement => {
   }
 
   return (
-    <div className="bg-4E13AF">
-      <div className="w-full  bg-gray-100 max-w-430 m-auto min-h-screen bg-4E13AF overflow-hide">
+    <div className="bg-4E13AF h-screen min-h-[950px]">
+      <div className="w-full  bg-gray-100 max-w-430 m-auto  bg-4E13AF overflow-hide min-h-[940px] overflow-auto h-[940px]">
         {location.pathname === '/login' && localUser?.user && localUser?.user?.role !== 'shadow' ? (
           <Navigate to="/" state={{ from: location }} replace />
         ) : (

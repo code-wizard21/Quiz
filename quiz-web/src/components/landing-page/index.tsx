@@ -8,22 +8,22 @@ import { setUserData } from '../../redux/actions/auth.action';
 import close from '../../assets/close.svg';
 import { useDispatch } from 'react-redux';
 const LandingPage: React.FC = () => {
- 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleButtonClick = () => {
-   
     const defaultPath = '/quiz';
     const prevPath = localStorage.getItem('prevPath') || defaultPath;
     navigate(prevPath);
+    const statejoin = localStorage.getItem('isjoinchanel');
     if (prevPath !== defaultPath) {
-      localStorage.clear();
-      localStorage.setItem('startGuest', true);
-    }else{
+      if (statejoin == 'true') {
+        localStorage.clear();
+        localStorage.setItem('isjoinchanel',true);
+      }
+    } else {
       localStorage.clear();
     }
-    
-   
+
     window.location.reload();
   };
   const googleLogin = useGoogleLogin({
@@ -44,7 +44,7 @@ const LandingPage: React.FC = () => {
 
   return (
     <>
-      <Row className="landing-page ">
+      <Row className="landing-page h-[940px] min-h-[940px]">
         <Col className="px-6 flex flex-col pt-60 justify-center">
           <div className="flex justify-center">
             <div className="text-3xl font-stud-regular font-bold text-white">Sign up for QuizMobb</div>

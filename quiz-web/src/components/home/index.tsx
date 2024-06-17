@@ -117,32 +117,59 @@ function App() {
           </div>
         </div>
       </div> */}
-      <div className="mt-16 my-8 mx-[10%] flex flex=col justify-between">
-        <div className="flex lg:mr-[0%] lg:flex-row gap-4">
-          <div className="flex gap-3 justify-center bg-[#1A3EEC] text-xl p-4 lg:p-6">
-            <img src="/home/trophy.svg" className="w-9 h-9 lg:w-6 lg:h-6" alt="1" />
-            <div className="space-y-6">
-              <PrizeItem title="WINNER" percentage="50%" cap="Capped at 5000 per quiz per month" />
-              <PrizeItem title="2ND PRIZE" percentage="25%" cap="Capped at 2000 per quiz per month" />
-              <PrizeItem title="3RD PRIZE" percentage="10%" cap="Capped at 1000 per quiz per month" />
+         <div className="max-w-[1086px] mx-auto pt-[126px] container">
+        <div className="flex gap-[20px] max-[840px]:flex-col-reverse">
+          <div className="bg-[#1A3EEC] p-[19px] min-[990px]:p-[50px] max-[500px]:ml-[9px] max-[500px]:mr-[17px] max-[500px]:w-auto content-center max-[840px]:mx-auto">
+            <div className="flex gap-[5px] justify-center">
+              <img
+                src="/home/trophy.svg"
+                className="w-9 h-9 max-[500px]:w-6 max-[500px]:h-6"
+                alt="image"
+              />
+              <div className="space-y-6">
+                <PrizeItem
+                  title="WINNER"
+                  percentage="50%"
+                  cap="Capped at 5000 per quiz per month"
+                />
+                <PrizeItem
+                  title="2ND PRIZE"
+                  percentage="25%"
+                  cap="Capped at 2000 per quiz per month"
+                />
+                <PrizeItem
+                  title="3RD PRIZE"
+                  percentage="10%"
+                  cap="Capped at 1000 per quiz per month"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="max-w-[439px] max-[500px]:max-w-[258px] max-[500px]:ml-[9px] my-auto max-[840px]:mr-auto">
+            <div className="text-white text-[48px] max-[500px]:text-[32px] font-bold">
+              Prize Distribution
+            </div>
+            <div className="text-white text-[24px] max-[500px]:text-[20px] font-bold">
+              Unclaimed prize money goes to Social Causes
             </div>
           </div>
         </div>
-        <div className='mt-32'>
-          <div className=" mx-auto lg:mx-4 my-auto text-center lg:text-left">
-            <div className="text-white text-xl lg:text-3xl font-bold">Prize Distribution</div>
-            <div className="text-white my-4 text-base lg:text-xl font-bold">
-              Unclaimed prize money goes to Social Ca uses
+        <div className="min-[840px]:max-w-[604px] min-[840px]:w-full w-fit max-[840px]:mr-[1px] max-[840px]:ml-[32px] ml-auto py-[60px] mt-[-10vh] max-[840px]:mx-auto max-[840px]:mt-[-3vh] bg-[#4500B2] space-y-[7px]">
+          <div className="ml-auto max-w-[406px] justify-center w-auto h-auto p-[20px]">
+            <div className="text-[20px] max-[500px]:text-[14px] text-[#FFD500] font-bold">
+              CONSOLATIONS
             </div>
-          </div>
-          <div className="bg-[#4500B2] space-y-3">
-            <div className="text-2xl lg:text-base text-[#FFD500] font-bold">CONSOLATIONS</div>
-            <div className="w-auto ">
-              <div className="text-xl lg:text-xl text-white">if you have answered all questions</div>
-              <div className="text-xl lg:text-xl text-white">correctly and placed outside of the </div>
-              <div className="text-xl lg:text-xl text-white">top placed winners.</div>
-              <div className="text-3xl lg:text-3xl w-auto text-white font-bold">15% of prize pool</div>
-              <div className="text-sm text-white">Capped at 20 per quiz per month</div>
+            <div className="w-auto">
+              <div className="text-[24px] max-[500px]:text-[20px] text-white">
+                if you have answered all questions correctly and placed outside
+                of the top placed winners.
+              </div>
+              <div className="text-[36px] max-[500px]:text-[24px] w-auto text-white font-bold">
+                15% of prize pool
+              </div>
+              <div className="text-[14px] text-white">
+                Capped at 20 per quiz per month
+              </div>
             </div>
           </div>
         </div>

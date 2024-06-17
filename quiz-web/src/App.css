@@ -106,7 +106,6 @@ body {
 .landing-page {
   background-image: url("assets/landing2.svg");
   background-repeat: no-repeat;
-  height: 100vh;
   margin: auto;
 }
 
