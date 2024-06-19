@@ -29,8 +29,9 @@ const LandingPage: React.FC = () => {
   const googleLogin = useGoogleLogin({
     onSuccess: (credentialResponse) => {
       console.log('credentialRespose', credentialResponse);
+      const hostname = window.location.hostname;
       googleAuth({
-        credentialResponse,
+        credentialResponse,hostname
       }).then((res) => {
         console.log('googleauth', res.data);
         navigate('/quiz');

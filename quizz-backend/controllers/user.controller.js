@@ -16,8 +16,8 @@ const createUser = catchAsync(async (req, res) => {
 });
 
 const googlelogin = async (req, res) => {
-  const { credentialResponse } = req.body;
-  console.log(credentialResponse);
+  const { credentialResponse,hostname } = req.body;
+  console.log(hostname);
 
   if (!credentialResponse.authuser) {
     res.status(400).send({
@@ -29,7 +29,7 @@ const googlelogin = async (req, res) => {
     code: credentialResponse.code,
     client_id: '1082715081696-mgk2hen3l75jf0oin4lavv7ga0r4pf9a.apps.googleusercontent.com',
     client_secret: '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',
-    redirect_uri: 'https://www.quizmobb.com',
+    redirect_uri: `https://${hostname}`,
     // redirect_uri: 'http://localhost:4002',
     grant_type: 'authorization_code',
     
