@@ -2,6 +2,7 @@ const socketio = require('socket.io');
 const { ObjectId } = require('mongodb');
 const LiveStream = require('../models/live-stream.model');
 const QuizQuestion = require('../models/question.model');
+const Quiz = require('../models/quiz.model');
 const UserParticipation = require('../models/participation.model');
 const UserAnswer = require('../models/user-answer.model');
 const Option = require('../models/option.model');
@@ -14,6 +15,7 @@ const liveQuiz = require('../models/live-quiz.model');
 const quizticket = require('../models/quizticket.model');
 
 let amount = 50;
+let totalQuestion = 0;
 let playCount = 0;
 let viewer_count = 0;
 const quizPoolData = { amount: 50, playCount: 0 };
@@ -154,52 +156,57 @@ const initaliseWebSocket = (server) => {
       socket.on('host_show_pool', async (data) => {
         console.log('host_show_pool####');
         const { quiz_id, host_id } = data;
-
-        const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
-        // TODO: calculate the leaderboard and emit the result to the host and users
-        if (!liveStream) {
-          console.log('liveStream not found');
+        const quiz_content = await Quiz.findOne({ _id: quiz_id, host: host_id });
+        console.log('ispaid', quiz_content);
+        if (quiz_content.is_paid == false) {
           return;
-        }
-        try {
-          await liveQuiz.deleteMany({});
-          console.log('Successful deletion');
-        } catch (err) {
-          console.error(err);
-        }
-        if (data.status === 'hide') {
-          const newData = new liveQuiz({
-            status: 'quiz_end',
-            quiz: quiz_id,
-          });
-
-          await newData
-            .save()
-            .then((res) => {
-              console.log('res');
-            })
-            .catch((err) => {
-              console.log(err);
-            });
         } else {
-          const newData = new liveQuiz({
-            status: 'showpool',
-            quiz: quiz_id,
-          });
-
-          await newData
-            .save()
-            .then((res) => {
-              console.log('res');
-            })
-            .catch((err) => {
-              console.log(err);
+          const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
+          // TODO: calculate the leaderboard and emit the result to the host and users
+          if (!liveStream) {
+            console.log('liveStream not found');
+            return;
+          }
+          try {
+            await liveQuiz.deleteMany({});
+            console.log('Successful deletion');
+          } catch (err) {
+            console.error(err);
+          }
+          if (data.status === 'hide') {
+            const newData = new liveQuiz({
+              status: 'quiz_end',
+              quiz: quiz_id,
             });
-        }
 
-        const room = liveStream.room_id;
-        data.room_id = room;
-        io.in(room).emit('user_show_pool', data);
+            await newData
+              .save()
+              .then((res) => {
+                console.log('res');
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          } else {
+            const newData = new liveQuiz({
+              status: 'showpool',
+              quiz: quiz_id,
+            });
+
+            await newData
+              .save()
+              .then((res) => {
+                console.log('res');
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
+
+          const room = liveStream.room_id;
+          data.room_id = room;
+          io.in(room).emit('user_show_pool', data);
+        }
       });
 
       socket.on('host_live_quiz_calculation_start', async (data) => {
@@ -213,7 +220,7 @@ const initaliseWebSocket = (server) => {
           return;
         }
         // emit live quiz calculation start to all the users in the room
-
+        await UserActivity.updateMany({}, { totalquestion: totalQuestion });
         const room = liveStream.room_id;
 
         io.in(room).emit('user_quiz_live_calculation_start', { quiz: quiz_id });
@@ -247,6 +254,7 @@ const initaliseWebSocket = (server) => {
           const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
           amount = 50;
           playCount = 0;
+          totalQuestion = 0;
           await liveQuiz.deleteMany({});
           // Update LiveStream status and end time
           liveStream.status = 'completed';
@@ -288,6 +296,7 @@ const initaliseWebSocket = (server) => {
       socket.on('host_live_quiz_question_start', async (data) => {
         // get room_id from livestreams collection via quiz_id and host_id
         console.log('host_live_quiz_question_star');
+        totalQuestion++;
         const { quiz_id, host_id, question_id, question_index } = data;
         const liveStream = await LiveStream.findOne({ quiz: new ObjectId(quiz_id), host: new ObjectId(host_id) });
         if (!liveStream) {
@@ -502,13 +511,12 @@ const initaliseWebSocket = (server) => {
 
           await participation.save();
         }
-        const quiz_question = await QuizQuestion.find({ quiz: quiz_id });
+
         const userActivity = new UserActivity({
           quiz: quiz_id,
           user: user_id,
           role: role,
           username: username,
-          totalquestion: quiz_question.length,
         });
         await userActivity.save();
 
@@ -526,7 +534,7 @@ const initaliseWebSocket = (server) => {
         console.log('user_join_live_quiz', viewer_count);
         setTimeout(() => {
           io.in(room).emit('user_quiz_live_viewer_count', { viewer_count: viewer_count });
-         console.log('user_joined');
+          console.log('user_joined');
           io.in(room).emit('user_joined', { viewer_count: viewer_count });
         }, 1500);
       });
