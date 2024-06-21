@@ -1223,7 +1223,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </div>
             <div className="text-3xl p-3 text-white font-bold font-stud-regular text-center">
               {currentQuestion?.question.text}
-            </div>
+            </div>  
             <div className="p-4">
               {currentQuestion?.question?.options?.map((option, index) => {
                 return (
@@ -1234,7 +1234,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                   >
                     <div className="absolute z-40 flex justify-between w-full font-stud-regular h-12">
                       <span className="pl-6 text-base font-bold  self-center">
-                        {`${index + 1}` + '. ' + option.text}
+                        {option.text}
                       </span>
                       <span className="pr-3 text-base self-center">{`${option.total_answers || 0}`}</span>
                     </div>
