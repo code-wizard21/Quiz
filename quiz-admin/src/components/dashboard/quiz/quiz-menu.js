@@ -18,7 +18,8 @@ export const ProductMenu = (props) => {
 
   return (
     <>
-      <IconButton onClick={handleOpen} ref={anchorRef} {...props}>
+      <IconButton onClick={handleOpen} 
+      ref={anchorRef} {...props}>
         <DotsVerticalIcon fontSize="small" />
       </IconButton>
       <Menu

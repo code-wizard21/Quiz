@@ -5,10 +5,6 @@ import { Box, Button, Container, Grid, Skeleton, Typography } from "@mui/materia
 import { invoiceApi } from "../../../../api/invoice";
 import { AuthGuard } from "../../../../components/authentication/auth-guard";
 import { DashboardLayout } from "../../../../components/dashboard/dashboard-layout";
-import { InvoiceDetails } from "../../../../components/dashboard/invoices/invoice-details";
-import { InvoiceLineItems } from "../../../../components/dashboard/invoices/invoice-line-items";
-import { InvoicePayment } from "../../../../components/dashboard/invoices/invoice-payment";
-import { InvoicePaymentHistory } from "../../../../components/dashboard/invoices/invoice-payment-history";
 import { Status } from "../../../../components/status";
 import { useMounted } from "../../../../hooks/use-mounted";
 import { ArrowLeft as ArrowLeftIcon } from "../../../../icons/arrow-left";
@@ -137,15 +133,7 @@ const Invoice = () => {
             }}
             xs={12}
           >
-            <Grid item xs={12}>
-              <InvoiceDetails invoice={invoiceState.data} />
-            </Grid>
-            <Grid item xs={12}>
-              <InvoicePayment invoice={invoiceState.data} />
-            </Grid>
-            <Grid item xs={12}>
-              <InvoiceLineItems invoice={invoiceState.data} />
-            </Grid>
+           
           </Grid>
           <Grid
             container
@@ -162,9 +150,7 @@ const Invoice = () => {
             xs={12}
           >
             <Grid item xs={12}></Grid>
-            <Grid item xs={12}>
-              <InvoicePaymentHistory />
-            </Grid>
+         
           </Grid>
         </Grid>
       </>

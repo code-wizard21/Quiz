@@ -111,7 +111,8 @@ export const ProductsTable = (props) => {
           <TableBody>
             {products.map((product) => {
               return (
-                <NextLink href={"quizzes/" + product.id} key={product.id}>
+                <NextLink href={"quizzes/" + product.id} 
+                key={product.id}>
                   <TableRow
                     hover
                     key={product.id}
