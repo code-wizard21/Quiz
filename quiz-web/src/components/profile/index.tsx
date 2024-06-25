@@ -4,18 +4,21 @@ import group_red from '../../assets/figma/Group_red.svg';
 import group_yel from '../../assets/figma/Ellipse1.svg';
 import vector from '../../assets/figma/Vector.svg';
 import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import { getTicket } from '../../service/user/user.service';
 import { useSelector } from 'react-redux';
 import backSvg from '../../assets/back.svg';
 import sideMenuSvg from '../../assets/side-menu.svg';
 import { useCallback, useEffect, useState } from 'react';
 import { PlusCircleOutlined, ProfileOutlined, UsergroupAddOutlined } from '@ant-design/icons';
-import { Collapse,Modal } from 'antd';
+import { Collapse, Modal } from 'antd';
+import { RootState } from '../../redux/reducers';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { checkOutBuyCreditSessionProfile } from '../../service/payment/payment.service';
 import { useLocation } from 'react-router-dom';
-const Payment = () => {
+
+const Profile: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
@@ -24,7 +27,7 @@ const Payment = () => {
   };
   useEffect(() => {
     const isSuccess = location.search.includes('success');
-    if(isSuccess==true){
+    if (isSuccess == true) {
       setIsModalOpen(true);
     }
   }, []);
@@ -36,15 +39,15 @@ const Payment = () => {
     setOpen(false);
   };
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const [ticket, setTicket] = useState(0);
   const [credit, setCredit] = useState(0);
   const [amount, setAmount] = useState(0);
   const [name, setName] = useState('');
   const [imageUrl, setImageUrl] = useState(sideMenuSvg);
-  const handleJoinClick=()=>{
+  const handleJoinClick = () => {
     setIsModalOpen(false);
-  }
+  };
   const text = `
   A dog is a type of domesticated animal.
 `;
@@ -52,7 +55,6 @@ const Payment = () => {
   const containerStyle = {
     position: 'relative',
     height: 950,
-
     overflow: 'hidden',
   };
   useEffect(() => {
@@ -60,10 +62,10 @@ const Payment = () => {
       if (user.role == 'user') {
         setName(user.username);
         const data = { id: user.id };
-        
+
         getTicket(data)
           .then((res) => {
-            console.log('res',res);
+            console.log('res', res);
             setImageUrl(res.data.data.avatar);
             setTicket(res.data.data.ticket);
             setCredit(res.data.data.credit);
@@ -84,9 +86,8 @@ const Payment = () => {
     }
   }, []);
   const handlebuyCreditClick = () => {
-    let amount,
-      credit,
-      ticket = 0;
+    let amount, credit;
+    const  ticket = 0;
     switch (value) {
       case 1:
         amount = 1000;
@@ -110,15 +111,15 @@ const Payment = () => {
     }
 
     const data = {
-      user: JSON.parse(localStorage.getItem('user')).user.name,
-      email: JSON.parse(localStorage.getItem('user')).user.email,
+      user: JSON.parse(localStorage.getItem('user')!).user.name,
+      email: JSON.parse(localStorage.getItem('user')!).user.email,
       amount: amount,
       ticket: ticket,
       credit: credit,
     };
     checkOutBuyCreditSessionProfile(data)
       .then((res) => {
-        console.log('res.data',res.data)  ;
+        console.log('res.data', res.data);
         if (res.status == 200) {
           window.location.href = res.data.redirectUrl;
         }
@@ -378,14 +379,12 @@ const Payment = () => {
       </div>
       <Modal title="" open={isModalOpen} footer={null} width={'350px'} onCancel={handleCancel}>
         <div className="modal-box">
-        
-            <div>
-
-              <div className="flex  mt-4  text-black text-2xl font-bold text-center studregular  justify-center">
+          <div>
+            <div className="flex  mt-4  text-black text-2xl font-bold text-center studregular  justify-center">
               Transaction Success!
-              </div>
             </div>
-        
+          </div>
+
           <div className=" flex text-base  text-black  justify-center">Welcome Contestant! You will need </div>
           <div className="flex text-base  text-black justify-center">to sign up in order to access any </div>
           <div className="flex text-base text-black justify-center">Prize Money! </div>
@@ -396,8 +395,8 @@ const Payment = () => {
                 onClick={handleJoinClick}
                 className="bg-customYellowBorder mt-8 w-[325px] h-[52px] top-[320px] rounded-[30px] space-x-[6px] border-customYellowBorder"
                 style={{ fontSize: window.innerWidth <= 412 ? 'small' : 'medium' }} // Change this line
-              ><div className='text-black font-bold'>Continue to Sign Up</div>
-                
+              >
+                <div className="text-black font-bold">Continue to Sign Up</div>
               </button>
             </div>
 
@@ -421,4 +420,4 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default Profile;

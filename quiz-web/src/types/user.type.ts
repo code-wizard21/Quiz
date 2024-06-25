@@ -19,7 +19,14 @@ export interface ILoginResponse {
   user: IUser;
   redirectUrl: string;
   data:{
+    status:string,
+    pool:number,
+    contestants:number,
+    question_id:string,
+    question_index:number,
+    total_questions:number,
     avatar:string,
+    amount:number,
     ticket:number,
     credit:number;
   }

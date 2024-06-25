@@ -1,12 +1,6 @@
 import { IUser } from './user.type';
 
-interface TQuizCategory {
-  _id: string;
-  name: string;
-  image: string;
-  description: string;
-  active: boolean;
-}
+
 export interface IQuiz {
   _id: string;
   host: IUser;
@@ -16,6 +10,7 @@ export interface IQuiz {
   is_paid: boolean;
   question_id: string;
   description: string;
+  name:string;
   is_live: boolean;
   pool: number;
   question_index:number;
@@ -118,6 +113,7 @@ export interface IQuizLeaderboardOverview {
    results: ILeaderboardResult[];
   totalquestion: number;
   correct: number;
+  
   credit:number;
   amount:number;
   ticket:number;

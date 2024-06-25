@@ -203,7 +203,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       setAmount(data.amount);
       setNumberParticipants(data.playCount);
     });
-    socket?.on('user_joined', (data) => {
+    socket?.on('user_joined', () => {
       setIsLoading(false);
     });
     // host_live_change
@@ -416,16 +416,13 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
   useEffect(() => {
     localStorage.removeItem('prevPath');
-    const state = JSON.parse(localStorage.getItem('setmodal'));
+    const state = JSON.parse(localStorage.getItem('setmodal')!);
     if (state == true) {
       setIsModalOpen2(true);
       toggleLeaderboardHandler(true);
       localStorage.removeItem('setmodal'); // remove the item
     }
-    const stateJoin = JSON.parse(localStorage.getItem('isjoinchanel'));
-    if (stateJoin == true) {
-      joinChannel();   
-    }
+
   }, []);
 
   const calculationStart = async () => {
@@ -474,7 +471,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }, 15000); // Stop the sound after 15 seconds
   };
   const fetchQuizState = async () => {
-    const data = { quiz: id };
+    const data:any = { quiz: id };
     const res = await getQuizState(data);
     try {
       const iscounted = localStorage.getItem('iscounted');
@@ -543,7 +540,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         setIsPaused(false);
         setIsShowpool(false);
         const query_question_start = { question_id: res.data.data.question_id };
-        const quizStartQuestions = await getOnlyQuestion(query_question_start);
+        const quizStartQuestions:any = await getOnlyQuestion(query_question_start);
         setQuestionIndex(res.data.data.question_index);
         setTotalNumberOfQuestions(res.data.data.total_questions);
         setCurrentQuestion(quizStartQuestions.data);
@@ -557,7 +554,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         setIsShowpool(false);
         const query_answer = { question_id: res.data.data.question_id };
         toggleQuestion(true);
-        const quizAnswerQuestions = await getQuestionWithOption(query_answer);
+        const quizAnswerQuestions:any = await getQuestionWithOption(query_answer);
         setCurrentQuestion(quizAnswerQuestions.data);
         setQuestionIndex(res.data.data.question_index);
         setTotalNumberOfQuestions(res.data.data.total_questions);
@@ -880,7 +877,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         setIsLoading(false);
       }
     }
-    const reqData = { quiz: id };
+    const reqData:any = { quiz: id };
     const res = await getQuizState(reqData);
 
     if (res?.data?.data?.status != undefined) {
@@ -902,7 +899,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setIsPaused(false);
           setIsShowpool(false);
           const query_question_start = { question_id: res.data.data.question_id };
-          const quizStartQuestions = await getOnlyQuestion(query_question_start);
+          const quizStartQuestions:any = await getOnlyQuestion(query_question_start);
           setQuestionIndex(res.data.data.question_index);
           setTotalNumberOfQuestions(res.data.data.total_questions);
           setCurrentQuestion(quizStartQuestions?.data);
@@ -916,7 +913,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
           setIsShowpool(false);
           const query_answer = { question_id: res.data.data.question_id };
           toggleQuestion(true);
-          const quizAnswerQuestions = await getQuestionWithOption(query_answer);
+          const quizAnswerQuestions:any = await getQuestionWithOption(query_answer);
           setCurrentQuestion(quizAnswerQuestions.data);
           setQuestionIndex(res.data.data.question_index);
           setTotalNumberOfQuestions(res.data.data.total_questions);
@@ -943,41 +940,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     }, intervalDuration);
     setTimerInterval(timerInterval);
   }, []);
-  const joinAgora = async () => {
-    localStorage.setItem('iscounted', 'true');
-    const randomUid = Math.floor(Math.random() * 1000);
 
-    const rtcToken = await getAgoraRtcToken('test', 'audience', 'uid', randomUid);
-
-    await client
-      .join(appId, channelName, rtcToken.data.data, randomUid)
-      .then((res) => {
-        console.log('resres###########', res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    setIsJoined(true);
-    localStorage.setItem('isjoinchanel', 'true');
-    localStorage.setItem('iscounted', 'true');
-    message.destroy();
-    videoRef.current.hidden = false;
-    toggleQuestion(false);
-    dispatch(setMiscellaneousData({ topBarVisibility: false }));
-
-    client.on('user-published', onUserPublish);
-
-    client.on('user-unpublished', (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
-      if (mediaType === 'video') {
-        user.videoTrack?.stop();
-      }
-      if (mediaType === 'audio') {
-        user.audioTrack?.stop();
-      }
-      leaveChannel();
-    });
-  };
   const handleBuyTicketClick = () => {
     let amount, ticket;
     switch (value) {
@@ -1031,12 +994,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
   const handleJoinClick = () => {
     // Save the current path ('/quiz/:quizId/leaderboard') in local storage before navigating
     localStorage.setItem('prevPath', location.pathname);
-    localStorage.setItem('setmodal', true);
+    localStorage.setItem('setmodal', JSON.stringify(true));
     navigate('/signup');
   };
   const handleJoinCommunity = () => {
  
-      const statejoin = localStorage.getItem('isjoinchanel');
+  
     localStorage.setItem('prevPath', location.pathname);
 
     navigate('/signup');

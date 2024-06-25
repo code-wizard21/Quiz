@@ -2,16 +2,22 @@ import { Button } from 'antd';
 import useResponsive from '../responsive/responsive';
 import { useNavigate } from 'react-router-dom';
 
-const PrizeItem = ({ title, percentage, cap }) => (
-  <div className="space-y-2">
-    <div className="text-yellow-400 text-[20px] max-[500px]:text-[14px] font-bold">{title}</div>
-    <div className="max-lg:mr-[50px] max-[500px]:mr-0 mr-[90px]">
-      <div className="text-white text-[36px] max-[500px]:text-[24px] font-bold">{percentage} of prize pool</div>
-      <div className="text-white text-[24px] max-[500px]:text-[20px] font-medium">+ sponsored prizes (if any)</div>
-      <div className="text-[14px] text-white">{cap}</div>
+interface PrizeItemProps {
+  title: string;
+  percentage: string;
+  cap: string;
+}
+
+const PrizeItem: React.FC<PrizeItemProps> = ({ title, percentage, cap }) => (
+    <div className="space-y-2">
+      <div className="text-yellow-400 text-[20px] max-[500px]:text-[14px] font-bold">{title}</div>
+      <div className="max-lg:mr-[50px] max-[500px]:mr-0 mr-[90px]">
+        <div className="text-white text-[36px] max-[500px]:text-[24px] font-bold">{percentage} of prize pool</div>
+        <div className="text-white text-[24px] max-[500px]:text-[20px] font-medium">+ sponsored prizes (if any)</div>
+        <div className="text-[14px] text-white">{cap}</div>
+      </div>
     </div>
-  </div>
-);
+  );
 
 function App() {
   const navigate = useNavigate();

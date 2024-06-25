@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 // import { ILoggedInUser } from 'common/types/user.type';
-import { get,post } from '../../wrappers/request';
-import { IAgoraRtcTokenResponse, IQuizLeaderboardResponse, IQuizResponse, IQuizesResponse, IUserQuizGameSummaryResponse } from '../../types/quiz.types';
+import { get,post } from './wrappers/request';
+import { IAgoraRtcTokenResponse, IQuizLeaderboardResponse, IQuizResponse, IQuizesResponse, IUserQuizGameSummaryResponse } from './types/quiz.types';
 
 export const getQuizList = async (): Promise<AxiosResponse<IQuizesResponse>> => {
   return get('quizes');
@@ -18,10 +18,10 @@ export const getInfoQuizContest = async (
   return get(`quizes/${user_ID}/getmodaldata`);
 }
 
-export const getQuestionWithOption = async (userData): Promise<AxiosResponse<IQuizesResponse>> => {
+export const getQuestionWithOption = async (userData:any): Promise<AxiosResponse<IQuizesResponse>> => {
   return post('quizes/getquestion',userData);
 };
-export const getOnlyQuestion = async (userData): Promise<AxiosResponse<IQuizesResponse>> => {
+export const getOnlyQuestion = async (userData:any): Promise<AxiosResponse<IQuizesResponse>> => {
   return post('quizes/getonlyquestion',userData);
 };
 

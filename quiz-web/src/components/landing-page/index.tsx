@@ -5,8 +5,8 @@ import google from '../../assets/social/Google.svg';
 import { useGoogleLogin } from '@react-oauth/google';
 import { googleAuth } from '../../service/payment/payment.service';
 import { setUserData } from '../../redux/actions/auth.action';
-import close from '../../assets/close.svg';
 import { useDispatch } from 'react-redux';
+
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const LandingPage: React.FC = () => {
     if (prevPath !== defaultPath) {
       if (statejoin == 'true') {
         localStorage.clear();
-        localStorage.setItem('isjoinchanel',true);
+        localStorage.setItem('isjoinchanel', JSON.stringify(true));
       }
     } else {
       localStorage.clear();
