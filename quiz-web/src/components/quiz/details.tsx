@@ -18,6 +18,7 @@ import ic_speakerOff from '../../assets/ic_speakerOff.svg';
 import ic_speakerOn from '../../assets/ic_speakerOn.svg';
 import liveIcon from '../../assets/live-icon.svg';
 import { Modal } from 'antd';
+import svg from '../../assets/side-menu.svg';
 import CountUp from 'react-countup';
 import userCountIcon from '../../assets/user-count-icon.svg';
 import { OPTION_PROGRESS_COLORS, SOCKET_EMITTERS, SOCKET_LISTENERS } from '../../constants/enum';
@@ -1502,7 +1503,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       <Modal title="" open={isModalOpen2} footer={null} width={'350px'} onCancel={handleCancel2}>
         <div className="modal-box">
           <div className="flex mt-6 items-center justify-center">
-            <Avatar size={128} src={currentQuizContent.avatar} />
+            <Avatar size={128} src={currentQuizContent.avatar||svg} />
           </div>
           <div className="flex mt-2 items-center justify-center">
             <div className="text-base  text-black">{user?.username}</div>

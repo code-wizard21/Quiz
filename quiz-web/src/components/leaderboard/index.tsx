@@ -8,6 +8,7 @@ import { Drawer, Button } from 'antd';
 import { getUserLeaderboard } from '../../service/quiz/quiz.service';
 import { ILeaderboard} from '../../types/quiz.types';
 import './style.css';
+import svg from '../../assets/side-menu.svg';
 import close from '../../assets/close.svg';
 const containerStyle = {
   position: 'relative',
@@ -158,7 +159,7 @@ const Leaderboard: React.FC<{ quizId: string; }> = ({ quizId }): React.ReactElem
                       count={3}
                     >
                       <img
-                        src={leaderboardResults?.[2]?.avatar}
+                        src={leaderboardResults?.[2]?.avatar||svg}
                         className="-ml-3 border-green-400 border-4 border-solid rounded-full"
                         alt="user3"
                         width={100}
@@ -208,7 +209,7 @@ const Leaderboard: React.FC<{ quizId: string; }> = ({ quizId }): React.ReactElem
                         >
                           <div className="w-1/8 cursor-default">{index + 1}</div>
                           <div className="w-1/8">
-                            <Avatar src={item.avatar} alt="user1" width={35} height={35} />
+                            <Avatar src={item.avatar||svg} alt="user1" width={35} height={35} />
                           </div>
                           <span className="w-1/3 cursor-default  truncate">
                             {item.username?.length > 14 ? `${item.username.slice(0, 14)}...` : item.username}
