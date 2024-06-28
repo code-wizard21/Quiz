@@ -423,7 +423,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       toggleLeaderboardHandler(true);
       localStorage.removeItem('setmodal'); // remove the item
     }
-
   }, []);
 
   const calculationStart = async () => {
@@ -555,7 +554,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
         setIsShowpool(false);
         const query_answer = { question_id: res.data.data.question_id };
         toggleQuestion(true);
-        const quizAnswerQuestions:any = await getQuestionWithOption(query_answer);
+        const quizAnswerQuestions: any = await getQuestionWithOption(query_answer);
         setCurrentQuestion(quizAnswerQuestions.data);
         setQuestionIndex(res.data.data.question_index);
         setTotalNumberOfQuestions(res.data.data.total_questions);
@@ -999,8 +998,6 @@ const QuizDetail: React.FC = (): React.ReactElement => {
     navigate('/signup');
   };
   const handleJoinCommunity = () => {
- 
-  
     localStorage.setItem('prevPath', location.pathname);
 
     navigate('/signup');
@@ -1187,7 +1184,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
             </div>
             <div className="text-3xl p-3 text-white font-bold font-stud-regular text-center">
               {currentQuestion?.question.text}
-            </div>  
+            </div>
             <div className="p-4">
               {currentQuestion?.question?.options?.map((option, index) => {
                 return (
@@ -1197,9 +1194,7 @@ const QuizDetail: React.FC = (): React.ReactElement => {
                     key={index}
                   >
                     <div className="absolute z-40 flex justify-between w-full font-stud-regular h-12">
-                      <span className="pl-6 text-base font-bold  self-center">
-                        {option.text}
-                      </span>
+                      <span className="pl-6 text-base font-bold  self-center">{option.text}</span>
                       <span className="pr-3 text-base self-center">{`${option.total_answers || 0}`}</span>
                     </div>
                     <Progress
@@ -1249,13 +1244,9 @@ const QuizDetail: React.FC = (): React.ReactElement => {
               <div className="studregular text-center text-4xl font-bold  text-white p-1">{numberParticipants}</div>
             </div>
             <div className="pr-8 pl-8 mt-8">
-              <div className="studregular text-customYellowBorder text-center text-xl font-bold  p-1">
-                You are now a Contestant
-              </div>
-              <div className="studregular text-customYellowBorder text-center text-xl font-bold   p-1">
-                eligible to win from the
-              </div>
-              <div className="studregular text-customYellowBorder text-center text-xl font-bold  p-1">prize pool</div>
+              <div className=" text-[#00FFE0] text-center text-2xl font-bold  p-1">You are now a Contestant</div>
+              <div className=" text-[#00FFE0] text-center text-2xl font-bold   p-1">eligible to win from the</div>
+              <div className=" text-[#00FFE0] text-center text-2xl font-bold  p-1">prize pool</div>
             </div>
           </div>
         )}
@@ -1376,9 +1367,12 @@ const QuizDetail: React.FC = (): React.ReactElement => {
 
       {isPaused && (
         <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
-          <p className="text-center h-full flex justify-center m-auto items-center text-yellow-400 text-4xl font-stud-regular">
-            Quiz Paused
-          </p>
+          <div className="pt-48 pl-12 mb-12">
+            <div className="text-white text-5xl mb-4">WE BE</div>
+            <div className="text-white text-5xl mb-4">RIGHT</div>
+            <div className="text-white text-5xl">BACK</div>
+          </div>
+          <p className="text-center flex justify-center m-auto items-center text-yellow-400 text-4xl">Quiz Paused</p>
         </div>
       )}
 
