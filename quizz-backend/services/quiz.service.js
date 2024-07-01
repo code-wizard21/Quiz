@@ -347,7 +347,7 @@ const queryQuizes = async (filter, options, authUserId) => {
     const parts = options.sort_by.split(':');
     sort[parts[0]] = parts[1] === 'desc' ? -1 : 1;
   } else {
-    sort = { start_date: -1 };
+    sort = { start_date: 1 };
   }
 
   if (options.limit) {
