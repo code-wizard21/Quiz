@@ -110,8 +110,17 @@ const QuizCreateUpdate = (props) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const getQuizById = useCallback(async () => {
-    const result = await axiosClient.get("quizes/all?_id=" + quizId);
+    let result;
+
+    if (quizId === undefined || quizId === 'undefined') {
+      result = await axiosClient.get("quizes/all?_id=" + quizId);
+    } else {
+      result = await axiosClient.get("quizes/all?_id=" + quizId);
+    }
+    
+    
     const quiz = result?.data?.data?.results[0];
+    console.log('result', quiz);
     formik.setValues({
       ...formik.values,
       id: quiz._id,

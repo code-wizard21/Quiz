@@ -1368,8 +1368,8 @@ const QuizDetail: React.FC = (): React.ReactElement => {
       {isPaused && (
         <div className="w-96 h-12 mt-6 z-50 bottom-0" id="view-que">
           <div className="pt-48 pl-12 mb-12">
-            <div className="text-white text-5xl mb-4">WE BE</div>
-            <div className="text-white text-5xl mb-4">RIGHT</div>
+            <div className="text-white font-bold text-5xl mb-4">WE WILL</div>
+            <div className="text-white font-bold text-5xl mb-4"> BE RIGHT</div>
             <div className="text-white text-5xl">BACK</div>
           </div>
           <p className="text-center flex justify-center m-auto items-center text-yellow-400 text-4xl">Quiz Paused</p>

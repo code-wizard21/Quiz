@@ -39,7 +39,6 @@ export type TCreateUser = {
   shadow_user_id?: string;
   email?: string;
   id?: string;
-
   user?: string;
   amount?:number;
   ticket?:number;

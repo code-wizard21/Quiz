@@ -50,13 +50,14 @@ export const ProductCreateDialog = (props) => {
     axiosClient
     .get("/users?role=host")
     .then((response) => {
-      if (response?.data?.data?.results) {
-        const data = response?.data?.data?.results?.map((item) => {
+      if (response?.data?.data?.results ) {
+        const  data = response?.data?.data?.results?.map((item) => {
           return {
             value: item.id,
             label: item.name,
           };
         });
+        console.log('responsedata',data)
         setHostList(data);
       }
     })
@@ -194,115 +195,7 @@ export const ProductCreateDialog = (props) => {
       {...other}
     >
       <DialogTitle>Create Quiz</DialogTitle>
-      {/* <DialogContent>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <AutocompleteField
-              error={Boolean(formik.touched.host && formik.errors.host)}
-              filterSelectedOptions
-              fullWidth
-              label="Host"
-              helperText={formik.touched.host && formik.errors.host}
-              name="host"
-              value={formik.values.host}
-              onChange={(e, newValue) => {
-                formik.setValues({
-                  ...formik.values,
-                  host: newValue,
-                });
-              }}
-              options={hostList}
-              sx={{ mb: 2 }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <AutocompleteField
-              error={Boolean(formik.touched.category && formik.errors.category)}
-              filterSelectedOptions
-              fullWidth
-              label="Category"
-              helperText={formik.touched.category && formik.errors.category}
-              name="category"
-              value={formik.values.category}
-              onChange={(e, newValue) => {
-                formik.setValues({
-                  ...formik.values,
-                  category: newValue,
-                });
-              }}
-              options={categoryList}
-              sx={{ mb: 2 }}
-            />
-          </Grid>
-         
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formik.values.isPaid}
-                  onChange={(event) =>
-                    formik.setFieldValue("isPaid", event.target.checked)
-                  }
-                />
-              }
-              label="Paid"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <InputField
-              error={Boolean(formik.touched.description && formik.errors.description)}
-              fullWidth
-              helperText={formik.touched.description && formik.errors.description}
-              label="Description"
-              name="description"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.description}
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <AutocompleteField
-              filterSelectedOptions
-              fullWidth
-              label="Status"
-              name="status"
-              value={formik.values.status}
-              onChange={(e, newValue) => {
-                formik.setValues({
-                  ...formik.values,
-                  status: newValue,
-                });
-              }}
-              options={[
-                { label: "Active", value: true },
-                { label: "In-Active", value: false },
-              ]}
-              sx={{ mb: 2 }}
-            />
-          </Grid>
-          {formik.errors.submit && (
-            <Grid item xs={12}>
-              <FormHelperText error>{formik.errors.submit}</FormHelperText>
-            </Grid>
-          )}
-        </Grid>
-      </DialogContent>
-      <DialogActions>
-        <Button color="primary" onClick={onClose} variant="text">
-          Cancel
-        </Button>
-        <Button
-          color="primary"
-          disabled={formik.isSubmitting}
-          onClick={() => {
-            formik.handleSubmit();
-          }}
-          variant="contained"
-        >
-          {editData ? "Update Quiz" : "Create Quiz"}
-        </Button>
-      </DialogActions> */}
+    
     </Dialog>
   );
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create();
-//axiosInstance.defaults.baseURL = "http://localhost:4000/v1";
+//axiosInstance.defaults.baseURL = "http://localhost:5000/v1";
 // TODO: remove /api form server
 axiosInstance.defaults.baseURL = 'https://api.quizmobb.com/v1';
 
