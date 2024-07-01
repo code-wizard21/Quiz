@@ -17,7 +17,10 @@ router
     .route('/')
     .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
     .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
-
+    router
+    .route('/host')
+    .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
+    .get(auth('getUsers'), validate(userValidation.getUsers), userController.getHostUsers);
 
 router
     .route('/:user_id')

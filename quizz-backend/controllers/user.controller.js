@@ -131,6 +131,21 @@ const getUsers = catchAsync(async (req, res) => {
   // const result = await userService.queryUsers(filter, options);
 });
 
+const getHostUsers = catchAsync(async (req, res) => {
+  const filter = pick(req.query, ['name', 'role']);
+  const options = pick(req.query, ['sort_by', 'limit', 'page']);
+  const users = await User.paginate(filter, options);
+  User.find({ role: 'host' })
+    .sort({ createdAt: -1 })
+    .then((result) => {
+      res.json(success(httpStatus.OK, 'Users retrieved successfully', result));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  // const result = await userService.queryUsers(filter, options);
+});
 const getTicket = async (req, res) => {
   try {
     const result = await User.findById(req.body.id);
@@ -286,6 +301,7 @@ const deleteUser = catchAsync(async (req, res) => {
 module.exports = {
   googlelogin,
   createUser,
+  getHostUsers,
   setAvatar,
   getTicket,
   getShadowUsers,

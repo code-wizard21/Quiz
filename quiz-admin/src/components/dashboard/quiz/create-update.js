@@ -270,10 +270,13 @@ const QuizCreateUpdate = (props) => {
 
   const getAllHost = async () => {
     axiosClient
-      .get("/users?role=host")
+      .get("/users/host")
       .then((response) => {
-        if (response?.data?.data?.results) {
-          const data = response?.data?.data?.results?.map((item) => {
+        
+        if (response?.data?.data) {
+          console.log('allhostser',response?.data?.data)
+          const data = response?.data?.data?.map((item) => {
+            
             return {
               value: item.id,
               label: item.name,
